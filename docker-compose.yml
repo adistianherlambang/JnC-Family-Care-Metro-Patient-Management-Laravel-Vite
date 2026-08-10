@@ -1,0 +1,49 @@
+services:
+  # Web Application (PHP 8.2 + Apache)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mariadb
+
+  # Database Server (MariaDB 10.4.32)
+  mariadb:
+    image: mariadb:10.4
+    platform: linux/amd64
+    container_name: mariadb_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pelayanan_pasien
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  # Database Administration (phpMyAdmin 5.2.1)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.1
+    platform: linux/amd64
+    container_name: phpmyadmin_web
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mariadb
+
+volumes:
+  dbdata:

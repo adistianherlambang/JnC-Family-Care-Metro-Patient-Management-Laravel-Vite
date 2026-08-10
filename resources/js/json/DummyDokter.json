@@ -1,0 +1,108 @@
+[
+  {
+    "doctor": "dr. Aulia Rahma, Sp.A",
+    "role": "Spesialis Anak & Tumbuh Kembang",
+    "image": "/img/landingPage/dummyDr.png",
+    "schedules": [
+      {
+        "days": [
+          "Senin",
+          "Rabu",
+          "Jumat"
+        ],
+        "startTime": "08:00",
+        "endTime": "12:00",
+        "services": [
+          "Konsultasi tumbuh kembang anak",
+          "Manajemen Terpadu Balita Sakit",
+          "Imunisasi"
+        ]
+      },
+      {
+        "days": [
+          "Selasa",
+          "Kamis"
+        ],
+        "startTime": "13:00",
+        "endTime": "16:00",
+        "services": [
+          "Pijat bayi, infant, dan anak",
+          "Pijat untuk common cold",
+          "Pijat untuk diare"
+        ]
+      }
+    ]
+  },
+  {
+    "doctor": "Bidan Siti Rahmawati, S.Tr.Keb",
+    "role": "Bidan Praktisi Kehamilan & Kebidanan",
+    "image": "/img/landingPage/dummyDr.png",
+    "schedules": [
+      {
+        "days": [
+          "Senin",
+          "Selasa",
+          "Kamis"
+        ],
+        "startTime": "08:00",
+        "endTime": "14:00",
+        "services": [
+          "Pemeriksaan kehamilan",
+          "Konsultasi persiapan kehamilan",
+          "Pelayanan keluarga berencana",
+          "Pemeriksaan masa nifas"
+        ]
+      },
+      {
+        "days": [
+          "Rabu",
+          "Jumat"
+        ],
+        "startTime": "13:00",
+        "endTime": "17:00",
+        "services": [
+          "Prenatal yoga",
+          "Aquatic yoga",
+          "Kelas persiapan persalinan"
+        ]
+      }
+    ]
+  },
+  {
+    "doctor": "Bidan Nabila Putri, S.Keb",
+    "role": "Bidan Praktisi Persalinan & Laktasi",
+    "image": "/img/landingPage/dummyDr.png",
+    "schedules": [
+      {
+        "days": [
+          "Senin",
+          "Rabu",
+          "Sabtu"
+        ],
+        "startTime": "08:00",
+        "endTime": "12:00",
+        "services": [
+          "Pelayanan persalinan normal",
+          "Inisiasi Menyusu Dini",
+          "Pendampingan persalinan",
+          "Delayed Cord Clamping"
+        ]
+      },
+      {
+        "days": [
+          "Selasa",
+          "Kamis"
+        ],
+        "startTime": "13:00",
+        "endTime": "16:00",
+        "services": [
+          "Perawatan ibu hamil",
+          "Perawatan laktasi",
+          "Perawatan pasca melahirkan",
+          "Body massage",
+          "Totok Wajah"
+        ]
+      }
+    ]
+  }
+]

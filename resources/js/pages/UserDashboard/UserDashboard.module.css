@@ -1,0 +1,153 @@
+.container {
+  background-color: var(--secondary);
+  min-height: 100vh;
+  width: 100%;
+  padding: 64px 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  box-sizing: border-box;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo img {
+  height: 48px;
+}
+
+.thirdContainer {
+  display: flex;
+  gap: 64px;
+}
+
+.menuWrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  gap: 12px;
+}
+
+.menuItem {
+  font-family: var(--artico);
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+  cursor: pointer;
+  padding: 14px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.menuItem:hover {
+  background-color: rgba(216, 150, 237, 0.2);
+}
+
+.menuItemActive {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.rightWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+}
+
+.rightWrapper .header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rightWrapper .header .title {
+  font-family: var(--antonia);
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.rightWrapper .header .desc {
+  margin: 0;
+  font-family: var(--artico);
+  font-size: 16px;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.inputContainer .title {
+  font-weight: 600;
+  font-size: 24px;
+  font-family: var(--antonia);
+  margin: 0;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input {
+  display: flex;
+  gap: 24px;
+}
+
+.confirm {
+  width: 100%;
+}
+
+.confirm .label {
+  font-family: var(--artico);
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0 0 4px 0;
+}
+
+.confirm .value {
+  font-family: var(--artico);
+  font-size: 16px;
+  margin: 0;
+}
+
+.confirm img {
+  height: 240px;
+  width: fit-content;
+  margin-top: 16px;
+}
+
+.button {
+  background-color: var(--primary);
+  padding: 16px 24px;
+  color: white;
+  cursor: pointer;
+  width: fit-content;
+  border-radius: 100px;
+  font-family: var(--artico);
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background-color: var(--hover);
+}
+
+.buttonDanger {
+  background-color: #ef4444;
+}
+
+.buttonDanger:hover {
+  background-color: #dc2626;
+}

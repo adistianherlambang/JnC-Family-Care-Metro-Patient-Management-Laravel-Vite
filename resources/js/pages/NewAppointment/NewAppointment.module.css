@@ -1,0 +1,241 @@
+.container {
+  background-color: var(--secondary);
+  min-height: 100vh;
+  width: 100%;
+  padding: 64px 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.pageContainer {
+  display: flex;
+  gap: 64px;
+}
+
+.pageContainer .header {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 50%;
+}
+
+.pageContainer .header .title {
+  font-family: var(--antonia);
+  font-weight: 600;
+  font-size: 32px;
+}
+
+.pageContainer p {
+  margin: 0;
+}
+
+.pageContainer .itemWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.pageContainer .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0;
+  border-top: solid var(--hover) 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pageContainer .item:last-child {
+  border-bottom: solid var(--hover) 1px;
+}
+
+.pageContainer .item .itemIn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pageContainer .item .itemIn:hover {
+  text-decoration: underline;
+}
+
+.pageContainer a {
+  font-size: 24px;
+}
+
+.back {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: 300ms ease;
+  margin: 0;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+.secondContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.secondContainer .header .title {
+  font-family: var(--antonia);
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.secondContainer .header p {
+  margin: 0;
+}
+
+.button {
+  background-color: var(--primary);
+  padding: 16px 24px;
+  color: white;
+  cursor: pointer;
+  width: fit-content;
+  border-radius: 100px;
+}
+
+.secondContainer .button:hover {
+  background-color: var(--hover);
+}
+
+.stepperWrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 20%;
+}
+
+.stepper {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 36px;
+}
+
+.stepper:last-child {
+  padding-bottom: 0;
+}
+
+.stepIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.stepCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.stepCircleActive {
+  background-color: var(--primary);
+}
+
+.stepLine {
+  position: absolute;
+  top: 24px;
+  bottom: -36px;
+  width: 2px;
+  background-color: var(--primary);
+}
+
+.stepper:last-child .stepLine {
+  display: none;
+}
+
+.stepText {
+  display: flex;
+  align-items: center;
+}
+
+.stepText p {
+  margin: 0;
+  font-family: var(--font-artico);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.thirdContainer {
+  display: flex;
+  gap: 64px;
+}
+
+.rightWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+}
+
+.rightWrapper .header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rightWrapper .header .title {
+  font-family: var(--antonia);
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.inputContainer .title {
+  font-weight: 600;
+  font-size: 24px;
+  font-family: var(--antonia);
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input {
+  display: flex;
+  gap: 24px;
+}
+
+.rightWrapper .button {
+  width: 100%;
+  text-align: center;
+}
+
+.confirm {
+  width: 100%;
+}
+
+.confirm .label {
+  font-family: var(--artico);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.confirm .value {
+  font-family: var(--artico);
+  font-size: 16px;
+}
+
+.confirm img {
+  height: 240px;
+  width: fit-content;
+  margin-top: 16px;
+}

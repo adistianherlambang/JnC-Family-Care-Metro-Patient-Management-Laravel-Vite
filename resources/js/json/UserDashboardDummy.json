@@ -1,0 +1,134 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin",
+      "patient": {
+        "name": "Administrator Klinik",
+        "noRM": "ADM-001",
+        "noBpjs": "-",
+        "phone": "081122334455",
+        "email": "admin@meikahealth.id",
+        "address": "Klinik Utama Ibu & Anak"
+      }
+    },
+    {
+      "username": "siti123",
+      "password": "123",
+      "role": "pasien",
+      "patient": {
+        "name": "Siti Nurhaliza",
+        "noRM": "RM-2026-08912",
+        "noBpjs": "0001234567890",
+        "phone": "081234567890",
+        "email": "siti.nurhaliza@email.com",
+        "address": "Jl. Mawar No. 12, Kel. Menteng, Kec. Jatinegara, Jakarta Timur"
+      },
+      "hasActiveQueue": true,
+      "activeQueue": {
+        "queueNumber": "A-014",
+        "doctor": "dr. Aulia Rahma, Sp.A",
+        "specialty": "Spesialis Anak & Tumbuh Kembang",
+        "service": "Konsultasi tumbuh kembang anak",
+        "date": "Senin, 10 Agustus 2026",
+        "time": "09:30 WIB",
+        "estimatedTime": "09:45 WIB",
+        "status": "Menunggu Antrean",
+        "currentCalling": "A-011",
+        "location": "Poli Balita & Anak - Ruang 102"
+      },
+      "visitHistory": [
+        {
+          "id": "VIS-001",
+          "date": "15 Juli 2026",
+          "doctor": "Bidan Siti Rahmawati, S.Tr.Keb",
+          "service": "Pemeriksaan Kehamilan Trimester 3",
+          "diagnosis": "Usia kehamilan 32 minggu, kondisi janin sehat & detak jantung normal",
+          "notes": "Tetap konsumsi vitamin prenatal & istirahat cukup.",
+          "status": "Selesai"
+        },
+        {
+          "id": "VIS-002",
+          "date": "02 Juni 2026",
+          "doctor": "dr. Aulia Rahma, Sp.A",
+          "service": "Imunisasi DPT & Polio",
+          "diagnosis": "Imunisasi rutin balita",
+          "notes": "Berikan parasetamol sirup jika timbul demam ringan pasca imunisasi.",
+          "status": "Selesai"
+        }
+      ]
+    },
+    {
+      "username": "dewi123",
+      "password": "123",
+      "role": "pasien",
+      "patient": {
+        "name": "Dewi Lestari",
+        "noRM": "RM-2026-04519",
+        "noBpjs": "0009876543210",
+        "phone": "089876543210",
+        "email": "dewi.lestari@email.com",
+        "address": "Jl. Melati No. 45, Kel. Tebet, Kec. Tebet, Jakarta Selatan"
+      },
+      "hasActiveQueue": false,
+      "activeQueue": null,
+      "visitHistory": [
+        {
+          "id": "VIS-004",
+          "date": "20 Juni 2026",
+          "doctor": "dr. Aulia Rahma, Sp.A",
+          "service": "Konsultasi Tumbuh Kembang",
+          "diagnosis": "Berat badan dan tinggi balita sesuai kurva KMS",
+          "notes": "Pertahankan asupan gizi seimbang.",
+          "status": "Selesai"
+        }
+      ]
+    }
+  ],
+  "news": [
+    {
+      "id": 1,
+      "title": "Pentingnya Imunisasi Dasar Lengkap untuk Tumbuh Kembang Optimal Balita",
+      "category": "Kesehatan Anak",
+      "date": "08 Agustus 2026",
+      "summary": "Imunisasi melindungi anak dari berbagai penyakit infeksi berbahaya. Simak jadwal imunisasi terbaru rekomendasi IDAI di klinik kami."
+    },
+    {
+      "id": 2,
+      "title": "Tips Mempersiapkan Persalinan Nyaman dan Minim Rasa Sakit",
+      "category": "Kehamilan & Persalinan",
+      "date": "05 Agustus 2026",
+      "summary": "Metode melahirkan dengan pernapasan relaksasi dan pendampingan doula terbukti membantu kelancaran proses persalinan."
+    },
+    {
+      "id": 3,
+      "title": "Manfaat Pijat Bayi (Infant Massage) Terhadap Kualitas Tidur dan Pencernaan",
+      "category": "Mom & Baby Care",
+      "date": "01 Agustus 2026",
+      "summary": "Pijat bayi secara rutin membantu mengatasi perut kembung, kolik, dan merangsang nafsu makan si kecil."
+    }
+  ],
+  "faqs": [
+    {
+      "id": 1,
+      "question": "Bagaimana cara melakukan pendaftaran antrean online?",
+      "answer": "Anda cukup memilih menu Registrasi Online, memilih kategori layanan, menentukan jadwal dokter, dan konfirmasi. Nomor antrean digital akan langsung terbit."
+    },
+    {
+      "id": 2,
+      "question": "Apakah BPJS Kesehatan berlaku untuk semua jenis pelayanan?",
+      "answer": "BPJS Kesehatan berlaku untuk pelayanan persalinan dan pemeriksaan medis kebidanan sesuai dengan ketentuan fasilitas kesehatan rujukan."
+    },
+    {
+      "id": 3,
+      "question": "Bagaimana jika saya terlambat datang sesuai estimasi jam pelayanan?",
+      "answer": "Nomor antrean Anda akan dipanggil kembali setelah 2 nomor antrean berikutnya diproses oleh petugas pendaftaran/klinik."
+    },
+    {
+      "id": 4,
+      "question": "Apakah saya dapat mengubah atau membatalkan janji temu?",
+      "answer": "Ya, Anda dapat membatalkan janji temu melalui menu Antrean Saya di dashboard pasien sebelum waktu pelayanan dimulai."
+    }
+  ]
+}

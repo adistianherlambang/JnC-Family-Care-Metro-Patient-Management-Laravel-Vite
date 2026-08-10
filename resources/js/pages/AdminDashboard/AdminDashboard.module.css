@@ -1,0 +1,284 @@
+.container {
+  background-color: var(--secondary);
+  min-height: 100vh;
+  width: 100%;
+  padding: 64px 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  box-sizing: border-box;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo img {
+  height: 48px;
+}
+
+.thirdContainer {
+  display: flex;
+  gap: 64px;
+}
+
+.menuWrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  gap: 12px;
+}
+
+.menuItem {
+  font-family: var(--artico);
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+  cursor: pointer;
+  padding: 14px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.menuItem:hover {
+  background-color: rgba(216, 150, 237, 0.2);
+}
+
+.menuItemActive {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.rightWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+}
+
+.rightWrapper .header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rightWrapper .header .title {
+  font-family: var(--antonia);
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.rightWrapper .header .desc {
+  margin: 0;
+  font-family: var(--artico);
+  font-size: 16px;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.inputContainer .title {
+  font-weight: 600;
+  font-size: 24px;
+  font-family: var(--antonia);
+  margin: 0;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input {
+  display: flex;
+  gap: 24px;
+}
+
+.confirm {
+  width: 100%;
+}
+
+.confirm .label {
+  font-family: var(--artico);
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0 0 4px 0;
+}
+
+.confirm .value {
+  font-family: var(--artico);
+  font-size: 16px;
+  margin: 0;
+}
+
+.confirm img {
+  height: 240px;
+  width: fit-content;
+  margin-top: 16px;
+}
+
+.button {
+  background-color: var(--primary);
+  padding: 16px 24px;
+  color: white;
+  cursor: pointer;
+  width: fit-content;
+  border-radius: 100px;
+  font-family: var(--artico);
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background-color: var(--hover);
+}
+
+.buttonDanger {
+  background-color: #ef4444;
+}
+
+.buttonDanger:hover {
+  background-color: #dc2626;
+}
+
+.buttonSecondary {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+
+.buttonSecondary:hover {
+  background-color: #FAF0FC;
+}
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(216, 150, 237, 0.3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--artico);
+  font-size: 15px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #FAF0FC;
+  color: #1F2937;
+  font-weight: 600;
+  padding: 16px 20px;
+  border-bottom: 2px solid rgba(216, 150, 237, 0.3);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #1F2937;
+  vertical-align: middle;
+}
+
+.tableTr:hover {
+  background-color: #fdf8fe;
+}
+
+.actionCell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  padding: 8px 16px !important;
+  font-size: 13px !important;
+  border-radius: 20px !important;
+  line-height: 1.2;
+}
+
+.statusText {
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.statusPending {
+  background-color: #fff7ed;
+  color: #c2410c;
+}
+
+.statusActive {
+  background-color: #FAF0FC;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.statusDone {
+  background-color: #f0fdf4;
+  color: #15803d;
+}
+
+.chipContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FAF0FC;
+  color: var(--primary);
+  border: 1px solid rgba(216, 150, 237, 0.4);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: var(--artico);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.chipRemove {
+  cursor: pointer;
+  color: #ef4444;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.chipRemove:hover {
+  background-color: #fee2e2;
+}
+
+.addInputRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+

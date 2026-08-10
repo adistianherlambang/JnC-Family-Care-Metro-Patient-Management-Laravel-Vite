@@ -1,0 +1,312 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.label {
+  font-size: 16px;
+  font-family: var(--font-artico, sans-serif);
+  color: black;
+  font-weight: 500;
+}
+
+/* Standardized Text Input */
+.input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid black;
+  font-size: 16px;
+  font-family: var(--font-artico, sans-serif);
+  background-color: transparent;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 300ms ease;
+}
+
+.input:focus {
+  border-color: var(--primary);
+}
+
+/* Password Input Wrapper */
+.passwordWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid black;
+  background-color: transparent;
+  transition: border-color 300ms ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.passwordWrapper:focus-within {
+  border-color: var(--primary);
+}
+
+.passwordInput {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+  font-family: var(--font-artico, sans-serif);
+  background: transparent;
+}
+
+.eyeButton {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  font-size: 14px;
+  color: black;
+}
+
+/* Custom Select Dropdown Trigger */
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.selectTrigger {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid black;
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 16px;
+  font-family: var(--font-artico, sans-serif);
+  transition: border-color 300ms ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.selectTrigger:hover,
+.selectOpen {
+  border-color: var(--primary);
+}
+
+.placeholder {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.selectedValue {
+  color: black;
+}
+
+.selectArrow {
+  display: flex;
+  align-items: center;
+  transition: transform 300ms ease;
+}
+
+.arrowRotate {
+  transform: rotate(180deg);
+}
+
+.selectMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 12px;
+  z-index: 50;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  max-height: 240px;
+  overflow-y: scroll;
+}
+
+.selectItem {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: var(--font-artico, sans-serif);
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.selectItem:hover {
+  background-color: #FAF0FC;
+  color: var(--primary);
+}
+
+.selectActiveItem {
+  background-color: #FAF0FC;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Date Input Wrapper */
+.dateWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid black;
+  background-color: transparent;
+  transition: border-color 300ms ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dateWrapper:focus-within {
+  border-color: var(--primary);
+}
+
+.dateInput {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+  font-family: "poppins", sans-serif;
+  background: transparent;
+}
+
+.dateIcon {
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+/* Custom Radio Buttons */
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.radioCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border: 1px solid black;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 300ms ease;
+  font-size: 16px;
+  font-family: var(--font-artico, sans-serif);
+  user-select: none;
+  flex: 1;
+}
+
+.radioCard:hover {
+  border-color: var(--primary);
+}
+
+.radioCardActive {
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.radioCircle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 300ms ease;
+  box-sizing: border-box;
+}
+
+.radioCardActive .radioCircle {
+  border-color: var(--primary);
+}
+
+.radioDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--primary);
+}
+
+/* Image Upload Input */
+.imageUploadArea {
+  border: 1.5px dashed black;
+  border-radius: 12px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  background-color: transparent;
+  transition: all 300ms ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 140px;
+}
+
+.imageUploadArea:hover,
+.imageUploadDragOver {
+  border-color: var(--primary);
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+.imagePlaceholderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.imageUploadText {
+  font-size: 15px;
+  font-family: var(--font-artico, sans-serif);
+  color: black;
+  font-weight: 500;
+  margin: 0;
+}
+
+.imageUploadSubtext {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+  font-family: var(--font-artico, sans-serif);
+}
+
+.imagePreviewWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.imagePreview {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.inputError {
+  border-color: #ef4444 !important;
+}
+
+.errorMessage {
+  font-size: 14px;
+  color: #ef4444;
+  font-family: var(--font-artico, sans-serif);
+  margin-top: 4px;
+}
