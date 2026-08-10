@@ -1,64 +1,38 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import styles from "./AdminDashboard.module.css";
-import initialDummyData from "../../json/UserDashboardDummy.json";
-import initialDummyDokter from "../../json/DummyDokter.json";
-import initialLayanan from "../../json/Layanan.json";
-import { InputText, InputSelect, InputRadio, InputImage } from "../../components/Input";
+import InputText from "../../components/Input/InputText";
+import InputSelect from "../../components/Input/InputSelect";
+import InputRadio from "../../components/Input/InputRadio";
+import InputImage from "../../components/Input/InputImage";
+import { apiService } from "../../services/apiService";
+import dummyKategori from "../../json/Layanan.json";
+import dummyDokter from "../../json/DummyDokter.json";
+import userDummy from "../../json/UserDashboardDummy.json";
 
-export default function AdminDashboard() {
-  const navigate = useNavigate();
-  const [activeMenu, setActiveMenu] = useState("antrean");
-
-  const [queueDateFilter, setQueueDateFilter] = useState("Hari Ini");
-
-  const [queues, setQueues] = useState([
-    {
-      id: "Q-001",
-      queueNumber: "A-014",
-      patientName: "Siti Nurhaliza",
-      doctor: "dr. Aulia Rahma, Sp.A",
-      service: "Konsultasi tumbuh kembang anak",
-      date: "Hari Ini",
-      time: "09:30 WIB",
-      status: "Menunggu Antrean"
-    },
-    {
-      id: "Q-002",
-      queueNumber: "A-015",
-      patientName: "Dewi Lestari",
-      doctor: "Bidan Siti Rahmawati, S.Tr.Keb",
-      service: "Pemeriksaan Kehamilan",
-      date: "Besok",
-      time: "10:00 WIB",
-      status: "Dipanggil"
-    },
-    {
-      id: "Q-003",
-      queueNumber: "A-016",
-      patientName: "Rina Wijaya",
-      doctor: "Bidan Nabila Putri, S.Keb",
-      service: "Prenatal Yoga",
-      date: "Hari Ini",
-      time: "11:00 WIB",
-      status: "Menunggu Antrean"
-    }
-  ]);
-
-  const [doctors, setDoctors] = useState(initialDummyDokter);
-  const [categories, setCategories] = useState(initialLayanan);
-  const [news, setNews] = useState(initialDummyData.news);
-  const [faqs, setFaqs] = useState(initialDummyData.faqs);
-
-  // Form states
-  // 1. Queue Form
-  const [newQueue, setNewQueue] = useState({
-    patientName: "",
-    kategoriLayanan: "",
-    service: "",
-    doctor: "",
-    date: "Hari Ini"
-  });
+const dummyNews = userDummy.news || [];
+const dummyFaq = userDummy.faqs || [];
+const dummyAntrean = [
+  {
+    id: "Q-001",
+    queueNumber: "A-014",
+    patientName: "Siti Nurhaliza",
+    doctor: "dr. Aulia Rahma, Sp.A",
+    service: "Konsultasi tumbuh kembang anak",
+    date: "Hari Ini",
+    time: "09:30 WIB",
+    status: "Menunggu Antrean"
+  },
+  {
+    id: "Q-002",
+    queueNumber: "A-015",
+    patientName: "Budi Santoso",
+    doctor: "dr. Fitri Handayani, Sp.A",
+    service: "Pemeriksaan Anak",
+    date: "Hari Ini",
+    time: "10:00 WIB",
+    status: "Dipanggil"
+  }
+];
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -73,7 +47,45 @@ const getDaysRange = (startDay, endDay) => {
   }
 };
 
-  // 2. Doctor Form
+export default function AdminDashboard() {
+  const [activeMenu, setActiveMenu] = useState("antrean"); // 'antrean', 'dokter', 'poli', 'artikel', 'faq'
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Master Data State
+  const [queues, setQueues] = useState(dummyAntrean);
+  const [doctors, setDoctors] = useState(dummyDokter);
+  const [categories, setCategories] = useState(dummyKategori);
+  const [news, setNews] = useState(dummyNews);
+  const [faqs, setFaqs] = useState(dummyFaq);
+
+  useEffect(() => {
+    async function loadData() {
+      const cats = await apiService.getCategories(dummyKategori);
+      setCategories(cats);
+      const docs = await apiService.getDoctors(dummyDokter);
+      setDoctors(docs);
+      const qList = await apiService.getQueues(dummyAntrean);
+      setQueues(qList);
+      const nList = await apiService.getNews(dummyNews);
+      setNews(nList);
+      const fList = await apiService.getFaqs(dummyFaq);
+      setFaqs(fList);
+    }
+    loadData();
+  }, []);
+
+  // Filter State
+  const [queueDateFilter, setQueueDateFilter] = useState("Hari Ini");
+
+  // Forms State
+  const [newQueue, setNewQueue] = useState({
+    patientName: "",
+    kategoriLayanan: "",
+    service: "",
+    doctor: "",
+    date: "Hari Ini"
+  });
+
   const [newDoctor, setNewDoctor] = useState({
     doctor: "",
     role: "",
@@ -86,39 +98,72 @@ const getDaysRange = (startDay, endDay) => {
     servicesList: []
   });
 
-  // 3. Schedule Form
-  const [newSchedule, setNewSchedule] = useState({
-    doctor: "",
-    days: "Senin",
-    startTime: "08:00",
-    endTime: "12:00",
-    services: ""
-  });
-
-  // 4. Poli / Category Form
   const [newCategory, setNewCategory] = useState({
     title: "",
     tempServiceName: "",
     servicesList: []
   });
 
-  // 5. News Form
   const [newNews, setNewNews] = useState({
     title: "",
     category: "Kesehatan Anak",
     summary: ""
   });
 
-  // 6. FAQ Form
   const [newFaq, setNewFaq] = useState({
     question: "",
     answer: ""
   });
 
-  // Handlers CRUD
-  // Queue Handlers
+  // Edit States
   const [editingQueueId, setEditingQueueId] = useState(null);
+  const [editingDoctorName, setEditingDoctorName] = useState(null);
+  const [editingCategoryTitle, setEditingCategoryTitle] = useState(null);
+  const [editingNewsId, setEditingNewsId] = useState(null);
+  const [editingFaqId, setEditingFaqId] = useState(null);
 
+  // Handlers Open Add Modals
+  const handleOpenAddQueueModal = () => {
+    setEditingQueueId(null);
+    setNewQueue({ patientName: "", kategoriLayanan: "", service: "", doctor: "", date: "Hari Ini" });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenAddDoctorModal = () => {
+    setEditingDoctorName(null);
+    setNewDoctor({
+      doctor: "",
+      role: "",
+      image: "",
+      startDay: "Senin",
+      endDay: "Jumat",
+      startTime: "08:00",
+      endTime: "14:00",
+      selectedServiceInput: "",
+      servicesList: []
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenAddCategoryModal = () => {
+    setEditingCategoryTitle(null);
+    setNewCategory({ title: "", tempServiceName: "", servicesList: [] });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenAddNewsModal = () => {
+    setEditingNewsId(null);
+    setNewNews({ title: "", category: "Kesehatan Anak", summary: "" });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenAddFaqModal = () => {
+    setEditingFaqId(null);
+    setNewFaq({ question: "", answer: "" });
+    setIsModalOpen(true);
+  };
+
+  // Queue Handlers
   const handleStartEditQueue = (q) => {
     setEditingQueueId(q.id);
     setNewQueue({
@@ -128,6 +173,7 @@ const getDaysRange = (startDay, endDay) => {
       doctor: q.doctor,
       date: q.date
     });
+    setIsModalOpen(true);
   };
 
   const handleCancelEditQueue = () => {
@@ -135,53 +181,55 @@ const getDaysRange = (startDay, endDay) => {
     setNewQueue({ patientName: "", kategoriLayanan: "", service: "", doctor: "", date: "Hari Ini" });
   };
 
-  const handleAddQueue = () => {
+  const handleAddQueue = async () => {
     if (!newQueue.patientName.trim() || !newQueue.doctor || !newQueue.service) return;
 
     if (editingQueueId) {
+      const payload = {
+        patientName: newQueue.patientName.trim(),
+        doctor: newQueue.doctor,
+        service: newQueue.service,
+        date: newQueue.date
+      };
+      await apiService.updateQueue(editingQueueId, payload);
       setQueues(
-        queues.map((q) =>
-          q.id === editingQueueId
-            ? {
-                ...q,
-                patientName: newQueue.patientName.trim(),
-                doctor: newQueue.doctor,
-                service: newQueue.service,
-                date: newQueue.date
-              }
-            : q
-        )
+        queues.map((q) => (q.id === editingQueueId ? { ...q, ...payload } : q))
       );
       setEditingQueueId(null);
     } else {
-      const item = {
-        id: `Q-00${queues.length + 1}`,
-        queueNumber: `A-0${Math.floor(Math.random() * 80) + 20}`,
-        patientName: newQueue.patientName,
+      const payload = {
+        patientName: newQueue.patientName.trim(),
         doctor: newQueue.doctor,
         service: newQueue.service,
         date: newQueue.date,
         time: "09:00 WIB",
         status: "Menunggu Antrean"
       };
+      const created = await apiService.createQueue(payload);
+      const item = created || {
+        id: `Q-00${queues.length + 1}`,
+        queueNumber: `A-0${Math.floor(Math.random() * 80) + 20}`,
+        ...payload
+      };
       setQueues([...queues, item]);
     }
     setNewQueue({ patientName: "", kategoriLayanan: "", service: "", doctor: "", date: "Hari Ini" });
+    setIsModalOpen(false);
   };
 
-  const handleUpdateQueueStatus = (id, newStatus) => {
+  const handleUpdateQueueStatus = async (id, newStatus) => {
+    await apiService.updateQueue(id, { status: newStatus });
     setQueues(
       queues.map((q) => (q.id === id ? { ...q, status: newStatus } : q))
     );
   };
 
-  const handleDeleteQueue = (id) => {
+  const handleDeleteQueue = async (id) => {
+    await apiService.deleteQueue(id);
     setQueues(queues.filter((q) => q.id !== id));
   };
 
   // Doctor Handlers
-  const [editingDoctorName, setEditingDoctorName] = useState(null);
-
   const handleStartEditDoctor = (doc) => {
     setEditingDoctorName(doc.doctor);
     const firstSchedule = doc.schedules?.[0] || {};
@@ -199,6 +247,7 @@ const getDaysRange = (startDay, endDay) => {
       selectedServiceInput: "",
       servicesList: servicesList
     });
+    setIsModalOpen(true);
   };
 
   const handleCancelEditDoctor = () => {
@@ -216,7 +265,7 @@ const getDaysRange = (startDay, endDay) => {
     });
   };
 
-  const handleAddDoctor = () => {
+  const handleAddDoctor = async () => {
     if (!newDoctor.doctor.trim()) return;
 
     const startDay = newDoctor.startDay || "Senin";
@@ -230,19 +279,28 @@ const getDaysRange = (startDay, endDay) => {
       ? newDoctor.servicesList
       : ["Konsultasi Umum"];
 
+    const payload = {
+      doctor: newDoctor.doctor.trim(),
+      role: newDoctor.role.trim() || "Praktisi Medis",
+      image: newDoctor.image || "/img/landingPage/dummyDr.png",
+      startDay: startDay,
+      endDay: endDay,
+      startTime: startTime,
+      endTime: endTime,
+      services: servicesList
+    };
+
     if (editingDoctorName) {
+      const docObj = doctors.find((d) => d.doctor === editingDoctorName);
+      if (docObj?.id) {
+        await apiService.updateDoctor(docObj.id, payload);
+      }
       setDoctors(
         doctors.map((d) =>
           d.doctor === editingDoctorName
             ? {
                 ...d,
-                doctor: newDoctor.doctor.trim(),
-                role: newDoctor.role.trim() || "Praktisi Medis",
-                image: newDoctor.image || "/img/landingPage/dummyDr.png",
-                startDay: startDay,
-                endDay: endDay,
-                startTime: startTime,
-                endTime: endTime,
+                ...payload,
                 schedules: [
                   {
                     days: daysList,
@@ -258,14 +316,9 @@ const getDaysRange = (startDay, endDay) => {
       );
       setEditingDoctorName(null);
     } else {
-      const docItem = {
-        doctor: newDoctor.doctor.trim(),
-        role: newDoctor.role.trim() || "Praktisi Medis",
-        image: newDoctor.image || "/img/landingPage/dummyDr.png",
-        startDay: startDay,
-        endDay: endDay,
-        startTime: startTime,
-        endTime: endTime,
+      const created = await apiService.createDoctor(payload);
+      const docItem = created || {
+        ...payload,
         schedules: [
           {
             days: daysList,
@@ -289,43 +342,18 @@ const getDaysRange = (startDay, endDay) => {
       selectedServiceInput: "",
       servicesList: []
     });
+    setIsModalOpen(false);
   };
 
-  const handleDeleteDoctor = (docName) => {
+  const handleDeleteDoctor = async (docName) => {
+    const docObj = doctors.find((d) => d.doctor === docName);
+    if (docObj?.id) {
+      await apiService.deleteDoctor(docObj.id);
+    }
     setDoctors(doctors.filter((d) => d.doctor !== docName));
   };
 
-  // Schedule Handlers
-  const handleAddSchedule = () => {
-    if (!newSchedule.doctor) return;
-    setDoctors(
-      doctors.map((d) => {
-        if (d.doctor === newSchedule.doctor) {
-          const servicesList = newSchedule.services
-            ? newSchedule.services.split(",").map((s) => s.trim())
-            : ["Pemeriksaan Medis"];
-          return {
-            ...d,
-            schedules: [
-              ...d.schedules,
-              {
-                days: [newSchedule.days],
-                startTime: newSchedule.startTime,
-                endTime: newSchedule.endTime,
-                services: servicesList
-              }
-            ]
-          };
-        }
-        return d;
-      })
-    );
-    setNewSchedule({ doctor: "", days: "Senin", startTime: "08:00", endTime: "12:00", services: "" });
-  };
-
   // Category Handlers
-  const [editingCategoryTitle, setEditingCategoryTitle] = useState(null);
-
   const handleStartEditCategory = (cat) => {
     setEditingCategoryTitle(cat.title);
     setNewCategory({
@@ -333,6 +361,7 @@ const getDaysRange = (startDay, endDay) => {
       tempServiceName: "",
       servicesList: [...cat.list]
     });
+    setIsModalOpen(true);
   };
 
   const handleCancelEditCategory = () => {
@@ -340,48 +369,45 @@ const getDaysRange = (startDay, endDay) => {
     setNewCategory({ title: "", tempServiceName: "", servicesList: [] });
   };
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (!newCategory.title.trim()) return;
 
+    const payload = {
+      title: newCategory.title.trim(),
+      list: newCategory.servicesList
+    };
+
     if (editingCategoryTitle) {
+      const catObj = categories.find((c) => c.title === editingCategoryTitle);
+      if (catObj?.id) {
+        await apiService.updateCategory(catObj.id, payload);
+      }
       setCategories(
         categories.map((c) =>
           c.title === editingCategoryTitle
-            ? { title: newCategory.title.trim(), list: newCategory.servicesList }
+            ? { ...c, ...payload }
             : c
         )
       );
       setEditingCategoryTitle(null);
     } else {
-      const existingIndex = categories.findIndex((c) => c.title.toLowerCase() === newCategory.title.toLowerCase());
-      if (existingIndex >= 0) {
-        const updated = [...categories];
-        newCategory.servicesList.forEach((item) => {
-          if (!updated[existingIndex].list.some((existing) => existing.toLowerCase() === item.toLowerCase())) {
-            updated[existingIndex].list.push(item);
-          }
-        });
-        setCategories(updated);
-      } else {
-        setCategories([
-          ...categories,
-          {
-            title: newCategory.title.trim(),
-            list: newCategory.servicesList
-          }
-        ]);
-      }
+      const created = await apiService.createCategory(payload);
+      const item = created || payload;
+      setCategories([...categories, item]);
     }
     setNewCategory({ title: "", tempServiceName: "", servicesList: [] });
+    setIsModalOpen(false);
   };
 
-  const handleDeleteCategory = (title) => {
+  const handleDeleteCategory = async (title) => {
+    const catObj = categories.find((c) => c.title === title);
+    if (catObj?.id) {
+      await apiService.deleteCategory(catObj.id);
+    }
     setCategories(categories.filter((c) => c.title !== title));
   };
 
   // News Handlers
-  const [editingNewsId, setEditingNewsId] = useState(null);
-
   const handleStartEditNews = (n) => {
     setEditingNewsId(n.id);
     setNewNews({
@@ -389,6 +415,7 @@ const getDaysRange = (startDay, endDay) => {
       category: n.category,
       summary: n.summary
     });
+    setIsModalOpen(true);
   };
 
   const handleCancelEditNews = () => {
@@ -396,50 +423,51 @@ const getDaysRange = (startDay, endDay) => {
     setNewNews({ title: "", category: "Kesehatan Anak", summary: "" });
   };
 
-  const handleAddNews = () => {
+  const handleAddNews = async () => {
     if (!newNews.title.trim() || !newNews.summary.trim()) return;
 
+    const payload = {
+      title: newNews.title.trim(),
+      category: newNews.category,
+      summary: newNews.summary.trim()
+    };
+
     if (editingNewsId) {
+      await apiService.updateNews(editingNewsId, payload);
       setNews(
-        news.map((n) =>
-          n.id === editingNewsId
-            ? {
-                ...n,
-                title: newNews.title.trim(),
-                category: newNews.category,
-                summary: newNews.summary.trim()
-              }
-            : n
-        )
+        news.map((n) => (n.id === editingNewsId ? { ...n, ...payload } : n))
       );
       setEditingNewsId(null);
     } else {
       const now = new Date();
-      const item = {
+      const created = await apiService.createNews({
+        ...payload,
+        date: `${now.getDate()} Agustus 2026`
+      });
+      const item = created || {
         id: news.length + 1,
-        title: newNews.title.trim(),
-        category: newNews.category,
         date: `${now.getDate()} Agustus 2026`,
-        summary: newNews.summary.trim()
+        ...payload
       };
       setNews([item, ...news]);
     }
     setNewNews({ title: "", category: "Kesehatan Anak", summary: "" });
+    setIsModalOpen(false);
   };
 
-  const handleDeleteNews = (id) => {
+  const handleDeleteNews = async (id) => {
+    await apiService.deleteNews(id);
     setNews(news.filter((n) => n.id !== id));
   };
 
   // FAQ Handlers
-  const [editingFaqId, setEditingFaqId] = useState(null);
-
   const handleStartEditFaq = (f) => {
     setEditingFaqId(f.id);
     setNewFaq({
       question: f.question,
       answer: f.answer
     });
+    setIsModalOpen(true);
   };
 
   const handleCancelEditFaq = () => {
@@ -447,34 +475,34 @@ const getDaysRange = (startDay, endDay) => {
     setNewFaq({ question: "", answer: "" });
   };
 
-  const handleAddFaq = () => {
+  const handleAddFaq = async () => {
     if (!newFaq.question.trim() || !newFaq.answer.trim()) return;
 
+    const payload = {
+      question: newFaq.question.trim(),
+      answer: newFaq.answer.trim()
+    };
+
     if (editingFaqId) {
+      await apiService.updateFaq(editingFaqId, payload);
       setFaqs(
-        faqs.map((f) =>
-          f.id === editingFaqId
-            ? {
-                ...f,
-                question: newFaq.question.trim(),
-                answer: newFaq.answer.trim()
-              }
-            : f
-        )
+        faqs.map((f) => (f.id === editingFaqId ? { ...f, ...payload } : f))
       );
       setEditingFaqId(null);
     } else {
-      const item = {
+      const created = await apiService.createFaq(payload);
+      const item = created || {
         id: faqs.length + 1,
-        question: newFaq.question.trim(),
-        answer: newFaq.answer.trim()
+        ...payload
       };
       setFaqs([...faqs, item]);
     }
     setNewFaq({ question: "", answer: "" });
+    setIsModalOpen(false);
   };
 
-  const handleDeleteFaq = (id) => {
+  const handleDeleteFaq = async (id) => {
+    await apiService.deleteFaq(id);
     setFaqs(faqs.filter((f) => f.id !== id));
   };
 
@@ -540,94 +568,44 @@ const getDaysRange = (startDay, endDay) => {
           >
             Kelola FAQ
           </div>
-          <div
-            className={styles.menuItem}
-            onClick={() => {
-              localStorage.removeItem("loggedInUser");
-              navigate("/login");
-            }}
-          >
-            Keluar
-          </div>
         </div>
 
-        {/* Right Content Area */}
-        <div className={styles.rightWrapper}>
+        {/* Content Area */}
+        <div className={styles.inputWrapper}>
           {/* 1. CRUD Antrean Pasien */}
           {activeMenu === "antrean" && (
             <>
               <div className={styles.header}>
-                <p className={styles.title}>Kelola Antrean Pasien</p>
-                <p className={styles.desc}>Pantau dan perbarui status antrean pasien secara realtime.</p>
+                <p className={styles.title}>Kelola Antrean Pasien Walk-In</p>
+                <p className={styles.desc}>Verifikasi dan buat antrean pasien langsung di lokasi klinik.</p>
               </div>
 
-              {/* Form Tambah Antrean Walk-in */}
               <div className={styles.inputContainer}>
-                <p className={styles.title}>Pendaftaran Antrean Pasien Walk-In</p>
-                <div className={styles.inputWrapper}>
-                  <InputText
-                    label="Nama Pasien"
-                    value={newQueue.patientName}
-                    onChange={(e) => setNewQueue({ ...newQueue, patientName: e.target.value })}
-                    placeholder="Masukkan nama lengkap pasien"
-                  />
-                  <InputSelect
-                    label="Tanggal Layanan"
-                    options={["Hari Ini", "Besok"]}
-                    value={newQueue.date}
-                    onChange={(val) => setNewQueue({ ...newQueue, date: val, doctor: "", service: "" })}
-                    placeholder="Pilih Tanggal Layanan"
-                  />
-                  <InputRadio
-                    label="Kategori Layanan"
-                    options={categories.map((item) => item.title)}
-                    value={newQueue.kategoriLayanan}
-                    onChange={(val) => setNewQueue({ ...newQueue, kategoriLayanan: val, service: "", doctor: "" })}
-                  />
-                  <InputSelect
-                    label="Pilih Layanan"
-                    options={adminServiceOptions}
-                    value={newQueue.service}
-                    onChange={(val) => setNewQueue({ ...newQueue, service: val, doctor: "" })}
-                    placeholder="Pilih Layanan"
-                  />
-                  <InputSelect
-                    label="Pilih Dokter / Bidan"
-                    options={doctorOptions}
-                    value={newQueue.doctor}
-                    onChange={(val) => setNewQueue({ ...newQueue, doctor: val })}
-                    placeholder="Pilih Dokter / Bidan"
-                  />
-                </div>
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <div className={styles.button} onClick={handleAddQueue}>
-                    {editingQueueId ? "Simpan Perubahan Antrean" : "Terbitkan Antrean"}
+                <div className={styles.tableHeaderRow}>
+                  <div>
+                    <p className={styles.title}>Daftar Antrean Aktif ({filteredQueues.length})</p>
                   </div>
-                  {editingQueueId && (
-                    <div className={`${styles.button} ${styles.buttonSecondary}`} onClick={handleCancelEditQueue}>
-                      Batal
+                  <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                    <div style={{ width: "160px" }}>
+                      <InputSelect
+                        label=""
+                        options={["Hari Ini", "Besok", "Semua"]}
+                        value={queueDateFilter}
+                        onChange={(val) => setQueueDateFilter(val)}
+                        placeholder="Filter Tanggal"
+                      />
                     </div>
-                  )}
+                    <button
+                      type="button"
+                      className={`${styles.button} ${styles.actionBtn}`}
+                      style={{ height: "48px", whiteSpace: "nowrap" }}
+                      onClick={handleOpenAddQueueModal}
+                    >
+                      + Tambah Antrean Walk-In
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Filter Tanggal Antrean */}
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Filter Antrean Berdasarkan Tanggal</p>
-                <div className={styles.inputWrapper}>
-                  <InputSelect
-                    label="Pilih Filter Tanggal"
-                    options={["Hari Ini", "Besok", "Semua"]}
-                    value={queueDateFilter}
-                    onChange={(val) => setQueueDateFilter(val)}
-                    placeholder="Filter Tanggal"
-                  />
-                </div>
-              </div>
-
-              {/* Daftar Antrean (Tabel Pendaftaran Pasien) */}
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Daftar Antrean Aktif - {queueDateFilter} ({filteredQueues.length})</p>
                 {filteredQueues.length > 0 ? (
                   <div className={styles.tableContainer}>
                     <table className={styles.table}>
@@ -707,10 +685,344 @@ const getDaysRange = (startDay, endDay) => {
                 <p className={styles.desc}>Tambah, edit, dan kelola profil dokter, foto, serta jadwal jam kerja praktik.</p>
               </div>
 
-              {/* Form Tambah / Edit Dokter */}
               <div className={styles.inputContainer}>
-                <p className={styles.title}>{editingDoctorName ? "Edit Data Dokter & Jadwal" : "Tambah Dokter Baru"}</p>
-                <div className={styles.inputWrapper}>
+                <div className={styles.tableHeaderRow}>
+                  <p className={styles.title}>Daftar Dokter Terdaftar ({doctors.length})</p>
+                  <button
+                    type="button"
+                    className={`${styles.button} ${styles.actionBtn}`}
+                    style={{ height: "44px" }}
+                    onClick={handleOpenAddDoctorModal}
+                  >
+                    + Tambah Dokter Baru
+                  </button>
+                </div>
+
+                <div className={styles.tableContainer}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Foto</th>
+                        <th>Nama Dokter & Gelar</th>
+                        <th>Peran / Spesialisasi</th>
+                        <th>Jadwal Praktik</th>
+                        <th>Layanan Utama</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {doctors.map((doc, idx) => (
+                        <tr key={idx} className={styles.tableTr}>
+                          <td>
+                            <img
+                              src={doc.image || "/img/landingPage/dummyDr.png"}
+                              alt={doc.doctor}
+                              style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(216, 150, 237, 0.4)" }}
+                            />
+                          </td>
+                          <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
+                          <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
+                          <td>
+                            {doc.schedules.map((s, i) => (
+                              <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
+                                {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
+                              </div>
+                            ))}
+                          </td>
+                          <td style={{ fontSize: "13px" }}>
+                            {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
+                          </td>
+                          <td>
+                            <div className={styles.actionCell}>
+                              <button
+                                type="button"
+                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                                onClick={() => handleStartEditDoctor(doc)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                                onClick={() => handleDeleteDoctor(doc.doctor)}
+                              >
+                                Hapus
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* 3. CRUD Poli & Kategori Layanan */}
+          {activeMenu === "poli" && (
+            <>
+              <div className={styles.header}>
+                <p className={styles.title}>Kelola Poli & Kategori Layanan</p>
+                <p className={styles.desc}>Tambah dan kelola jenis kategori pelayanan resmi klinik.</p>
+              </div>
+
+              <div className={styles.inputContainer}>
+                <div className={styles.tableHeaderRow}>
+                  <p className={styles.title}>Daftar Kategori Layanan ({categories.length})</p>
+                  <button
+                    type="button"
+                    className={`${styles.button} ${styles.actionBtn}`}
+                    style={{ height: "44px" }}
+                    onClick={handleOpenAddCategoryModal}
+                  >
+                    + Tambah Kategori Layanan
+                  </button>
+                </div>
+
+                <div className={styles.tableContainer}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        <th>Nama Kategori</th>
+                        <th>Jumlah Layanan</th>
+                        <th>Daftar Layanan Spesifik</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.map((cat, idx) => (
+                        <tr key={idx} className={styles.tableTr}>
+                          <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
+                          <td style={{ fontWeight: "600", color: "var(--primary)" }}>{cat.title}</td>
+                          <td>{cat.list.length} Layanan</td>
+                          <td style={{ fontSize: "13px" }}>
+                            {cat.list.length > 0 ? cat.list.join(", ") : "-"}
+                          </td>
+                          <td>
+                            <div className={styles.actionCell}>
+                              <button
+                                type="button"
+                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                                onClick={() => handleStartEditCategory(cat)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                                onClick={() => handleDeleteCategory(cat.title)}
+                              >
+                                Hapus
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* 4. CRUD Artikel & Berita */}
+          {activeMenu === "artikel" && (
+            <>
+              <div className={styles.header}>
+                <p className={styles.title}>Kelola Artikel & Berita Kesehatan</p>
+                <p className={styles.desc}>Publikasikan artikel edukasi kesehatan ibu dan anak.</p>
+              </div>
+
+              <div className={styles.inputContainer}>
+                <div className={styles.tableHeaderRow}>
+                  <p className={styles.title}>Daftar Artikel Terbit ({news.length})</p>
+                  <button
+                    type="button"
+                    className={`${styles.button} ${styles.actionBtn}`}
+                    style={{ height: "44px" }}
+                    onClick={handleOpenAddNewsModal}
+                  >
+                    + Tambah Artikel Baru
+                  </button>
+                </div>
+
+                <div className={styles.tableContainer}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        <th>Judul Artikel</th>
+                        <th>Kategori</th>
+                        <th>Tanggal Terbit</th>
+                        <th>Ringkasan</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {news.map((n, idx) => (
+                        <tr key={n.id} className={styles.tableTr}>
+                          <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
+                          <td style={{ fontWeight: "600", color: "var(--primary)" }}>{n.title}</td>
+                          <td>
+                            <span className={styles.statusText} style={{ backgroundColor: "#FAF0FC", color: "var(--primary)" }}>
+                              {n.category}
+                            </span>
+                          </td>
+                          <td style={{ fontSize: "13px" }}>{n.date}</td>
+                          <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "280px" }}>{n.summary}</td>
+                          <td>
+                            <div className={styles.actionCell}>
+                              <button
+                                type="button"
+                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                                onClick={() => handleStartEditNews(n)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                                onClick={() => handleDeleteNews(n.id)}
+                              >
+                                Hapus
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* 5. CRUD FAQ */}
+          {activeMenu === "faq" && (
+            <>
+              <div className={styles.header}>
+                <p className={styles.title}>Kelola FAQ (Pertanyaan Umum)</p>
+                <p className={styles.desc}>Atur pertanyaan dan jawaban pusat bantuan pasien.</p>
+              </div>
+
+              <div className={styles.inputContainer}>
+                <div className={styles.tableHeaderRow}>
+                  <p className={styles.title}>Daftar Pertanyaan FAQ ({faqs.length})</p>
+                  <button
+                    type="button"
+                    className={`${styles.button} ${styles.actionBtn}`}
+                    style={{ height: "44px" }}
+                    onClick={handleOpenAddFaqModal}
+                  >
+                    + Tambah FAQ Baru
+                  </button>
+                </div>
+
+                <div className={styles.tableContainer}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        <th>Pertanyaan</th>
+                        <th>Jawaban</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {faqs.map((f, idx) => (
+                        <tr key={f.id} className={styles.tableTr}>
+                          <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
+                          <td style={{ fontWeight: "600", color: "var(--primary)", maxWidth: "260px" }}>{f.question}</td>
+                          <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "350px" }}>{f.answer}</td>
+                          <td>
+                            <div className={styles.actionCell}>
+                              <button
+                                type="button"
+                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                                onClick={() => handleStartEditFaq(f)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                                onClick={() => handleDeleteFaq(f.id)}
+                              >
+                                Hapus
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Modal Window Popup */}
+      {isModalOpen && (
+        <div className={styles.modalBackdrop} onClick={() => setIsModalOpen(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <p className={styles.modalTitle}>
+                {activeMenu === "antrean" && (editingQueueId ? "Edit Antrean Walk-In" : "Tambah Antrean Walk-In Baru")}
+                {activeMenu === "dokter" && (editingDoctorName ? "Edit Data & Jadwal Dokter" : "Tambah Dokter Baru")}
+                {activeMenu === "poli" && (editingCategoryTitle ? "Edit Kategori / Layanan" : "Tambah Kategori / Layanan Baru")}
+                {activeMenu === "artikel" && (editingNewsId ? "Edit Artikel" : "Tambah Artikel Baru")}
+                {activeMenu === "faq" && (editingFaqId ? "Edit FAQ" : "Tambah Pertanyaan FAQ Baru")}
+              </p>
+              <button type="button" className={styles.modalCloseBtn} onClick={() => setIsModalOpen(false)}>
+                ✕
+              </button>
+            </div>
+
+            <div className={styles.inputWrapper}>
+              {activeMenu === "antrean" && (
+                <>
+                  <InputText
+                    label="Nama Pasien"
+                    value={newQueue.patientName}
+                    onChange={(e) => setNewQueue({ ...newQueue, patientName: e.target.value })}
+                    placeholder="Masukkan nama lengkap pasien"
+                  />
+                  <InputSelect
+                    label="Tanggal Layanan"
+                    options={["Hari Ini", "Besok"]}
+                    value={newQueue.date}
+                    onChange={(val) => setNewQueue({ ...newQueue, date: val, doctor: "", service: "" })}
+                    placeholder="Pilih Tanggal Layanan"
+                  />
+                  <InputRadio
+                    label="Kategori Layanan"
+                    options={categories.map((item) => item.title)}
+                    value={newQueue.kategoriLayanan}
+                    onChange={(val) => setNewQueue({ ...newQueue, kategoriLayanan: val, service: "", doctor: "" })}
+                  />
+                  <InputSelect
+                    label="Pilih Layanan"
+                    options={adminServiceOptions}
+                    value={newQueue.service}
+                    onChange={(val) => setNewQueue({ ...newQueue, service: val, doctor: "" })}
+                    placeholder="Pilih Layanan"
+                  />
+                  <InputSelect
+                    label="Pilih Dokter / Bidan"
+                    options={doctorOptions}
+                    value={newQueue.doctor}
+                    onChange={(val) => setNewQueue({ ...newQueue, doctor: val })}
+                    placeholder="Pilih Dokter / Bidan"
+                  />
+                </>
+              )}
+
+              {activeMenu === "dokter" && (
+                <>
                   <InputText
                     label="Nama Dokter & Gelar"
                     value={newDoctor.doctor}
@@ -730,7 +1042,6 @@ const getDaysRange = (startDay, endDay) => {
                     placeholder="Unggah foto profil dokter untuk ditampilkan di Landing Page"
                   />
 
-                  {/* Pengaturan Hari & Jam Kerja */}
                   <div className={styles.input}>
                     <InputSelect
                       label="Hari Praktik Mulai"
@@ -812,147 +1123,11 @@ const getDaysRange = (startDay, endDay) => {
                       ))}
                     </div>
                   )}
-                </div>
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <div className={styles.button} onClick={handleAddDoctor}>
-                    {editingDoctorName ? "Simpan Perubahan Dokter" : "Simpan Dokter Baru"}
-                  </div>
-                  {editingDoctorName && (
-                    <div className={`${styles.button} ${styles.buttonSecondary}`} onClick={handleCancelEditDoctor}>
-                      Batal
-                    </div>
-                  )}
-                </div>
-              </div>
+                </>
+              )}
 
-              {/* Daftar Dokter */}
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Daftar Dokter Terdaftar ({doctors.length})</p>
-                <div className={styles.tableContainer}>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>Foto</th>
-                        <th>Nama Dokter & Gelar</th>
-                        <th>Peran / Spesialisasi</th>
-                        <th>Jadwal Praktik</th>
-                        <th>Layanan Utama</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {doctors.map((doc, idx) => (
-                        <tr key={idx} className={styles.tableTr}>
-                          <td>
-                            <img
-                              src={doc.image || "/img/landingPage/dummyDr.png"}
-                              alt={doc.doctor}
-                              style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(216, 150, 237, 0.4)" }}
-                            />
-                          </td>
-                          <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
-                          <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
-                          <td>
-                            {doc.schedules.map((s, i) => (
-                              <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
-                                {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
-                              </div>
-                            ))}
-                          </td>
-                          <td style={{ fontSize: "13px" }}>
-                            {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
-                          </td>
-                          <td>
-                            <div className={styles.actionCell}>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
-                                onClick={() => handleStartEditDoctor(doc)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
-                                onClick={() => handleDeleteDoctor(doc.doctor)}
-                              >
-                                Hapus
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* 3. CRUD Jadwal Dokter */}
-          {activeMenu === "jadwal" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Kelola Jadwal Praktik Dokter</p>
-                <p className={styles.desc}>Atur hari dan jam praktik kerja dokter serta bidan.</p>
-              </div>
-
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Tambah Jadwal Praktik</p>
-                <div className={styles.inputWrapper}>
-                  <InputSelect
-                    label="Pilih Dokter"
-                    options={doctorOptions}
-                    value={newSchedule.doctor}
-                    onChange={(val) => setNewSchedule({ ...newSchedule, doctor: val })}
-                    placeholder="Pilih Dokter"
-                  />
-                  <InputSelect
-                    label="Hari Praktik"
-                    options={["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]}
-                    value={newSchedule.days}
-                    onChange={(val) => setNewSchedule({ ...newSchedule, days: val })}
-                    placeholder="Pilih Hari"
-                  />
-                  <div className={styles.input}>
-                    <InputText
-                      label="Jam Mulai"
-                      value={newSchedule.startTime}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, startTime: e.target.value })}
-                      placeholder="08:00"
-                    />
-                    <InputText
-                      label="Jam Selesai"
-                      value={newSchedule.endTime}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, endTime: e.target.value })}
-                      placeholder="14:00"
-                    />
-                  </div>
-                  <InputText
-                    label="Layanan Spesifik (Pisahkan dengan koma)"
-                    value={newSchedule.services}
-                    onChange={(e) => setNewSchedule({ ...newSchedule, services: e.target.value })}
-                    placeholder="Pemeriksaan Umum, Imunisasi"
-                  />
-                </div>
-                <div className={styles.button} onClick={handleAddSchedule}>
-                  Tambah Jadwal
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* 4. CRUD Poli & Kategori Layanan */}
-          {activeMenu === "poli" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Kelola Poli & Kategori Layanan</p>
-                <p className={styles.desc}>Tambah dan kelola jenis kategori pelayanan resmi klinik.</p>
-              </div>
-
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Tambah Kategori / Layanan Baru</p>
-                <div className={styles.inputWrapper}>
+              {activeMenu === "poli" && (
+                <>
                   <InputText
                     label="Nama Kategori (Poli / Mom's Treatment / dll)"
                     value={newCategory.title}
@@ -1007,79 +1182,11 @@ const getDaysRange = (startDay, endDay) => {
                       ))}
                     </div>
                   )}
-                </div>
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <div className={styles.button} onClick={handleAddCategory}>
-                    {editingCategoryTitle ? "Simpan Perubahan Kategori" : "Simpan Kategori / Layanan"}
-                  </div>
-                  {editingCategoryTitle && (
-                    <div className={`${styles.button} ${styles.buttonSecondary}`} onClick={handleCancelEditCategory}>
-                      Batal
-                    </div>
-                  )}
-                </div>
-              </div>
+                </>
+              )}
 
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Daftar Kategori Layanan ({categories.length})</p>
-                <div className={styles.tableContainer}>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>No.</th>
-                        <th>Nama Kategori</th>
-                        <th>Jumlah Layanan</th>
-                        <th>Daftar Layanan Spesifik</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {categories.map((cat, idx) => (
-                        <tr key={idx} className={styles.tableTr}>
-                          <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
-                          <td style={{ fontWeight: "600", color: "var(--primary)" }}>{cat.title}</td>
-                          <td>{cat.list.length} Layanan</td>
-                          <td style={{ fontSize: "13px" }}>
-                            {cat.list.length > 0 ? cat.list.join(", ") : "-"}
-                          </td>
-                          <td>
-                            <div className={styles.actionCell}>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
-                                onClick={() => handleStartEditCategory(cat)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
-                                onClick={() => handleDeleteCategory(cat.title)}
-                              >
-                                Hapus
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* 5. CRUD Artikel & Berita */}
-          {activeMenu === "artikel" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Kelola Artikel & Berita Kesehatan</p>
-                <p className={styles.desc}>Publikasikan artikel edukasi kesehatan ibu dan anak.</p>
-              </div>
-
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Tambah Artikel Baru</p>
-                <div className={styles.inputWrapper}>
+              {activeMenu === "artikel" && (
+                <>
                   <InputText
                     label="Judul Artikel"
                     value={newNews.title}
@@ -1099,83 +1206,11 @@ const getDaysRange = (startDay, endDay) => {
                     onChange={(e) => setNewNews({ ...newNews, summary: e.target.value })}
                     placeholder="Masukkan ringkasan singkat artikel"
                   />
-                </div>
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <div className={styles.button} onClick={handleAddNews}>
-                    {editingNewsId ? "Simpan Perubahan Artikel" : "Publikasikan Artikel"}
-                  </div>
-                  {editingNewsId && (
-                    <div className={`${styles.button} ${styles.buttonSecondary}`} onClick={handleCancelEditNews}>
-                      Batal
-                    </div>
-                  )}
-                </div>
-              </div>
+                </>
+              )}
 
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Daftar Artikel Terbit ({news.length})</p>
-                <div className={styles.tableContainer}>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>No.</th>
-                        <th>Judul Artikel</th>
-                        <th>Kategori</th>
-                        <th>Tanggal Terbit</th>
-                        <th>Ringkasan</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {news.map((n, idx) => (
-                        <tr key={n.id} className={styles.tableTr}>
-                          <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
-                          <td style={{ fontWeight: "600", color: "var(--primary)" }}>{n.title}</td>
-                          <td>
-                            <span className={styles.statusText} style={{ backgroundColor: "#FAF0FC", color: "var(--primary)" }}>
-                              {n.category}
-                            </span>
-                          </td>
-                          <td style={{ fontSize: "13px" }}>{n.date}</td>
-                          <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "280px" }}>{n.summary}</td>
-                          <td>
-                            <div className={styles.actionCell}>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
-                                onClick={() => handleStartEditNews(n)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
-                                onClick={() => handleDeleteNews(n.id)}
-                              >
-                                Hapus
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* 6. CRUD FAQ */}
-          {activeMenu === "faq" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Kelola FAQ (Pertanyaan Umum)</p>
-                <p className={styles.desc}>Atur pertanyaan dan jawaban pusat bantuan pasien.</p>
-              </div>
-
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Tambah Pertanyaan FAQ Baru</p>
-                <div className={styles.inputWrapper}>
+              {activeMenu === "faq" && (
+                <>
                   <InputText
                     label="Pertanyaan"
                     value={newFaq.question}
@@ -1188,65 +1223,39 @@ const getDaysRange = (startDay, endDay) => {
                     onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })}
                     placeholder="Masukkan jawaban"
                   />
-                </div>
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <div className={styles.button} onClick={handleAddFaq}>
-                    {editingFaqId ? "Simpan Perubahan FAQ" : "Simpan Pertanyaan FAQ"}
-                  </div>
-                  {editingFaqId && (
-                    <div className={`${styles.button} ${styles.buttonSecondary}`} onClick={handleCancelEditFaq}>
-                      Batal
-                    </div>
-                  )}
-                </div>
-              </div>
+                </>
+              )}
+            </div>
 
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Daftar Pertanyaan FAQ ({faqs.length})</p>
-                <div className={styles.tableContainer}>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>No.</th>
-                        <th>Pertanyaan</th>
-                        <th>Jawaban</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {faqs.map((f, idx) => (
-                        <tr key={f.id} className={styles.tableTr}>
-                          <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
-                          <td style={{ fontWeight: "600", color: "var(--primary)", maxWidth: "260px" }}>{f.question}</td>
-                          <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "350px" }}>{f.answer}</td>
-                          <td>
-                            <div className={styles.actionCell}>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
-                                onClick={() => handleStartEditFaq(f)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
-                                onClick={() => handleDeleteFaq(f.id)}
-                              >
-                                Hapus
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
+            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end", marginTop: "12px" }}>
+              <button
+                type="button"
+                className={`${styles.button} ${styles.buttonSecondary}`}
+                onClick={() => setIsModalOpen(false)}
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                className={styles.button}
+                onClick={() => {
+                  if (activeMenu === "antrean") handleAddQueue();
+                  if (activeMenu === "dokter") handleAddDoctor();
+                  if (activeMenu === "poli") handleAddCategory();
+                  if (activeMenu === "artikel") handleAddNews();
+                  if (activeMenu === "faq") handleAddFaq();
+                }}
+              >
+                {activeMenu === "antrean" && (editingQueueId ? "Simpan Perubahan Antrean" : "Terbitkan Antrean")}
+                {activeMenu === "dokter" && (editingDoctorName ? "Simpan Perubahan Dokter" : "Simpan Dokter Baru")}
+                {activeMenu === "poli" && (editingCategoryTitle ? "Simpan Perubahan Kategori" : "Simpan Kategori / Layanan")}
+                {activeMenu === "artikel" && (editingNewsId ? "Simpan Perubahan Artikel" : "Publikasikan Artikel")}
+                {activeMenu === "faq" && (editingFaqId ? "Simpan Perubahan FAQ" : "Simpan Pertanyaan FAQ")}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
