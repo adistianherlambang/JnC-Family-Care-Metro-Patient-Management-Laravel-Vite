@@ -143,7 +143,11 @@ export default function UserDashboard() {
 
   const availableDoctors = doctorsList.filter((doc) => {
     return (doc.schedules || []).some((sched) => {
-      const matchService = !newQueueData.layanan || (sched.services || []).includes(newQueueData.layanan);
+      const matchService =
+        !newQueueData.layanan ||
+        (sched.services || []).some(
+          (s) => s.toLowerCase().trim() === newQueueData.layanan.toLowerCase().trim()
+        );
       const matchDay = !currentDayName || (sched.days || []).includes(currentDayName);
       return matchService && matchDay;
     });

@@ -23,37 +23,35 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('admin123'),
         ]);
 
-        // 2. Categories & Services
+        // 2. Categories & Services (Resmi sesuai AGENTS.md Rule 3)
         $categoriesData = [
             [
                 'title' => 'Poli',
                 'services' => [
-                    'Pemeriksaan dan konsultasi pranikah',
-                    'Konsultasi persiapan kehamilan',
-                    'Pemeriksaan kehamilan',
-                    'Prenatal yoga',
-                    'Aquatic yoga',
-                    'Kelas persiapan persalinan',
-                    'Pelayanan keluarga berencana',
-                    'Konsultasi menyusui dan laktasi',
-                    'Pemeriksaan masa nifas',
-                    'Pemeriksaan IVA',
-                    'Pemeriksaan Pap Smear',
-                    'Vaginal washing'
+                    'Prenatal Class Yoga',
+                    'Aquatic Yoga',
+                    'Kelas Melahirkan',
+                    'KB',
+                    'Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)',
+                    'Pemeriksaan Nifas',
+                    'Pemeriksaan Kehamilan',
+                    'IVA',
+                    'Papsmear',
+                    'Washing V'
                 ]
             ],
             [
                 'title' => "Mom's Treatment",
                 'services' => [
-                    'Perawatan ibu hamil',
-                    'Perawatan laktasi',
-                    'Perawatan pasca melahirkan',
+                    'Special Pregnant Treatment',
+                    'Treatment Laktasi',
+                    'Treatment Babaran',
                     'Totok Wajah',
-                    'Body massage',
-                    'Ratus vagina',
+                    'Body Massage',
+                    'Ratus V',
                     'Steambath',
-                    'Lulur badan',
-                    'Body scrub',
+                    'Lulur',
+                    'Scrub',
                     'Creambath',
                     'Footbath'
                 ]
@@ -61,36 +59,37 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Persalinan',
                 'services' => [
-                    'Pelayanan persalinan normal',
-                    'Inisiasi Menyusu Dini',
-                    'Pendampingan persalinan',
-                    'Delayed Cord Clamping'
+                    'Pelayanan Persalinan',
+                    'IMD (Inisiasi Menyusu Dini)',
+                    'Pendampingan Persalinan',
+                    'DCC (Delayed Cord Clamping)'
                 ]
             ],
             [
                 'title' => 'Pelayanan Bayi dan Anak',
                 'services' => [
-                    'Pijat bayi, infant, dan anak',
-                    'Pijat untuk common cold',
-                    'Pijat untuk diare',
-                    'Pijat untuk konstipasi',
-                    'Pijat untuk kolik',
-                    'Pijat untuk perut kembung',
-                    'Skrining Hipotiroid Kongenital',
-                    'Konsultasi tumbuh kembang anak',
-                    'Manajemen Terpadu Balita Sakit',
-                    'Cukur rambut bayi',
-                    'Terapi jemur bayi',
+                    'Baby Infant dan Kids Massage',
+                    'Massage Common Cold',
+                    'Massage Diare',
+                    'Massage Konstipasi',
+                    'Massage Kolik',
+                    'Massage Kembung',
+                    'SHK (Skrining Hipotiroid Kongenital)',
+                    'Konsultasi Tumbuh Kembang',
+                    'MTBS/MTBM',
+                    'Cukur Bayi',
+                    'Jemur Bayi',
                     'Imunisasi',
-                    'Baby spa',
-                    'Baby spa bersama orang tua',
-                    'Potong kuku bayi',
-                    'Manicure dan pedicure anak',
-                    'Mandi bayi',
-                    'Pemeriksaan golongan darah',
-                    'Perawatan kebersihan lidah, telinga, dan hidung',
-                    'Tindik manual',
-                    'Tindik menggunakan Dr. Evoo'
+                    'Baby Spa',
+                    'Baby Spa with Parents',
+                    'Potong Kuku',
+                    'Manicure',
+                    'Pedicure',
+                    'Mandi Bayi',
+                    'Cek Golongan Darah',
+                    'Hygiene Lidah, Telinga, dan Hidung',
+                    'Tindik Manual',
+                    'Tindik dr Evoo'
                 ]
             ]
         ];
@@ -115,7 +114,7 @@ class DatabaseSeeder extends Seeder
                 'end_day' => 'Jumat',
                 'start_time' => '08:00',
                 'end_time' => '14:00',
-                'services' => ['Pemeriksaan Anak', 'Imunisasi', 'Konsultasi Tumbuh Kembang']
+                'services' => ['Konsultasi Tumbuh Kembang', 'Imunisasi', 'MTBS/MTBM', 'SHK (Skrining Hipotiroid Kongenital)', 'Baby Infant dan Kids Massage']
             ],
             [
                 'doctor' => 'dr. Aulia Rahma, Sp.OG',
@@ -125,17 +124,17 @@ class DatabaseSeeder extends Seeder
                 'end_day' => 'Sabtu',
                 'start_time' => '09:00',
                 'end_time' => '15:00',
-                'services' => ['Pemeriksaan Kehamilan', 'Konsultasi Pranikah', 'Pemeriksaan IVA']
+                'services' => ['Pemeriksaan Kehamilan', 'Pemeriksaan Nifas', 'IVA', 'Papsmear', 'KB', 'Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)', 'Pelayanan Persalinan']
             ],
             [
                 'doctor' => 'Bidan Siti Rahmawati, S.Tr.Keb',
-                'role' => 'Bidan Senior & Laktasi',
+                'role' => 'Bidan Senior & Treatment Specialist',
                 'image' => '/img/landingPage/dummyDr.png',
                 'start_day' => 'Selasa',
                 'end_day' => 'Minggu',
                 'start_time' => '08:00',
                 'end_time' => '16:00',
-                'services' => ['Konsultasi Laktasi', 'Perawatan Pasca Melahirkan', 'Baby Spa']
+                'services' => ['Treatment Laktasi', 'Special Pregnant Treatment', 'Treatment Babaran', 'Baby Spa', 'IMD (Inisiasi Menyusu Dini)', 'Pendampingan Persalinan', 'Prenatal Class Yoga', 'Mandi Bayi']
             ]
         ];
 

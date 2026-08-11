@@ -547,7 +547,11 @@ function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext, d
   const getFilteredDoctors = () => {
     return doctorsList.filter((doc) => {
       return (doc.schedules || []).some((sched) => {
-        const matchService = !formData.layanan || (sched.services || []).includes(formData.layanan);
+        const matchService =
+          !formData.layanan ||
+          (sched.services || []).some(
+            (s) => s.toLowerCase().trim() === formData.layanan.toLowerCase().trim()
+          );
         const matchDay = !currentDayName || (sched.days || []).includes(currentDayName);
         return matchService && matchDay;
       });
