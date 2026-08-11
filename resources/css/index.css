@@ -13,6 +13,13 @@
   unicode-range: U+0021-002F, U+003A-0040, U+005B-0060, U+007B-007E;
 }
 
+/* Poppins specifically for Numbers 0-9 */
+@font-face {
+  font-family: 'PoppinsNumbers';
+  src: local('Poppins'), url('https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2') format('woff2');
+  unicode-range: U+0030-0039;
+}
+
 /* Font Family: Antonia */
 @font-face {
   font-family: 'Antonia';
@@ -160,10 +167,10 @@
 }
 
 :root {
-  --font-antonia: 'PoppinsSpecial', 'Antonia', sans-serif;
-  --antonia: 'PoppinsSpecial', 'Antonia', sans-serif;
-  --font-artico: 'PoppinsSpecial', 'Artico', sans-serif;
-  --artico: 'PoppinsSpecial', 'Artico', sans-serif;
+  --font-antonia: 'PoppinsNumbers', 'PoppinsSpecial', 'Antonia', sans-serif;
+  --antonia: 'PoppinsNumbers', 'PoppinsSpecial', 'Antonia', sans-serif;
+  --font-artico: 'PoppinsNumbers', 'PoppinsSpecial', 'Artico', sans-serif;
+  --artico: 'PoppinsNumbers', 'PoppinsSpecial', 'Artico', sans-serif;
   --font-poppins: 'Poppins', sans-serif;
   --poppins: 'Poppins', sans-serif;
   --primary: #D896ED;
@@ -187,7 +194,7 @@
 
 body {
   margin: 0;
-  font-family: 'PoppinsSpecial', 'Artico', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'PoppinsNumbers', 'PoppinsSpecial', 'Artico', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;

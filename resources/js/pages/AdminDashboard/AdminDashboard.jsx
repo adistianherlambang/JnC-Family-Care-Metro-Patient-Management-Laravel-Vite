@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./AdminDashboard.module.css";
 import InputText from "../../components/Input/InputText";
 import InputSelect from "../../components/Input/InputSelect";
 import InputRadio from "../../components/Input/InputRadio";
 import InputImage from "../../components/Input/InputImage";
+import Button from "../../components/Button/Button";
 import { apiService } from "../../services/apiService";
 import dummyKategori from "../../json/Layanan.json";
 import dummyDokter from "../../json/DummyDokter.json";
@@ -48,7 +50,8 @@ const getDaysRange = (startDay, endDay) => {
 };
 
 export default function AdminDashboard() {
-  const [activeMenu, setActiveMenu] = useState("antrean"); // 'antrean', 'dokter', 'poli', 'artikel', 'faq'
+  const navigate = useNavigate();
+  const [activeMenu, setActiveMenu] = useState("overview"); // 'overview', 'antrean', 'dokter', 'poli', 'artikel', 'faq'
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Master Data State
@@ -59,6 +62,17 @@ export default function AdminDashboard() {
   const [faqs, setFaqs] = useState(dummyFaq);
 
   useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (!loggedInUser) {
+      navigate("/login", { replace: true });
+      return;
+    }
+    const isUserAdmin = loggedInUser.toLowerCase() === "admin" || loggedInUser.toLowerCase() === "administrator";
+    if (!isUserAdmin) {
+      navigate("/dashboard", { replace: true });
+      return;
+    }
+
     async function loadData() {
       const cats = await apiService.getCategories(dummyKategori);
       setCategories(cats);
@@ -72,7 +86,7 @@ export default function AdminDashboard() {
       setFaqs(fList);
     }
     loadData();
-  }, []);
+  }, [navigate]);
 
   // Filter State
   const [queueDateFilter, setQueueDateFilter] = useState("Hari Ini");
@@ -528,9 +542,21 @@ export default function AdminDashboard() {
         <div className={styles.logo}>
           <img src="/logo.png" alt="Logo" />
         </div>
-        <div className={styles.confirm}>
-          <p className={styles.label}>Administrator Klinik</p>
-          <p className={styles.value}>Panel Kelola Operasional & Pelayanan</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <div className={styles.confirm}>
+            <p className={styles.label}>Administrator Klinik</p>
+            <p className={styles.value}>Panel Kelola Operasional & Pelayanan</p>
+          </div>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => {
+              localStorage.removeItem("loggedInUser");
+              navigate("/login");
+            }}
+          >
+            Keluar
+          </Button>
         </div>
       </div>
 
@@ -538,6 +564,12 @@ export default function AdminDashboard() {
       <div className={styles.thirdContainer}>
         {/* Sidebar Menu */}
         <div className={styles.menuWrapper}>
+          <div
+            className={`${styles.menuItem} ${activeMenu === "overview" ? styles.menuItemActive : ""}`}
+            onClick={() => setActiveMenu("overview")}
+          >
+            Overview
+          </div>
           <div
             className={`${styles.menuItem} ${activeMenu === "antrean" ? styles.menuItemActive : ""}`}
             onClick={() => setActiveMenu("antrean")}
@@ -568,10 +600,184 @@ export default function AdminDashboard() {
           >
             Kelola FAQ
           </div>
+          <div
+            className={`${styles.menuItem}`}
+            style={{ color: "#dc2626", marginTop: "12px" }}
+            onClick={() => {
+              localStorage.removeItem("loggedInUser");
+              navigate("/login");
+            }}
+          >
+            Keluar
+          </div>
         </div>
 
         {/* Content Area */}
         <div className={styles.inputWrapper}>
+          {/* 0. Ringkasan Eksekutif & Operasional Overview */}
+          {activeMenu === "overview" && (
+            <>
+              <div className={styles.header}>
+                <p className={styles.title}>Ringkasan Eksekutif & Operasional Klinik</p>
+                <p className={styles.desc}>Overview statistik kunjungan pasien, praktisi medis, poli layanan, dan berita kesehatan.</p>
+              </div>
+
+              {/* 4 Stat Cards Grid */}
+              <div className={styles.overviewGrid}>
+                <div className={styles.statCard}>
+                  <span className={styles.statLabel}>Total Kunjungan / Antrean</span>
+                  <span className={styles.statValue}>{queues.length} Pasien</span>
+                  <span className={styles.statDesc}>Terdaftar di sistem klinik</span>
+                </div>
+                <div className={styles.statCard}>
+                  <span className={styles.statLabel}>Dokter & Bidan Aktif</span>
+                  <span className={styles.statValue}>{doctors.length} Praktisi</span>
+                  <span className={styles.statDesc}>Tim medis profesional</span>
+                </div>
+                <div className={styles.statCard}>
+                  <span className={styles.statLabel}>Kategori & Poli</span>
+                  <span className={styles.statValue}>{categories.length} Kategori</span>
+                  <span className={styles.statDesc}>{allClinicServices.length} Layanan spesifik</span>
+                </div>
+                <div className={styles.statCard}>
+                  <span className={styles.statLabel}>Artikel Edukasi</span>
+                  <span className={styles.statValue}>{news.length} Artikel</span>
+                  <span className={styles.statDesc}>Dipublikasikan di portal</span>
+                </div>
+              </div>
+
+              {/* Two Column Section: Status Breakdown & Category Distribution */}
+              <div className={styles.twoColumnGrid}>
+                {/* Status Antrean Breakdown */}
+                <div className={styles.cardSection}>
+                  <p className={styles.title} style={{ fontSize: "18px", margin: 0 }}>
+                    Status Antrean Pasien Hari Ini
+                  </p>
+
+                  <div className={styles.progressItem}>
+                    <div className={styles.progressLabelRow}>
+                      <span>Menunggu Antrean</span>
+                      <span>{queues.filter((q) => q.status === "Menunggu Antrean").length} Pasien</span>
+                    </div>
+                    <div className={styles.progressBarTrack}>
+                      <div
+                        className={styles.progressBarFill}
+                        style={{
+                          width: queues.length > 0
+                            ? `${(queues.filter((q) => q.status === "Menunggu Antrean").length / queues.length) * 100}%`
+                            : "0%",
+                          backgroundColor: "#c2410c"
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.progressItem}>
+                    <div className={styles.progressLabelRow}>
+                      <span>Sedang Dipanggil / Pelayanan</span>
+                      <span>{queues.filter((q) => q.status === "Dipanggil").length} Pasien</span>
+                    </div>
+                    <div className={styles.progressBarTrack}>
+                      <div
+                        className={styles.progressBarFill}
+                        style={{
+                          width: queues.length > 0
+                            ? `${(queues.filter((q) => q.status === "Dipanggil").length / queues.length) * 100}%`
+                            : "0%",
+                          backgroundColor: "var(--primary)"
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.progressItem}>
+                    <div className={styles.progressLabelRow}>
+                      <span>Selesai Konsultasi</span>
+                      <span>{queues.filter((q) => q.status === "Selesai").length} Pasien</span>
+                    </div>
+                    <div className={styles.progressBarTrack}>
+                      <div
+                        className={styles.progressBarFill}
+                        style={{
+                          width: queues.length > 0
+                            ? `${(queues.filter((q) => q.status === "Selesai").length / queues.length) * 100}%`
+                            : "0%",
+                          backgroundColor: "#16a34a"
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Kategori Pelayanan Utama */}
+                <div className={styles.cardSection}>
+                  <p className={styles.title} style={{ fontSize: "18px", margin: 0 }}>
+                    Distribusi Layanan per Kategori
+                  </p>
+                  {categories.map((cat, idx) => (
+                    <div key={idx} className={styles.progressItem}>
+                      <div className={styles.progressLabelRow}>
+                        <span>{cat.title}</span>
+                        <span>{cat.list.length} Layanan</span>
+                      </div>
+                      <div className={styles.progressBarTrack}>
+                        <div
+                          className={styles.progressBarFill}
+                          style={{
+                            width: allClinicServices.length > 0
+                              ? `${(cat.list.length / allClinicServices.length) * 100}%`
+                              : "0%"
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Antrean Table Preview */}
+              <div className={styles.inputContainer}>
+                <div className={styles.tableHeaderRow}>
+                  <p className={styles.title}>Antrean Terbaru</p>
+                  <Button
+                    onClick={() => setActiveMenu("antrean")}
+                  >
+                    Lihat Semua Antrean →
+                  </Button>
+                </div>
+
+                <div className={styles.tableContainer}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>No. Antrean</th>
+                        <th>Nama Pasien</th>
+                        <th>Dokter / Bidan</th>
+                        <th>Layanan</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {queues.slice(0, 5).map((q) => (
+                        <tr key={q.id} className={styles.tableTr}>
+                          <td style={{ fontWeight: "600", color: "var(--primary)" }}>{q.queueNumber}</td>
+                          <td style={{ fontWeight: "500" }}>{q.patientName}</td>
+                          <td>{q.doctor}</td>
+                          <td>{q.service}</td>
+                          <td>
+                            <span className={`${styles.statusText} ${q.status === "Dipanggil" ? styles.statusActive : q.status === "Selesai" ? styles.statusDone : styles.statusPending}`}>
+                              {q.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+
           {/* 1. CRUD Antrean Pasien */}
           {activeMenu === "antrean" && (
             <>
@@ -595,14 +801,11 @@ export default function AdminDashboard() {
                         placeholder="Filter Tanggal"
                       />
                     </div>
-                    <button
-                      type="button"
-                      className={`${styles.button} ${styles.actionBtn}`}
-                      style={{ height: "48px", whiteSpace: "nowrap" }}
+                    <Button
                       onClick={handleOpenAddQueueModal}
                     >
                       + Tambah Antrean Walk-In
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -635,34 +838,33 @@ export default function AdminDashboard() {
                             </td>
                             <td>
                               <div className={styles.actionCell}>
-                                <button
-                                  type="button"
-                                  className={`${styles.button} ${styles.actionBtn}`}
+                                <Button
+                                  size="sm"
                                   onClick={() => handleUpdateQueueStatus(q.id, "Dipanggil")}
                                 >
                                   Panggil
-                                </button>
-                                <button
-                                  type="button"
-                                  className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="secondary"
                                   onClick={() => handleStartEditQueue(q)}
                                 >
                                   Edit
-                                </button>
-                                <button
-                                  type="button"
-                                  className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="secondary"
                                   onClick={() => handleUpdateQueueStatus(q.id, "Selesai")}
                                 >
                                   Selesai
-                                </button>
-                                <button
-                                  type="button"
-                                  className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="danger"
                                   onClick={() => handleDeleteQueue(q.id)}
                                 >
                                   Hapus
-                                </button>
+                                </Button>
                               </div>
                             </td>
                           </tr>
@@ -688,14 +890,11 @@ export default function AdminDashboard() {
               <div className={styles.inputContainer}>
                 <div className={styles.tableHeaderRow}>
                   <p className={styles.title}>Daftar Dokter Terdaftar ({doctors.length})</p>
-                  <button
-                    type="button"
-                    className={`${styles.button} ${styles.actionBtn}`}
-                    style={{ height: "44px" }}
+                  <Button
                     onClick={handleOpenAddDoctorModal}
                   >
                     + Tambah Dokter Baru
-                  </button>
+                  </Button>
                 </div>
 
                 <div className={styles.tableContainer}>
@@ -734,20 +933,20 @@ export default function AdminDashboard() {
                           </td>
                           <td>
                             <div className={styles.actionCell}>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                              <Button
+                                size="sm"
+                                variant="secondary"
                                 onClick={() => handleStartEditDoctor(doc)}
                               >
                                 Edit
-                              </button>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="danger"
                                 onClick={() => handleDeleteDoctor(doc.doctor)}
                               >
                                 Hapus
-                              </button>
+                              </Button>
                             </div>
                           </td>
                         </tr>
@@ -770,14 +969,11 @@ export default function AdminDashboard() {
               <div className={styles.inputContainer}>
                 <div className={styles.tableHeaderRow}>
                   <p className={styles.title}>Daftar Kategori Layanan ({categories.length})</p>
-                  <button
-                    type="button"
-                    className={`${styles.button} ${styles.actionBtn}`}
-                    style={{ height: "44px" }}
+                  <Button
                     onClick={handleOpenAddCategoryModal}
                   >
                     + Tambah Kategori Layanan
-                  </button>
+                  </Button>
                 </div>
 
                 <div className={styles.tableContainer}>
@@ -802,20 +998,20 @@ export default function AdminDashboard() {
                           </td>
                           <td>
                             <div className={styles.actionCell}>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                              <Button
+                                size="sm"
+                                variant="secondary"
                                 onClick={() => handleStartEditCategory(cat)}
                               >
                                 Edit
-                              </button>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="danger"
                                 onClick={() => handleDeleteCategory(cat.title)}
                               >
                                 Hapus
-                              </button>
+                              </Button>
                             </div>
                           </td>
                         </tr>
@@ -838,14 +1034,11 @@ export default function AdminDashboard() {
               <div className={styles.inputContainer}>
                 <div className={styles.tableHeaderRow}>
                   <p className={styles.title}>Daftar Artikel Terbit ({news.length})</p>
-                  <button
-                    type="button"
-                    className={`${styles.button} ${styles.actionBtn}`}
-                    style={{ height: "44px" }}
+                  <Button
                     onClick={handleOpenAddNewsModal}
                   >
                     + Tambah Artikel Baru
-                  </button>
+                  </Button>
                 </div>
 
                 <div className={styles.tableContainer}>
@@ -874,20 +1067,20 @@ export default function AdminDashboard() {
                           <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "280px" }}>{n.summary}</td>
                           <td>
                             <div className={styles.actionCell}>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                              <Button
+                                size="sm"
+                                variant="secondary"
                                 onClick={() => handleStartEditNews(n)}
                               >
                                 Edit
-                              </button>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="danger"
                                 onClick={() => handleDeleteNews(n.id)}
                               >
                                 Hapus
-                              </button>
+                              </Button>
                             </div>
                           </td>
                         </tr>
@@ -910,14 +1103,11 @@ export default function AdminDashboard() {
               <div className={styles.inputContainer}>
                 <div className={styles.tableHeaderRow}>
                   <p className={styles.title}>Daftar Pertanyaan FAQ ({faqs.length})</p>
-                  <button
-                    type="button"
-                    className={`${styles.button} ${styles.actionBtn}`}
-                    style={{ height: "44px" }}
+                  <Button
                     onClick={handleOpenAddFaqModal}
                   >
                     + Tambah FAQ Baru
-                  </button>
+                  </Button>
                 </div>
 
                 <div className={styles.tableContainer}>
@@ -938,20 +1128,20 @@ export default function AdminDashboard() {
                           <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "350px" }}>{f.answer}</td>
                           <td>
                             <div className={styles.actionCell}>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonSecondary} ${styles.actionBtn}`}
+                              <Button
+                                size="sm"
+                                variant="secondary"
                                 onClick={() => handleStartEditFaq(f)}
                               >
                                 Edit
-                              </button>
-                              <button
-                                type="button"
-                                className={`${styles.button} ${styles.buttonDanger} ${styles.actionBtn}`}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="danger"
                                 onClick={() => handleDeleteFaq(f.id)}
                               >
                                 Hapus
-                              </button>
+                              </Button>
                             </div>
                           </td>
                         </tr>
@@ -1084,10 +1274,7 @@ export default function AdminDashboard() {
                         placeholder="Pilih Layanan dari Daftar Resmi Klinik"
                       />
                     </div>
-                    <button
-                      type="button"
-                      className={`${styles.button} ${styles.actionBtn}`}
-                      style={{ height: "48px" }}
+                    <Button
                       onClick={() => {
                         const val = newDoctor.selectedServiceInput?.trim();
                         if (val && !newDoctor.servicesList.some((s) => s.toLowerCase() === val.toLowerCase())) {
@@ -1100,7 +1287,7 @@ export default function AdminDashboard() {
                       }}
                     >
                       + Tambah Layanan
-                    </button>
+                    </Button>
                   </div>
 
                   {newDoctor.servicesList.length > 0 && (
@@ -1143,10 +1330,7 @@ export default function AdminDashboard() {
                         placeholder="Contoh: Pemeriksaan USG 4D"
                       />
                     </div>
-                    <button
-                      type="button"
-                      className={`${styles.button} ${styles.actionBtn}`}
-                      style={{ height: "48px" }}
+                    <Button
                       onClick={() => {
                         const val = newCategory.tempServiceName?.trim();
                         if (val && !newCategory.servicesList.some((s) => s.toLowerCase() === val.toLowerCase())) {
@@ -1159,7 +1343,7 @@ export default function AdminDashboard() {
                       }}
                     >
                       + Tambah Layanan
-                    </button>
+                    </Button>
                   </div>
 
                   {newCategory.servicesList.length > 0 && (
@@ -1228,16 +1412,13 @@ export default function AdminDashboard() {
             </div>
 
             <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end", marginTop: "12px" }}>
-              <button
-                type="button"
-                className={`${styles.button} ${styles.buttonSecondary}`}
+              <Button
+                variant="secondary"
                 onClick={() => setIsModalOpen(false)}
               >
                 Batal
-              </button>
-              <button
-                type="button"
-                className={styles.button}
+              </Button>
+              <Button
                 onClick={() => {
                   if (activeMenu === "antrean") handleAddQueue();
                   if (activeMenu === "dokter") handleAddDoctor();
@@ -1251,7 +1432,7 @@ export default function AdminDashboard() {
                 {activeMenu === "poli" && (editingCategoryTitle ? "Simpan Perubahan Kategori" : "Simpan Kategori / Layanan")}
                 {activeMenu === "artikel" && (editingNewsId ? "Simpan Perubahan Artikel" : "Publikasikan Artikel")}
                 {activeMenu === "faq" && (editingFaqId ? "Simpan Perubahan FAQ" : "Simpan Pertanyaan FAQ")}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

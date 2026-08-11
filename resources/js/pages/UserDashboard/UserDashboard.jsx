@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./UserDashboard.module.css";
+import Button from "../../components/Button/Button";
 import dummyData from "../../json/UserDashboardDummy.json";
 import dummyDokter from "../../json/DummyDokter.json";
 import layanan from "../../json/Layanan.json";
@@ -28,7 +29,11 @@ export default function UserDashboard() {
   const [settingsSuccess, setSettingsSuccess] = useState("");
 
   useEffect(() => {
-    const loggedInUsername = localStorage.getItem("loggedInUser") || "siti123";
+    const loggedInUsername = localStorage.getItem("loggedInUser");
+    if (!loggedInUsername) {
+      navigate("/login", { replace: true });
+      return;
+    }
     const registeredUserRaw = localStorage.getItem("registeredUser");
 
     let foundUser = dummyData.users.find((u) => u.username === loggedInUsername);
@@ -193,9 +198,21 @@ export default function UserDashboard() {
         <div className={styles.logo}>
           <img src="/logo.png" alt="Logo" />
         </div>
-        <div className={styles.confirm}>
-          <p className={styles.label}>Selamat datang, {currentUser.patient.name}</p>
-          <p className={styles.value}>{currentUser.patient.noRM}</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <div className={styles.confirm}>
+            <p className={styles.label}>Selamat datang, {currentUser.patient.name}</p>
+            <p className={styles.value}>{currentUser.patient.noRM}</p>
+          </div>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => {
+              localStorage.removeItem("loggedInUser");
+              navigate("/login");
+            }}
+          >
+            Keluar
+          </Button>
         </div>
       </div>
 

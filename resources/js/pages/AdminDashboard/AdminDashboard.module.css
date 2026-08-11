@@ -355,5 +355,107 @@
   margin-bottom: 16px;
 }
 
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.statCard {
+  background-color: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(216, 150, 237, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statLabel {
+  font-family: var(--artico);
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.statValue {
+  font-family: var(--artico);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.statDesc {
+  font-family: var(--artico);
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.twoColumnGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+}
+
+.cardSection {
+  background-color: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(216, 150, 237, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.progressItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progressLabelRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--artico);
+  font-size: 14px;
+  font-weight: 500;
+  color: #1F2937;
+}
+
+.progressBarTrack {
+  width: 100%;
+  height: 8px;
+  background-color: #FAF0FC;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+@media (max-width: 1280px) {
+  .overviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .twoColumnGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .overviewGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
 

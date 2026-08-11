@@ -14,7 +14,8 @@
 
 /* Standardized Text Input */
 .input {
-  padding: 12px;
+  height: 48px;
+  padding: 0 16px;
   border-radius: 8px;
   border: 1px solid black;
   font-size: 16px;
@@ -32,10 +33,11 @@
 
 /* Password Input Wrapper */
 .passwordWrapper {
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
+  padding: 0 16px;
   border-radius: 8px;
   border: 1px solid black;
   background-color: transparent;
@@ -52,9 +54,12 @@
   border: none;
   outline: none;
   width: 100%;
+  height: 100%;
   font-size: 16px;
   font-family: var(--font-artico, sans-serif);
   background: transparent;
+  padding: 0;
+  margin: 0;
 }
 
 .eyeButton {
@@ -64,6 +69,8 @@
   user-select: none;
   font-size: 14px;
   color: black;
+  white-space: nowrap;
+  margin-left: 8px;
 }
 
 /* Custom Select Dropdown Trigger */
@@ -73,7 +80,8 @@
 }
 
 .selectTrigger {
-  padding: 12px;
+  height: 48px;
+  padding: 0 16px;
   border-radius: 8px;
   border: 1px solid black;
   background-color: transparent;
@@ -151,10 +159,11 @@
 
 /* Date Input Wrapper */
 .dateWrapper {
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
+  padding: 0 16px;
   border-radius: 8px;
   border: 1px solid black;
   background-color: transparent;
@@ -171,9 +180,12 @@
   border: none;
   outline: none;
   width: 100%;
+  height: 100%;
   font-size: 16px;
-  font-family: "poppins", sans-serif;
+  font-family: var(--font-poppins, sans-serif);
   background: transparent;
+  padding: 0;
+  margin: 0;
 }
 
 .dateIcon {

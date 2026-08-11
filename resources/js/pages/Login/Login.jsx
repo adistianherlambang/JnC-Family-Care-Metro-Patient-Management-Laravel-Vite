@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Login.module.css";
+import Button from "../../components/Button/Button";
 import dummyUsersData from "../../json/UserDashboardDummy.json";
 
 export default function Login() {
@@ -18,6 +19,16 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      const foundUser = dummyUsersData.users.find(
+        (u) => u.username.toLowerCase() === loggedInUser.toLowerCase()
+      );
+      const isAdmin = loggedInUser.toLowerCase() === "admin" || foundUser?.role === "admin";
+      navigate(isAdmin ? "/admin-dashboard" : "/dashboard", { replace: true });
+      return;
+    }
+
     const registeredUser = localStorage.getItem("registeredUser");
     if (location.state?.username) {
       setData({
@@ -36,7 +47,7 @@ export default function Login() {
       } catch (err) {
       }
     }
-  }, [location.state]);
+  }, [location.state, navigate]);
 
   const handleLogin = () => {
     setErrorMsg("");
@@ -112,57 +123,36 @@ export default function Login() {
             </p>
           )}
 
-          <div className={styles.masuk} onClick={handleLogin}>
-            Masuk
+          <div style={{ marginTop: "12px" }}>
+            <Button fullWidth size="lg" onClick={handleLogin}>
+              Masuk
+            </Button>
           </div>
 
-          <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
             <p style={{ margin: 0, fontSize: "13px", color: "rgba(0,0,0,0.6)" }}>Pilihan Akun Dummy (Demo):</p>
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-              <button
-                type="button"
+              <Button
+                size="sm"
+                variant="primary"
                 onClick={() => fillDummyUser("admin", "admin123")}
-                style={{
-                  padding: "6px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid black",
-                  background: "#D896ED",
-                  color: "white",
-                  fontSize: "12px",
-                  fontWeight: "600",
-                  cursor: "pointer"
-                }}
               >
                 admin (Role Admin)
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
                 onClick={() => fillDummyUser("siti123", "123")}
-                style={{
-                  padding: "6px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid black",
-                  background: "#FAF0FC",
-                  fontSize: "12px",
-                  cursor: "pointer"
-                }}
               >
                 siti123 (Ada Antrean)
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
                 onClick={() => fillDummyUser("dewi123", "123")}
-                style={{
-                  padding: "6px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid black",
-                  background: "white",
-                  fontSize: "12px",
-                  cursor: "pointer"
-                }}
               >
-                dewi123 (Belum Antrean)
-              </button>
+                dewi123 (Tanpa Antrean)
+              </Button>
             </div>
           </div>
 
