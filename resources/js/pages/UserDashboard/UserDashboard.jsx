@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./UserDashboard.module.css";
 import Button from "../../components/Button/Button";
-import dummyData from "../../json/UserDashboardDummy.json";
-import dummyDokter from "../../json/DummyDokter.json";
-import layanan from "../../json/Layanan.json";
 import { InputSelect, InputPassword, InputRadio } from "../../components/Input";
 import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
+import { apiService } from "../../services/apiService";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -15,6 +13,10 @@ export default function UserDashboard() {
   const [currentUser, setCurrentUser] = useState(null);
   const [activeQueue, setActiveQueue] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [categoriesList, setCategoriesList] = useState([]);
+  const [doctorsList, setDoctorsList] = useState([]);
+  const [newsList, setNewsList] = useState([]);
+  const [faqList, setFaqList] = useState([]);
 
   const [newQueueData, setNewQueueData] = useState({
     tanggalLayanan: "",
@@ -36,52 +38,76 @@ export default function UserDashboard() {
       navigate("/login", { replace: true });
       return;
     }
+
+    const savedProfile = localStorage.getItem("user_profile_" + loggedInUsername);
     const registeredUserRaw = localStorage.getItem("registeredUser");
 
-    let foundUser = dummyData.users.find((u) => u.username === loggedInUsername);
+    let userObj = null;
 
-    if (!foundUser && registeredUserRaw) {
+    if (savedProfile) {
+      try {
+        userObj = JSON.parse(savedProfile);
+      } catch (e) {}
+    } else if (registeredUserRaw) {
       try {
         const reg = JSON.parse(registeredUserRaw);
-        if (reg.username === loggedInUsername || !loggedInUsername) {
-          foundUser = {
-            username: reg.username || "pasien_baru",
-            password: reg.password || "123",
-            patient: {
-              name: reg.nama || "Pasien Baru",
-              noRM: reg.noRM || "RM-2026-99012",
-              noBpjs: reg.noBpjs || "-",
-              phone: reg.telepon || "-",
-              email: reg.email || "-",
-              address: reg.alamat || "-"
-            },
-            hasActiveQueue: true,
-            activeQueue: {
-              queueNumber: "A-015",
-              doctor: reg.dokter || "dr. Aulia Rahma, Sp.A",
-              specialty: "Spesialis Anak & Kebidanan",
-              service: reg.layanan || "Pemeriksaan Kehamilan",
-              date: reg.tanggalLayanan || "Hari Ini",
-              time: "09:00 WIB",
-              estimatedTime: "09:15 WIB",
-              status: "Menunggu Antrean",
-              currentCalling: "A-012",
-              location: "Poli Utama - Ruang 101"
-            },
-            visitHistory: []
-          };
-        }
-      } catch (err) {
+        userObj = {
+          username: reg.username || loggedInUsername,
+          patient: {
+            name: reg.nama || loggedInUsername,
+            noRM: reg.noRM || "RM-2026-00123",
+            noBpjs: reg.noBpjs || "-",
+            phone: reg.telepon || "-",
+            email: reg.email || "-",
+            address: reg.alamat || "-"
+          },
+          visitHistory: []
+        };
+      } catch (e) {}
+    }
+
+    if (!userObj) {
+      userObj = {
+        username: loggedInUsername,
+        patient: {
+          name: loggedInUsername.charAt(0).toUpperCase() + loggedInUsername.slice(1),
+          noRM: "RM-2026-00123",
+          noBpjs: "-",
+          phone: "-",
+          email: "-",
+          address: "-"
+        },
+        visitHistory: []
+      };
+    }
+
+    setCurrentUser(userObj);
+
+    const savedUserQueue = localStorage.getItem("user_active_queue_" + loggedInUsername);
+    if (savedUserQueue) {
+      try {
+        setActiveQueue(JSON.parse(savedUserQueue));
+      } catch (e) {
+        setActiveQueue(null);
       }
+    } else {
+      setActiveQueue(null);
     }
+  }, [navigate]);
 
-    if (!foundUser) {
-      foundUser = dummyData.users[0];
+  useEffect(() => {
+    async function fetchDynamicData() {
+      const catsData = await apiService.getCategories();
+      setCategoriesList(catsData);
+      const docsData = await apiService.getDoctors();
+      setDoctorsList(docsData);
+      const newsData = await apiService.getNews();
+      setNewsList(newsData);
+      const faqsData = await apiService.getFaqs();
+      setFaqList(faqsData);
     }
-
-    setCurrentUser(foundUser);
-    setActiveQueue(foundUser.hasActiveQueue ? foundUser.activeQueue : null);
-  }, []);
+    fetchDynamicData();
+  }, [activeMenu]);
 
   const getDayName = (dateVal) => {
     const daysMap = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -110,22 +136,22 @@ export default function UserDashboard() {
     return null;
   };
 
-  const selectCategoryObj = layanan.find((item) => item.title === newQueueData.kategoriLayanan);
+  const selectCategoryObj = categoriesList.find((item) => item.title === newQueueData.kategoriLayanan);
   const listLayanan = selectCategoryObj?.list || [];
 
   const currentDayName = getDayName(newQueueData.tanggalLayanan);
 
-  const availableDoctors = dummyDokter.filter((doc) => {
-    return doc.schedules.some((sched) => {
-      const matchService = !newQueueData.layanan || sched.services.includes(newQueueData.layanan);
-      const matchDay = !currentDayName || sched.days.includes(currentDayName);
+  const availableDoctors = doctorsList.filter((doc) => {
+    return (doc.schedules || []).some((sched) => {
+      const matchService = !newQueueData.layanan || (sched.services || []).includes(newQueueData.layanan);
+      const matchDay = !currentDayName || (sched.days || []).includes(currentDayName);
       return matchService && matchDay;
     });
   });
 
   const doctorOptions = availableDoctors.map((doc) => doc.doctor);
 
-  const handleCreateQueue = () => {
+  const handleCreateQueue = async () => {
     setQueueFormError("");
 
     if (!newQueueData.tanggalLayanan) {
@@ -145,8 +171,8 @@ export default function UserDashboard() {
       return;
     }
 
-    const createdQueue = {
-      queueNumber: `A-0${Math.floor(Math.random() * 80) + 20}`,
+    const payload = {
+      patientName: currentUser?.patient?.name || "Pasien",
       doctor: newQueueData.dokter,
       specialty: "Pelayanan Ibu & Anak",
       service: newQueueData.layanan,
@@ -158,11 +184,28 @@ export default function UserDashboard() {
       location: "Poli Utama - Ruang 102"
     };
 
+    const created = await apiService.createQueue(payload);
+    const createdQueue = created || {
+      id: Date.now(),
+      queueNumber: `A-0${Math.floor(Math.random() * 80) + 20}`,
+      ...payload
+    };
+
+    if (currentUser?.username) {
+      localStorage.setItem("user_active_queue_" + currentUser.username, JSON.stringify(createdQueue));
+    }
+
     setActiveQueue(createdQueue);
     setNewQueueData({ tanggalLayanan: "", kategoriLayanan: "", layanan: "", dokter: "" });
   };
 
-  const handleCancelQueue = () => {
+  const handleCancelQueue = async () => {
+    if (activeQueue?.id) {
+      await apiService.deleteQueue(activeQueue.id);
+    }
+    if (currentUser?.username) {
+      localStorage.removeItem("user_active_queue_" + currentUser.username);
+    }
     setActiveQueue(null);
   };
 
@@ -182,6 +225,12 @@ export default function UserDashboard() {
     if (newPassword !== confirmPassword) {
       setSettingsError("Konfirmasi password baru tidak cocok.");
       return;
+    }
+
+    if (currentUser?.username) {
+      const updatedUser = { ...currentUser, password: newPassword };
+      setCurrentUser(updatedUser);
+      localStorage.setItem("user_profile_" + currentUser.username, JSON.stringify(updatedUser));
     }
 
     setSettingsSuccess("Password berhasil diperbarui.");
@@ -353,7 +402,7 @@ export default function UserDashboard() {
 
                         <InputRadio
                           label="Kategori Layanan"
-                          options={layanan.map((item) => item.title)}
+                          options={categoriesList.map((item) => item.title)}
                           value={newQueueData.kategoriLayanan}
                           onChange={(val) => {
                             setNewQueueData({
@@ -450,7 +499,7 @@ export default function UserDashboard() {
 
                 <div className={styles.inputContainer}>
                   <p className={styles.title}>Artikel & Edukasi Terbaru</p>
-                  {dummyData.news.map((item) => (
+                  {newsList.map((item) => (
                     <div
                       key={item.id}
                       className={styles.inputWrapper}
@@ -506,7 +555,7 @@ export default function UserDashboard() {
 
                 <div className={styles.inputContainer}>
                   <p className={styles.title}>Pusat Bantuan</p>
-                  {dummyData.faqs.map((item) => (
+                  {faqList.map((item) => (
                     <div key={item.id} className={styles.inputWrapper}>
                       <div className={styles.confirm}>
                         <p className={styles.label}>{item.question}</p>

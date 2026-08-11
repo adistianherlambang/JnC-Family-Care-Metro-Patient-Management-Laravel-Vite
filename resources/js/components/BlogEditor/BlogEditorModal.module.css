@@ -17,8 +17,8 @@
   background-color: #ffffff;
   border-radius: 24px;
   width: 100%;
-  max-width: 900px;
-  max-height: 90vh;
+  max-width: 920px;
+  max-height: 92vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -120,13 +120,7 @@
 
 .rowTwoCols {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 16px;
-}
-
-.rowThreeCols {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.5fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
@@ -146,8 +140,8 @@
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px;
+  gap: 8px;
+  padding: 10px;
   background-color: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -163,6 +157,9 @@
   color: #374151;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .toolBtn:hover {
@@ -171,23 +168,73 @@
   color: #c47bdc;
 }
 
-.textarea {
+/* WYSIWYG Visual Live Editor Area */
+.wysiwygEditor {
   width: 100%;
+  min-height: 280px;
+  max-height: 480px;
+  overflow-y: auto;
   border: 1px solid #d1d5db;
   border-radius: 14px;
-  padding: 14px;
+  padding: 18px;
   font-family: inherit;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.75;
   color: #1f2937;
-  resize: vertical;
   outline: none;
-  transition: border-color 0.2s ease;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.textarea:focus {
+.wysiwygEditor:focus {
   border-color: #d896ed;
   box-shadow: 0 0 0 3px rgba(216, 150, 237, 0.2);
+}
+
+.wysiwygEditor h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 18px 0 8px 0;
+}
+
+.wysiwygEditor h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 14px 0 6px 0;
+}
+
+.wysiwygEditor p {
+  margin-bottom: 12px;
+}
+
+.wysiwygEditor blockquote {
+  margin: 16px 0;
+  padding: 12px 18px;
+  background-color: #faf0fc;
+  border-left: 4px solid #d896ed;
+  font-style: italic;
+  color: #4b5563;
+  border-radius: 0 12px 12px 0;
+}
+
+.wysiwygEditor .calloutBox {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 16px 0;
+  padding: 14px 18px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  color: #1e40af;
+  font-size: 14px;
+}
+
+.wysiwygEditor ul {
+  margin: 12px 0 16px 20px;
+  padding-left: 8px;
 }
 
 .modalFooter {
@@ -199,7 +246,7 @@
   background-color: #faf0fc;
 }
 
-/* Preview Styles */
+/* Preview Container */
 .previewContainer {
   background-color: #ffffff;
   padding: 12px;
@@ -261,29 +308,25 @@
 
 .previewBody {
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.75;
   color: #374151;
 }
 
-.previewH2 {
-  font-size: 18px;
+.previewBody h2 {
+  font-size: 20px;
   font-weight: 700;
   color: #111827;
   margin: 20px 0 10px 0;
 }
 
-.previewH3 {
-  font-size: 16px;
+.previewBody h3 {
+  font-size: 17px;
   font-weight: 600;
   color: #1f2937;
   margin: 16px 0 8px 0;
 }
 
-.previewParagraph {
-  margin-bottom: 14px;
-}
-
-.previewQuote {
+.previewBody blockquote {
   margin: 16px 0;
   padding: 12px 20px;
   background-color: #faf0fc;
@@ -293,7 +336,7 @@
   border-radius: 0 12px 12px 0;
 }
 
-.previewCallout {
+.previewBody .calloutBox {
   display: flex;
   gap: 12px;
   align-items: flex-start;
@@ -306,25 +349,13 @@
   font-size: 14px;
 }
 
-.calloutIcon {
-  font-size: 18px;
-}
-
-.previewUl {
+.previewBody ul {
   margin: 12px 0 16px 20px;
   padding-left: 10px;
 }
 
-.emptyPreview {
-  text-align: center;
-  color: #9ca3af;
-  font-size: 14px;
-  padding: 40px 0;
-}
-
 @media (max-width: 640px) {
-  .rowTwoCols,
-  .rowThreeCols {
+  .rowTwoCols {
     grid-template-columns: 1fr;
   }
 }

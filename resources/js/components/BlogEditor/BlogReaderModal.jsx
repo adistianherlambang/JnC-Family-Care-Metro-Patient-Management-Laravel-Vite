@@ -8,6 +8,10 @@ export default function BlogReaderModal({ isOpen, onClose, article }) {
   const renderContent = (rawText) => {
     if (!rawText) return <p className={styles.noContent}>Isi artikel tidak tersedia.</p>;
 
+    if (rawText.includes("<p>") || rawText.includes("<h2>") || rawText.includes("<div") || rawText.includes("<ul")) {
+      return <div dangerouslySetInnerHTML={{ __html: rawText }} />;
+    }
+
     const blocks = rawText.split("\n\n");
     return blocks.map((block, idx) => {
       const trimmed = block.trim();

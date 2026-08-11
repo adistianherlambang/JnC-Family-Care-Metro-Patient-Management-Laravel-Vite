@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./NewAppointment.module.css";
 import { InputText, InputSelect, InputRadio, InputPassword, InputDate, InputImage } from "../../components/Input";
-import layanan from "../../json/Layanan.json";
-import dummyDokter from "../../json/DummyDokter.json";
+import { apiService } from "../../services/apiService";
 
 const step = [
   "Data Pasien",
@@ -15,6 +14,18 @@ const step = [
 
 export default function NewAppointment() {
   const [page, setPage] = useState(1);
+  const [categoriesList, setCategoriesList] = useState([]);
+  const [doctorsList, setDoctorsList] = useState([]);
+
+  useEffect(() => {
+    async function loadDynamicData() {
+      const cats = await apiService.getCategories();
+      setCategoriesList(cats);
+      const docs = await apiService.getDoctors();
+      setDoctorsList(docs);
+    }
+    loadDynamicData();
+  }, []);
 
   const [formData, setFormData] = useState({
     // Step 3: Data Pasien
@@ -160,6 +171,7 @@ export default function NewAppointment() {
           formData={formData}
           updateFormData={updateFormData}
           errors={errors}
+          categoriesList={categoriesList}
           onNext={() => {
             if (validateStep4()) setPage(5);
           }}
@@ -171,6 +183,7 @@ export default function NewAppointment() {
           formData={formData}
           updateFormData={updateFormData}
           errors={errors}
+          doctorsList={doctorsList}
           onNext={() => {
             if (validateStep5()) setPage(6);
           }}
@@ -432,8 +445,8 @@ function Third({ page, setPage, formData, updateFormData, errors = {}, onNext })
   );
 }
 
-function Fourth({ page, setPage, formData, updateFormData, errors = {}, onNext }) {
-  const selectCategoryObj = layanan.find((item) => item.title === formData.kategoriLayanan);
+function Fourth({ page, setPage, formData, updateFormData, errors = {}, onNext, categoriesList = [] }) {
+  const selectCategoryObj = categoriesList.find((item) => item.title === formData.kategoriLayanan);
   const listLayanan = selectCategoryObj?.list || [];
 
   return (
@@ -466,7 +479,7 @@ function Fourth({ page, setPage, formData, updateFormData, errors = {}, onNext }
           <div className={styles.inputWrapper}>
             <InputRadio
               label="Kategori Layanan"
-              options={layanan.map((item) => item.title)}
+              options={categoriesList.map((item) => item.title)}
               value={formData.kategoriLayanan}
               onChange={(val) => {
                 updateFormData("kategoriLayanan", val);
@@ -500,7 +513,7 @@ function Fourth({ page, setPage, formData, updateFormData, errors = {}, onNext }
   );
 }
 
-function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext }) {
+function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext, doctorsList = [] }) {
   const getDayName = (dateVal) => {
     const daysMap = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const now = new Date();
@@ -532,10 +545,10 @@ function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext })
 
   // Filter doctors matching selected service AND input date day of week
   const getFilteredDoctors = () => {
-    return dummyDokter.filter((doc) => {
-      return doc.schedules.some((sched) => {
-        const matchService = !formData.layanan || sched.services.includes(formData.layanan);
-        const matchDay = !currentDayName || sched.days.includes(currentDayName);
+    return doctorsList.filter((doc) => {
+      return (doc.schedules || []).some((sched) => {
+        const matchService = !formData.layanan || (sched.services || []).includes(formData.layanan);
+        const matchDay = !currentDayName || (sched.days || []).includes(currentDayName);
         return matchService && matchDay;
       });
     });

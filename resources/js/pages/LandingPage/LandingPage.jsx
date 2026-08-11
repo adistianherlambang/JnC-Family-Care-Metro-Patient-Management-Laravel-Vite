@@ -1,30 +1,30 @@
 import { useState, useEffect } from "react";
-import styles from "./LandingPage.module.css"
+import styles from "./LandingPage.module.css";
 
 //components
 import PageWrapper from "../../components/PageWrapper/PageWrapper";
 import BuatAppointment from "../../components/Button/BuatAppointment/BuatAppointment";
 
-import layanan from "../../json/Layanan.json"
-import dummyDokter from "../../json/DummyDokter.json"
+import { apiService } from "../../services/apiService";
 
 export default function LandingPage() {
+  const [isTab, setIsTab] = useState("");
+  const [doctorsList, setDoctorsList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
 
-  const [isTab, setIsTab] = useState("")
-
-  function counter(num) {
-    let count = 0
-    for (let i = 0; i <= num; i++) {
-      setTimeout(() => {
-        count += i
-      }, 300);
+  useEffect(() => {
+    async function loadData() {
+      const docs = await apiService.getDoctors();
+      setDoctorsList(docs);
+      const cats = await apiService.getCategories();
+      setCategoriesList(cats);
     }
-  }
+    loadData();
+  }, []);
 
   return (
     <PageWrapper>
       <div className={styles.container}>
-
         <div className={styles.banner}>
           <div className={styles.titleWrapper}>
             <p className={styles.title}>Perawatan Terbaik untuk Ibu, Bayi,<br />dan Tumbuh Kembang Anak</p>
@@ -60,9 +60,10 @@ export default function LandingPage() {
               <div className={styles.whyImg}></div>
             </div>
           </div>
+
           <div className={styles.counterWrapper}>
             <div className={styles.counter}>
-              <p className={styles.title}>20</p>
+              <p className={styles.title}>{doctorsList.length}</p>
               <p className={styles.desc}>Profesional Medis</p>
             </div>
             <div className={styles.counter}>
@@ -70,8 +71,8 @@ export default function LandingPage() {
               <p className={styles.desc}>Pasien Dilayani</p>
             </div>
             <div className={styles.counter}>
-              <p className={styles.title}>12</p>
-              <p className={styles.desc}>Mitra Asuransi</p>
+              <p className={styles.title}>{categoriesList.length}</p>
+              <p className={styles.desc}>Kategori Layanan</p>
             </div>
           </div>
 
@@ -81,7 +82,7 @@ export default function LandingPage() {
               <p className={styles.desc}>Didukung oleh dokter spesialis kandungan, dokter spesialis anak, bidan, dan tenaga kesehatan profesional yang siap memberikan pelayanan terbaik sesuai kebutuhan Anda.</p>
             </div>
             <div className={styles.teamList}>
-              {dummyDokter.map((item, index) => (
+              {doctorsList.map((item, index) => (
                 <div key={index} className={styles.team}>
                   <div className={styles.teamImgWrapper}>
                     <img src={item.image || "/img/landingPage/dummyDr.png"} alt={item.doctor} />
@@ -98,15 +99,12 @@ export default function LandingPage() {
           <div className={styles.layananContainer}>
             <p className={styles.title}>Pusat Layanan Ibu & Anak</p>
             <div className={styles.layananWrapper}>
-              {layanan.map((item, index) => (
-                <div
-                  key={index}
-                  className={styles.layanan}
-                >
+              {categoriesList.map((item, index) => (
+                <div key={index} className={styles.layanan}>
                   <p className={styles.title}>{item.title}</p>
                   <div>
-                    {item.list.map((list, index) => (
-                      <div className={styles.desc} key={index}>
+                    {(item.list || []).map((list, lIndex) => (
+                      <div className={styles.desc} key={lIndex}>
                         <p>{list}</p>
                       </div>
                     ))}
@@ -118,18 +116,18 @@ export default function LandingPage() {
 
           <div className={styles.layananMobileWrapper}>
             <p className={styles.title}>Pusat Layanan Ibu & Anak</p>
-            {layanan.map((item, index) => (
+            {categoriesList.map((item, index) => (
               <div className={styles.layananMobile} key={index}>
                 <div className={styles.titleWrapper} onClick={() => setIsTab((prev) => (prev === item.title ? "" : item.title))}>
                   <p className={styles.title}>{item.title}</p>
-                  <svg className={`${isTab == item.title ? styles.rotate : ""}`} width="7" height="13" viewBox="0 0 7 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg className={`${isTab === item.title ? styles.rotate : ""}`} width="7" height="13" viewBox="0 0 7 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M-5.66777e-07 1.06245L1.04108 3.42132e-07L6.71157 5.79036C6.80297 5.88314 6.87551 5.99347 6.92502 6.11501C6.97452 6.23654 7 6.36687 7 6.4985C7 6.63013 6.97452 6.76046 6.92502 6.88199C6.87551 7.00352 6.80297 7.11385 6.71157 7.20663L1.04108 13L0.000981715 11.9375L5.32314 6.5L-5.66777e-07 1.06245Z" fill="black" />
                   </svg>
                 </div>
-                <div className={`${styles.descWrapper} ${isTab == item.title ? styles.descWrapperOpen : ""}`}>
+                <div className={`${styles.descWrapper} ${isTab === item.title ? styles.descWrapperOpen : ""}`}>
                   <div>
-                    {item.list.map((list, index) => (
-                      <div className={styles.desc} key={index}>
+                    {(item.list || []).map((list, lIndex) => (
+                      <div className={styles.desc} key={lIndex}>
                         <p>{list}</p>
                       </div>
                     ))}
@@ -141,5 +139,5 @@ export default function LandingPage() {
         </div>
       </div>
     </PageWrapper>
-  )
+  );
 }

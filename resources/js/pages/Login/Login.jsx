@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Login.module.css";
 import Button from "../../components/Button/Button";
-import dummyUsersData from "../../json/UserDashboardDummy.json";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -21,10 +20,7 @@ export default function Login() {
   useEffect(() => {
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (loggedInUser) {
-      const foundUser = dummyUsersData.users.find(
-        (u) => u.username.toLowerCase() === loggedInUser.toLowerCase()
-      );
-      const isAdmin = loggedInUser.toLowerCase() === "admin" || foundUser?.role === "admin";
+      const isAdmin = loggedInUser.toLowerCase() === "admin" || loggedInUser.toLowerCase() === "administrator";
       navigate(isAdmin ? "/admin-dashboard" : "/dashboard", { replace: true });
       return;
     }
@@ -44,8 +40,7 @@ export default function Login() {
             password: parsed.password || ""
           });
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     }
   }, [location.state, navigate]);
 
@@ -63,17 +58,13 @@ export default function Login() {
       localStorage.setItem("userPassword", data.password);
     }
 
-    const foundUser = dummyUsersData.users.find(
-      (u) => u.username.toLowerCase() === usernameInput.toLowerCase()
-    );
-
-    const isAdmin = usernameInput.toLowerCase() === "admin" || foundUser?.role === "admin";
+    const isAdmin = usernameInput.toLowerCase() === "admin" || usernameInput.toLowerCase() === "administrator";
     const targetPath = isAdmin ? "/admin-dashboard" : "/dashboard";
 
     navigate(targetPath);
   };
 
-  const fillDummyUser = (username, password) => {
+  const fillQuickUser = (username, password) => {
     setData({ username, password });
     setErrorMsg("");
   };
@@ -87,7 +78,7 @@ export default function Login() {
         <div className={styles.loginWrapper}>
           <div className={styles.titleWrapper}>
             <p className={styles.title}>Selamat Datang</p>
-            <p className={styles.subTitle}>Masuk ke Akun JnC Anda</p>
+            <p className={styles.subTitle}>Masuk ke Akun Anda</p>
           </div>
         </div>
         <div className={styles.login}>
@@ -130,28 +121,21 @@ export default function Login() {
           </div>
 
           <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <p style={{ margin: 0, fontSize: "13px", color: "rgba(0,0,0,0.6)" }}>Pilihan Akun Dummy (Demo):</p>
+            <p style={{ margin: 0, fontSize: "13px", color: "rgba(0,0,0,0.6)" }}>Pilihan Akses Cepat Login:</p>
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
               <Button
                 size="sm"
                 variant="primary"
-                onClick={() => fillDummyUser("admin", "admin123")}
+                onClick={() => fillQuickUser("admin", "admin123")}
               >
                 admin (Role Admin)
               </Button>
               <Button
                 size="sm"
                 variant="secondary"
-                onClick={() => fillDummyUser("siti123", "123")}
+                onClick={() => fillQuickUser("pasien", "123")}
               >
-                siti123 (Ada Antrean)
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => fillDummyUser("dewi123", "123")}
-              >
-                dewi123 (Tanpa Antrean)
+                pasien (Role Pasien)
               </Button>
             </div>
           </div>
@@ -174,7 +158,7 @@ export default function Login() {
         <div className={styles.bottom}>
           <p>PEMBATASAN HUKUM DAN KETENTUAN PENGGUNAAN YANG BERLAKU UNTUK SITUS INI</p>
           <p>Dengan menggunakan situs ini, Anda dianggap menyetujui ketentuan penggunaan yang berlaku.</p>
-          <p>© {year} JnC Family Care Metro</p>
+          <p>© {year} Meika Healthcare</p>
         </div>
       </div>
     </div>

@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./BlogEditorModal.module.css";
 import Button from "../Button/Button";
 import InputText from "../Input/InputText";
 import InputSelect from "../Input/InputSelect";
+import InputImage from "../Input/InputImage";
 
 export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }) {
   const [activeTab, setActiveTab] = useState("editor"); // 'editor' | 'preview'
+  const editorRef = useRef(null);
+
   const [formData, setFormData] = useState({
     title: "",
     category: "Kesehatan Anak",
@@ -16,8 +19,30 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
     content: "",
   });
 
+  const convertRawToHtml = (str) => {
+    if (!str) return "<p>Tuliskan isi artikel blog secara mendalam di sini...</p>";
+    if (str.includes("<p>") || str.includes("<h2>") || str.includes("<div")) return str;
+    return str
+      .split("\n\n")
+      .map((b) => {
+        const trimmed = b.trim();
+        if (!trimmed) return "";
+        if (trimmed.startsWith("## ")) return `<h2>${trimmed.replace("## ", "")}</h2>`;
+        if (trimmed.startsWith("### ")) return `<h3>${trimmed.replace("### ", "")}</h3>`;
+        if (trimmed.startsWith("> ")) return `<blockquote>${trimmed.replace("> ", "")}</blockquote>`;
+        if (trimmed.startsWith("💡 ")) return `<div class="calloutBox">💡 ${trimmed.replace("💡 ", "")}</div>`;
+        if (trimmed.startsWith("• ") || trimmed.startsWith("- ")) {
+          const lis = trimmed.split("\n").map((i) => `<li>${i.replace(/^[•\-]\s*/, "")}</li>`).join("");
+          return `<ul>${lis}</ul>`;
+        }
+        return `<p>${trimmed}</p>`;
+      })
+      .join("");
+  };
+
   useEffect(() => {
     if (initialData) {
+      const htmlContent = convertRawToHtml(initialData.content || "");
       setFormData({
         title: initialData.title || "",
         category: initialData.category || "Kesehatan Anak",
@@ -25,9 +50,13 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
         readTime: initialData.readTime || initialData.read_time || "3 min read",
         image: initialData.image || "",
         summary: initialData.summary || "",
-        content: initialData.content || "",
+        content: htmlContent,
       });
+      if (editorRef.current) {
+        editorRef.current.innerHTML = htmlContent;
+      }
     } else {
+      const defaultHtml = "<p>Tuliskan isi artikel blog secara mendalam di sini...</p>";
       setFormData({
         title: "",
         category: "Kesehatan Anak",
@@ -35,36 +64,47 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
         readTime: "3 min read",
         image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&q=80",
         summary: "",
-        content: "",
+        content: defaultHtml,
       });
+      if (editorRef.current) {
+        editorRef.current.innerHTML = defaultHtml;
+      }
     }
     setActiveTab("editor");
   }, [initialData, isOpen]);
 
   if (!isOpen) return null;
 
-  const handleToolbarInsert = (prefix, suffix = "") => {
-    const textarea = document.getElementById("blogContentTextArea");
-    if (!textarea) return;
+  const handleWysiwygInput = () => {
+    if (editorRef.current) {
+      setFormData((prev) => ({ ...prev, content: editorRef.current.innerHTML }));
+    }
+  };
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const currentText = formData.content;
-    const selectedText = currentText.substring(start, end) || "teks di sini";
-    const replacement = `${prefix}${selectedText}${suffix}`;
+  const execCmd = (command, value = null) => {
+    document.execCommand(command, false, value);
+    handleWysiwygInput();
+  };
 
-    const newContent =
-      currentText.substring(0, start) + replacement + currentText.substring(end);
+  const insertCustomBlock = (type) => {
+    if (!editorRef.current) return;
+    editorRef.current.focus();
 
-    setFormData((prev) => ({ ...prev, content: newContent }));
-
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(
-        start + prefix.length,
-        start + prefix.length + selectedText.length
-      );
-    }, 50);
+    if (type === "h2") {
+      execCmd("formatBlock", "<h2>");
+    } else if (type === "h3") {
+      execCmd("formatBlock", "<h3>");
+    } else if (type === "p") {
+      execCmd("formatBlock", "<p>");
+    } else if (type === "quote") {
+      const sel = window.getSelection().toString() || "Kutipan penting di sini...";
+      execCmd("insertHTML", `<blockquote>${sel}</blockquote><p><br></p>`);
+    } else if (type === "tips") {
+      const sel = window.getSelection().toString() || "Tips Medis: Konsultasikan dengan dokter spesialis.";
+      execCmd("insertHTML", `<div class="calloutBox">💡 <div>${sel}</div></div><p><br></p>`);
+    } else if (type === "bullet") {
+      execCmd("insertUnorderedList");
+    }
   };
 
   const handleSave = () => {
@@ -77,55 +117,6 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
       return;
     }
     onSave(formData);
-  };
-
-  // Basic renderer for Live Preview tab
-  const renderFormattedContent = (rawText) => {
-    if (!rawText) return <p className={styles.emptyPreview}>Belum ada isi artikel. Tulis di tab Editor.</p>;
-
-    const paragraphs = rawText.split("\n\n");
-    return paragraphs.map((block, idx) => {
-      const trimmed = block.trim();
-      if (!trimmed) return null;
-
-      if (trimmed.startsWith("## ")) {
-        return <h2 key={idx} className={styles.previewH2}>{trimmed.replace("## ", "")}</h2>;
-      }
-      if (trimmed.startsWith("### ")) {
-        return <h3 key={idx} className={styles.previewH3}>{trimmed.replace("### ", "")}</h3>;
-      }
-      if (trimmed.startsWith("> ")) {
-        return (
-          <blockquote key={idx} className={styles.previewQuote}>
-            {trimmed.replace("> ", "")}
-          </blockquote>
-        );
-      }
-      if (trimmed.startsWith("💡 ")) {
-        return (
-          <div key={idx} className={styles.previewCallout}>
-            <span className={styles.calloutIcon}>💡</span>
-            <div>{trimmed.replace("💡 ", "")}</div>
-          </div>
-        );
-      }
-      if (trimmed.startsWith("• ") || trimmed.startsWith("- ")) {
-        const items = trimmed.split("\n").map((i) => i.replace(/^[•\-]\s*/, ""));
-        return (
-          <ul key={idx} className={styles.previewUl}>
-            {items.map((it, iIdx) => (
-              <li key={iIdx}>{it}</li>
-            ))}
-          </ul>
-        );
-      }
-
-      return (
-        <p key={idx} className={styles.previewParagraph}>
-          {trimmed}
-        </p>
-      );
-    });
   };
 
   return (
@@ -151,13 +142,13 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
             className={`${styles.tabBtn} ${activeTab === "editor" ? styles.activeTab : ""}`}
             onClick={() => setActiveTab("editor")}
           >
-            ✏️ Editor Artikel
+            ✏️ Live Rich Editor
           </button>
           <button
             className={`${styles.tabBtn} ${activeTab === "preview" ? styles.activeTab : ""}`}
             onClick={() => setActiveTab("preview")}
           >
-            👁️ Prinjau Tampilan Artikel
+            👁️ Prinjau Tampilan Pasien
           </button>
         </div>
 
@@ -185,7 +176,7 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
                 />
               </div>
 
-              <div className={styles.rowThreeCols}>
+              <div className={styles.rowTwoCols}>
                 <InputText
                   label="Penulis / Dokter"
                   value={formData.author}
@@ -198,13 +189,14 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
                   onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
                   placeholder="Contoh: 4 min read"
                 />
-                <InputText
-                  label="URL Gambar Sampul (Cover Image)"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://..."
-                />
               </div>
+
+              <InputImage
+                label="Unggah Foto Sampul Artikel (Cover Image)"
+                value={formData.image}
+                onChange={(file, preview) => setFormData({ ...formData, image: preview })}
+                placeholder="Klik atau seret berkas gambar sampul artikel ke sini untuk mengunggah (PNG, JPG, JPEG)"
+              />
 
               <InputText
                 label="Ringkasan Singkat (Excerpt)"
@@ -213,82 +205,94 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
                 placeholder="Ringkasan 1-2 kalimat yang tampil pada kartu beranda pasien..."
               />
 
-              {/* Rich Content Editor Section */}
+              {/* WYSIWYG Visual Content Editor */}
               <div className={styles.editorSection}>
-                <label className={styles.sectionLabel}>Isi Artikel Blog Lengkap</label>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <label className={styles.sectionLabel}>Isi Artikel Blog Lengkap (Prinjau Visual Langsung)</label>
+                  <span style={{ fontSize: "12px", color: "#6b7280" }}>Editor WYSIWYG Langsung</span>
+                </div>
                 
-                {/* Toolbar */}
+                {/* Visual Toolbar */}
                 <div className={styles.toolbar}>
                   <button
                     type="button"
                     className={styles.toolBtn}
-                    onClick={() => handleToolbarInsert("## ")}
+                    onClick={() => insertCustomBlock("h2")}
                     title="Subjudul H2"
                   >
-                    H2
+                    H2 Subjudul
                   </button>
                   <button
                     type="button"
                     className={styles.toolBtn}
-                    onClick={() => handleToolbarInsert("### ")}
+                    onClick={() => insertCustomBlock("h3")}
                     title="Subjudul H3"
                   >
-                    H3
+                    H3 Subjudul
                   </button>
                   <button
                     type="button"
                     className={styles.toolBtn}
-                    onClick={() => handleToolbarInsert("**", "**")}
+                    onClick={() => execCmd("bold")}
                     title="Cetak Tebal"
                   >
-                    B
+                    <strong>B Tebal</strong>
                   </button>
                   <button
                     type="button"
                     className={styles.toolBtn}
-                    onClick={() => handleToolbarInsert("*", "*")}
+                    onClick={() => execCmd("italic")}
                     title="Cetak Miring"
                   >
-                    I
+                    <em>I Miring</em>
                   </button>
                   <button
                     type="button"
                     className={styles.toolBtn}
-                    onClick={() => handleToolbarInsert("• ")}
-                    title="Daftar Bullet"
+                    onClick={() => insertCustomBlock("bullet")}
+                    title="Daftar Poin"
                   >
-                    • List
+                    • List Poin
                   </button>
                   <button
                     type="button"
                     className={styles.toolBtn}
-                    onClick={() => handleToolbarInsert("> ")}
-                    title="Kutipan/Quote"
+                    onClick={() => insertCustomBlock("quote")}
+                    title="Kotak Kutipan"
                   >
-                    Quote
+                    ” Quote
                   </button>
                   <button
                     type="button"
                     className={styles.toolBtn}
-                    onClick={() => handleToolbarInsert("💡 Tips Medis: ")}
+                    onClick={() => insertCustomBlock("tips")}
                     title="Kotak Tips Medis"
                   >
-                    💡 Tips
+                    💡 Tips Medis
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.toolBtn}
+                    onClick={() => insertCustomBlock("p")}
+                    title="Paragraf Normal"
+                  >
+                    Paragraf
                   </button>
                 </div>
 
-                <textarea
-                  id="blogContentTextArea"
-                  className={styles.textarea}
-                  rows={12}
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Tuliskan isi artikel blog secara mendalam di sini... Gunakan toolbar di atas untuk format teks, subjudul, poin penting, dan tips medis."
+                {/* ContentEditable Live Visual Editor Box */}
+                <div
+                  ref={editorRef}
+                  className={styles.wysiwygEditor}
+                  contentEditable
+                  suppressContentEditableWarning
+                  onInput={handleWysiwygInput}
+                  onBlur={handleWysiwygInput}
                 />
               </div>
             </div>
           ) : (
-            /* Live Preview Container */
+            /* Patient Reader Preview */
             <div className={styles.previewContainer}>
               <div className={styles.articleCardHeader}>
                 <span className={styles.categoryPill}>{formData.category}</span>
@@ -320,9 +324,10 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
                 </div>
               )}
 
-              <div className={styles.previewBody}>
-                {renderFormattedContent(formData.content)}
-              </div>
+              <div
+                className={styles.previewBody}
+                dangerouslySetInnerHTML={{ __html: formData.content }}
+              />
             </div>
           )}
         </div>

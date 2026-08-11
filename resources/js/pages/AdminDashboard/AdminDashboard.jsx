@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./AdminDashboard.module.css";
 import InputText from "../../components/Input/InputText";
@@ -7,43 +7,15 @@ import InputRadio from "../../components/Input/InputRadio";
 import InputImage from "../../components/Input/InputImage";
 import Button from "../../components/Button/Button";
 import { apiService } from "../../services/apiService";
-import dummyKategori from "../../json/Layanan.json";
-import dummyDokter from "../../json/DummyDokter.json";
-import userDummy from "../../json/UserDashboardDummy.json";
 import BlogEditorModal from "../../components/BlogEditor/BlogEditorModal";
 import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
-
-const dummyNews = userDummy.news || [];
-const dummyFaq = userDummy.faqs || [];
-const dummyAntrean = [
-  {
-    id: "Q-001",
-    queueNumber: "A-014",
-    patientName: "Siti Nurhaliza",
-    doctor: "dr. Aulia Rahma, Sp.A",
-    service: "Konsultasi tumbuh kembang anak",
-    date: "Hari Ini",
-    time: "09:30 WIB",
-    status: "Menunggu Antrean"
-  },
-  {
-    id: "Q-002",
-    queueNumber: "A-015",
-    patientName: "Budi Santoso",
-    doctor: "dr. Fitri Handayani, Sp.A",
-    service: "Pemeriksaan Anak",
-    date: "Hari Ini",
-    time: "10:00 WIB",
-    status: "Dipanggil"
-  }
-];
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
 const getDaysRange = (startDay, endDay) => {
   const startIndex = DAYS_OF_WEEK.indexOf(startDay);
   const endIndex = DAYS_OF_WEEK.indexOf(endDay);
-  if (startIndex === -1 || endIndex === -1) return [startDay || "Senin"];
+  if (startIndex === -1 || endIndex === -1) return [startDay, endDay];
   if (startIndex <= endIndex) {
     return DAYS_OF_WEEK.slice(startIndex, endIndex + 1);
   } else {
@@ -57,16 +29,18 @@ export default function AdminDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Master Data State
-  const [queues, setQueues] = useState(dummyAntrean);
-  const [doctors, setDoctors] = useState(dummyDokter);
-  const [categories, setCategories] = useState(dummyKategori);
-  const [news, setNews] = useState(dummyNews);
-  const [faqs, setFaqs] = useState(dummyFaq);
+  const [queues, setQueues] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [news, setNews] = useState([]);
+  const [faqs, setFaqs] = useState([]);
 
   // Blog Editor & Reader States
   const [isBlogEditorOpen, setIsBlogEditorOpen] = useState(false);
   const [selectedArticleForEdit, setSelectedArticleForEdit] = useState(null);
   const [selectedArticleForPreview, setSelectedArticleForPreview] = useState(null);
+
+  const isDataLoaded = useRef(false);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("loggedInUser");
@@ -81,19 +55,40 @@ export default function AdminDashboard() {
     }
 
     async function loadData() {
-      const cats = await apiService.getCategories(dummyKategori);
+      const cats = await apiService.getCategories();
       setCategories(cats);
-      const docs = await apiService.getDoctors(dummyDokter);
+      const docs = await apiService.getDoctors();
       setDoctors(docs);
-      const qList = await apiService.getQueues(dummyAntrean);
+      const qList = await apiService.getQueues();
       setQueues(qList);
-      const nList = await apiService.getNews(dummyNews);
+      const nList = await apiService.getNews();
       setNews(nList);
-      const fList = await apiService.getFaqs(dummyFaq);
+      const fList = await apiService.getFaqs();
       setFaqs(fList);
+      isDataLoaded.current = true;
     }
     loadData();
   }, [navigate]);
+
+  useEffect(() => {
+    if (isDataLoaded.current) apiService.saveNewsLocal(news);
+  }, [news]);
+
+  useEffect(() => {
+    if (isDataLoaded.current) apiService.saveFaqsLocal(faqs);
+  }, [faqs]);
+
+  useEffect(() => {
+    if (isDataLoaded.current) apiService.saveDoctorsLocal(doctors);
+  }, [doctors]);
+
+  useEffect(() => {
+    if (isDataLoaded.current) apiService.saveCategoriesLocal(categories);
+  }, [categories]);
+
+  useEffect(() => {
+    if (isDataLoaded.current) apiService.saveQueuesLocal(queues);
+  }, [queues]);
 
   // Filter State
   const [queueDateFilter, setQueueDateFilter] = useState("Hari Ini");
@@ -212,9 +207,9 @@ export default function AdminDashboard() {
         date: newQueue.date
       };
       await apiService.updateQueue(editingQueueId, payload);
-      setQueues(
-        queues.map((q) => (q.id === editingQueueId ? { ...q, ...payload } : q))
-      );
+      const updated = queues.map((q) => (q.id === editingQueueId ? { ...q, ...payload } : q));
+      setQueues(updated);
+      apiService.saveQueuesLocal(updated);
       setEditingQueueId(null);
     } else {
       const payload = {
@@ -231,7 +226,9 @@ export default function AdminDashboard() {
         queueNumber: `A-0${Math.floor(Math.random() * 80) + 20}`,
         ...payload
       };
-      setQueues([...queues, item]);
+      const updated = [...queues, item];
+      setQueues(updated);
+      apiService.saveQueuesLocal(updated);
     }
     setNewQueue({ patientName: "", kategoriLayanan: "", service: "", doctor: "", date: "Hari Ini" });
     setIsModalOpen(false);
@@ -239,14 +236,16 @@ export default function AdminDashboard() {
 
   const handleUpdateQueueStatus = async (id, newStatus) => {
     await apiService.updateQueue(id, { status: newStatus });
-    setQueues(
-      queues.map((q) => (q.id === id ? { ...q, status: newStatus } : q))
-    );
+    const updated = queues.map((q) => (q.id === id ? { ...q, status: newStatus } : q));
+    setQueues(updated);
+    apiService.saveQueuesLocal(updated);
   };
 
   const handleDeleteQueue = async (id) => {
     await apiService.deleteQueue(id);
-    setQueues(queues.filter((q) => q.id !== id));
+    const updated = queues.filter((q) => q.id !== id);
+    setQueues(updated);
+    apiService.saveQueuesLocal(updated);
   };
 
   // Doctor Handlers
@@ -315,25 +314,25 @@ export default function AdminDashboard() {
       if (docObj?.id) {
         await apiService.updateDoctor(docObj.id, payload);
       }
-      setDoctors(
-        doctors.map((d) =>
-          d.doctor === editingDoctorName
-            ? {
-                ...d,
-                ...payload,
-                schedules: [
-                  {
-                    days: daysList,
-                    displayDays: displayDays,
-                    startTime: startTime,
-                    endTime: endTime,
-                    services: servicesList
-                  }
-                ]
-              }
-            : d
-        )
+      const updated = doctors.map((d) =>
+        d.doctor === editingDoctorName
+          ? {
+              ...d,
+              ...payload,
+              schedules: [
+                {
+                  days: daysList,
+                  displayDays: displayDays,
+                  startTime: startTime,
+                  endTime: endTime,
+                  services: servicesList
+                }
+              ]
+            }
+          : d
       );
+      setDoctors(updated);
+      apiService.saveDoctorsLocal(updated);
       setEditingDoctorName(null);
     } else {
       const created = await apiService.createDoctor(payload);
@@ -349,7 +348,9 @@ export default function AdminDashboard() {
           }
         ]
       };
-      setDoctors([...doctors, docItem]);
+      const updated = [...doctors, docItem];
+      setDoctors(updated);
+      apiService.saveDoctorsLocal(updated);
     }
     setNewDoctor({
       doctor: "",
@@ -370,7 +371,9 @@ export default function AdminDashboard() {
     if (docObj?.id) {
       await apiService.deleteDoctor(docObj.id);
     }
-    setDoctors(doctors.filter((d) => d.doctor !== docName));
+    const updated = doctors.filter((d) => d.doctor !== docName);
+    setDoctors(updated);
+    apiService.saveDoctorsLocal(updated);
   };
 
   // Category Handlers
@@ -402,18 +405,18 @@ export default function AdminDashboard() {
       if (catObj?.id) {
         await apiService.updateCategory(catObj.id, payload);
       }
-      setCategories(
-        categories.map((c) =>
-          c.title === editingCategoryTitle
-            ? { ...c, ...payload }
-            : c
-        )
+      const updated = categories.map((c) =>
+        c.title === editingCategoryTitle ? { ...c, ...payload } : c
       );
+      setCategories(updated);
+      apiService.saveCategoriesLocal(updated);
       setEditingCategoryTitle(null);
     } else {
       const created = await apiService.createCategory(payload);
       const item = created || payload;
-      setCategories([...categories, item]);
+      const updated = [...categories, item];
+      setCategories(updated);
+      apiService.saveCategoriesLocal(updated);
     }
     setNewCategory({ title: "", tempServiceName: "", servicesList: [] });
     setIsModalOpen(false);
@@ -424,7 +427,9 @@ export default function AdminDashboard() {
     if (catObj?.id) {
       await apiService.deleteCategory(catObj.id);
     }
-    setCategories(categories.filter((c) => c.title !== title));
+    const updated = categories.filter((c) => c.title !== title);
+    setCategories(updated);
+    apiService.saveCategoriesLocal(updated);
   };
 
   // News & Blog Handlers
@@ -447,11 +452,11 @@ export default function AdminDashboard() {
 
     if (selectedArticleForEdit && selectedArticleForEdit.id) {
       await apiService.updateNews(selectedArticleForEdit.id, payload);
-      setNews(
-        news.map((n) =>
-          n.id === selectedArticleForEdit.id ? { ...n, ...payload } : n
-        )
+      const updated = news.map((n) =>
+        n.id === selectedArticleForEdit.id ? { ...n, ...payload } : n
       );
+      setNews(updated);
+      apiService.saveNewsLocal(updated);
     } else {
       const now = new Date();
       const created = await apiService.createNews({
@@ -459,11 +464,13 @@ export default function AdminDashboard() {
         date: `${now.getDate()} Agustus 2026`,
       });
       const item = created || {
-        id: news.length + 1,
+        id: Date.now(),
         date: `${now.getDate()} Agustus 2026`,
         ...payload,
       };
-      setNews([item, ...news]);
+      const updated = [item, ...news];
+      setNews(updated);
+      apiService.saveNewsLocal(updated);
     }
 
     setIsBlogEditorOpen(false);
@@ -472,7 +479,9 @@ export default function AdminDashboard() {
 
   const handleDeleteNews = async (id) => {
     await apiService.deleteNews(id);
-    setNews(news.filter((n) => n.id !== id));
+    const updated = news.filter((n) => n.id !== id);
+    setNews(updated);
+    apiService.saveNewsLocal(updated);
   };
 
   // FAQ Handlers
@@ -500,17 +509,19 @@ export default function AdminDashboard() {
 
     if (editingFaqId) {
       await apiService.updateFaq(editingFaqId, payload);
-      setFaqs(
-        faqs.map((f) => (f.id === editingFaqId ? { ...f, ...payload } : f))
-      );
+      const updated = faqs.map((f) => (f.id === editingFaqId ? { ...f, ...payload } : f));
+      setFaqs(updated);
+      apiService.saveFaqsLocal(updated);
       setEditingFaqId(null);
     } else {
       const created = await apiService.createFaq(payload);
       const item = created || {
-        id: faqs.length + 1,
+        id: Date.now(),
         ...payload
       };
-      setFaqs([...faqs, item]);
+      const updated = [...faqs, item];
+      setFaqs(updated);
+      apiService.saveFaqsLocal(updated);
     }
     setNewFaq({ question: "", answer: "" });
     setIsModalOpen(false);
@@ -518,7 +529,9 @@ export default function AdminDashboard() {
 
   const handleDeleteFaq = async (id) => {
     await apiService.deleteFaq(id);
-    setFaqs(faqs.filter((f) => f.id !== id));
+    const updated = faqs.filter((f) => f.id !== id);
+    setFaqs(updated);
+    apiService.saveFaqsLocal(updated);
   };
 
   const filteredQueues = queues.filter((q) => {
