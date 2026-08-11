@@ -142,13 +142,13 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
             className={`${styles.tabBtn} ${activeTab === "editor" ? styles.activeTab : ""}`}
             onClick={() => setActiveTab("editor")}
           >
-            ✏️ Live Rich Editor
+            Live Rich Editor
           </button>
           <button
             className={`${styles.tabBtn} ${activeTab === "preview" ? styles.activeTab : ""}`}
             onClick={() => setActiveTab("preview")}
           >
-            👁️ Prinjau Tampilan Pasien
+            Pratinjau Tampilan Pasien
           </button>
         </div>
 
@@ -208,10 +208,10 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
               {/* WYSIWYG Visual Content Editor */}
               <div className={styles.editorSection}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <label className={styles.sectionLabel}>Isi Artikel Blog Lengkap (Prinjau Visual Langsung)</label>
+                  <label className={styles.sectionLabel}>Isi Artikel Blog Lengkap (Pratinjau Visual Langsung)</label>
                   <span style={{ fontSize: "12px", color: "#6b7280" }}>Editor WYSIWYG Langsung</span>
                 </div>
-                
+
                 {/* Visual Toolbar */}
                 <div className={styles.toolbar}>
                   <button

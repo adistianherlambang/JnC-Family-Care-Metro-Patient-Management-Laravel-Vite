@@ -47,7 +47,7 @@ export default function UserDashboard() {
     if (savedProfile) {
       try {
         userObj = JSON.parse(savedProfile);
-      } catch (e) {}
+      } catch (e) { }
     } else if (registeredUserRaw) {
       try {
         const reg = JSON.parse(registeredUserRaw);
@@ -63,7 +63,7 @@ export default function UserDashboard() {
           },
           visitHistory: []
         };
-      } catch (e) {}
+      } catch (e) { }
     }
 
     if (!userObj) {
@@ -245,17 +245,6 @@ export default function UserDashboard() {
 
   return (
     <div className={styles.container}>
-      {/* <div className={styles.nav}>
-        <div className={styles.logo}>
-          <img src="/logo.png" alt="Logo" />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-          <div className={styles.confirm}>
-            <p className={styles.label}>Selamat datang, {currentUser.patient.name}</p>
-            <p className={styles.value}>{currentUser.patient.noRM}</p>
-          </div>
-        </div>
-      </div> */}
 
       <div className={styles.thirdContainer}>
         <div className={styles.menuWrapper}>
