@@ -13,6 +13,7 @@ export default function InputSelect({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [internalValue, setInternalValue] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef(null);
 
   const currentValue = value !== undefined ? value : internalValue;
@@ -26,6 +27,12 @@ export default function InputSelect({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery("");
+    }
+  }, [isOpen]);
 
   const handleSelect = (optionValue) => {
     setInternalValue(optionValue);
@@ -43,6 +50,14 @@ export default function InputSelect({
     const found = options.find((opt) => getOptionValue(opt) === currentValue);
     return found ? getOptionLabel(found) : currentValue;
   };
+
+  const showSearch = options.length > 5;
+
+  const filteredOptions = options.filter((opt) => {
+    if (!searchQuery.trim()) return true;
+    const lbl = getOptionLabel(opt);
+    return String(lbl).toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <div className={styles.group}>
@@ -69,20 +84,38 @@ export default function InputSelect({
 
         {isOpen && (
           <div className={styles.selectMenu}>
-            {options.map((opt, index) => {
-              const optVal = getOptionValue(opt);
-              const optLbl = getOptionLabel(opt);
-              const isSelected = currentValue === optVal;
-              return (
-                <div
-                  key={index}
-                  className={`${styles.selectItem} ${isSelected ? styles.selectActiveItem : ""}`}
-                  onClick={() => handleSelect(optVal)}
-                >
-                  {optLbl}
-                </div>
-              );
-            })}
+            {showSearch && (
+              <div className={styles.selectSearchWrapper}>
+                <input
+                  type="text"
+                  className={styles.selectSearchInput}
+                  placeholder="Cari..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                  autoFocus
+                />
+              </div>
+            )}
+
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((opt, index) => {
+                const optVal = getOptionValue(opt);
+                const optLbl = getOptionLabel(opt);
+                const isSelected = currentValue === optVal;
+                return (
+                  <div
+                    key={index}
+                    className={`${styles.selectItem} ${isSelected ? styles.selectActiveItem : ""}`}
+                    onClick={() => handleSelect(optVal)}
+                  >
+                    {optLbl}
+                  </div>
+                );
+              })
+            ) : (
+              <div className={styles.noOptionFound}>Tidak ada pilihan ditemukan</div>
+            )}
           </div>
         )}
       </div>
