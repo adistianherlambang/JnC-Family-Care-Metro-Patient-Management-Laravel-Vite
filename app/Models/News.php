@@ -9,5 +9,5 @@ class News extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'category', 'summary', 'date'];
+    protected $fillable = ['title', 'category', 'summary', 'content', 'author', 'image', 'read_time', 'date'];
 }

@@ -167,8 +167,8 @@
 }
 
 :root {
-  --font-antonia: 'PoppinsNumbers', 'PoppinsSpecial', 'Antonia', sans-serif;
-  --antonia: 'PoppinsNumbers', 'PoppinsSpecial', 'Antonia', sans-serif;
+  --font-antonia: 'Antonia', sans-serif;
+  --antonia: 'Antonia', sans-serif;
   --font-artico: 'PoppinsNumbers', 'PoppinsSpecial', 'Artico', sans-serif;
   --artico: 'PoppinsNumbers', 'PoppinsSpecial', 'Artico', sans-serif;
   --font-poppins: 'Poppins', sans-serif;

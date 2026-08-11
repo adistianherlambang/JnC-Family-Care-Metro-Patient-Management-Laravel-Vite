@@ -6,6 +6,7 @@ import dummyData from "../../json/UserDashboardDummy.json";
 import dummyDokter from "../../json/DummyDokter.json";
 import layanan from "../../json/Layanan.json";
 import { InputSelect, InputPassword, InputRadio } from "../../components/Input";
+import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function UserDashboard() {
 
   const [currentUser, setCurrentUser] = useState(null);
   const [activeQueue, setActiveQueue] = useState(null);
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   const [newQueueData, setNewQueueData] = useState({
     tanggalLayanan: "",
@@ -194,7 +196,7 @@ export default function UserDashboard() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.nav}>
+      {/* <div className={styles.nav}>
         <div className={styles.logo}>
           <img src="/logo.png" alt="Logo" />
         </div>
@@ -203,21 +205,14 @@ export default function UserDashboard() {
             <p className={styles.label}>Selamat datang, {currentUser.patient.name}</p>
             <p className={styles.value}>{currentUser.patient.noRM}</p>
           </div>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={() => {
-              localStorage.removeItem("loggedInUser");
-              navigate("/login");
-            }}
-          >
-            Keluar
-          </Button>
         </div>
-      </div>
+      </div> */}
 
       <div className={styles.thirdContainer}>
         <div className={styles.menuWrapper}>
+          <div className={styles.logo}>
+            <img src="/logo.png" alt="Logo" />
+          </div>
           <div
             className={`${styles.menuItem} ${activeMenu === "antrean" ? styles.menuItemActive : ""}`}
             onClick={() => setActiveMenu("antrean")}
@@ -260,273 +255,321 @@ export default function UserDashboard() {
         </div>
 
         <div className={styles.rightWrapper}>
-          {activeMenu === "antrean" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Antrean Online Saya</p>
-                <p className={styles.desc}>Pantau antrean aktif Anda atau buat janji antrean baru langsung dari jadwal praktisi.</p>
+          <div className={styles.nav}>
+            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+              <div className={styles.confirm}>
+                <p className={styles.label}>Selamat datang, {currentUser.patient.name}</p>
+                <p className={styles.value}>{currentUser.patient.noRM}</p>
               </div>
+            </div>
+          </div>
+          <div className={styles.content}>
+            {activeMenu === "antrean" && (
+              <>
+                <div className={styles.header}>
+                  <p className={styles.title}>Antrean Online Saya</p>
+                  <p className={styles.desc}>Pantau antrean aktif Anda atau buat janji antrean baru langsung dari jadwal praktisi.</p>
+                </div>
 
-              <div className={styles.inputContainer}>
-                {activeQueue ? (
-                  <>
-                    <p className={styles.title}>Detail Antrean Aktif Anda</p>
-                    <div className={styles.inputWrapper}>
-                      <div className={styles.confirm}>
-                        <p className={styles.label}>Nomor Antrean</p>
-                        <p className={styles.value}>{activeQueue.queueNumber}</p>
+                <div className={styles.inputContainer}>
+                  {activeQueue ? (
+                    <>
+                      <p className={styles.title}>Detail Antrean Aktif Anda</p>
+                      <div className={styles.inputWrapper}>
+                        <div className={styles.confirm}>
+                          <p className={styles.label}>Nomor Antrean</p>
+                          <p className={styles.value}>{activeQueue.queueNumber}</p>
+                        </div>
+                        <div className={styles.input}>
+                          <div className={styles.confirm}>
+                            <p className={styles.label}>Dokter / Bidan</p>
+                            <p className={styles.value}>{activeQueue.doctor}</p>
+                          </div>
+                          <div className={styles.confirm}>
+                            <p className={styles.label}>Spesialisasi / Peran</p>
+                            <p className={styles.value}>{activeQueue.specialty}</p>
+                          </div>
+                        </div>
+                        <div className={styles.confirm}>
+                          <p className={styles.label}>Layanan</p>
+                          <p className={styles.value}>{activeQueue.service}</p>
+                        </div>
+                        <div className={styles.input}>
+                          <div className={styles.confirm}>
+                            <p className={styles.label}>Tanggal & Jam Kunjungan</p>
+                            <p className={styles.value}>{activeQueue.date} ({activeQueue.time})</p>
+                          </div>
+                          <div className={styles.confirm}>
+                            <p className={styles.label}>Estimasi Pelayanan</p>
+                            <p className={styles.value}>{activeQueue.estimatedTime}</p>
+                          </div>
+                        </div>
+                        <div className={styles.confirm}>
+                          <p className={styles.label}>Status Antrean</p>
+                          <p className={styles.value}>{activeQueue.status} (Dipanggil saat ini: {activeQueue.currentCalling})</p>
+                        </div>
+                        <div className={styles.confirm}>
+                          <p className={styles.label}>Lokasi Ruangan</p>
+                          <p className={styles.value}>{activeQueue.location}</p>
+                        </div>
                       </div>
+
                       <div className={styles.input}>
-                        <div className={styles.confirm}>
-                          <p className={styles.label}>Dokter / Bidan</p>
-                          <p className={styles.value}>{activeQueue.doctor}</p>
+                        <div
+                          className={styles.button}
+                          onClick={() => alert(`Lokasi Ruangan: ${activeQueue.location}`)}
+                        >
+                          Detail Lokasi
                         </div>
-                        <div className={styles.confirm}>
-                          <p className={styles.label}>Spesialisasi / Peran</p>
-                          <p className={styles.value}>{activeQueue.specialty}</p>
-                        </div>
-                      </div>
-                      <div className={styles.confirm}>
-                        <p className={styles.label}>Layanan</p>
-                        <p className={styles.value}>{activeQueue.service}</p>
-                      </div>
-                      <div className={styles.input}>
-                        <div className={styles.confirm}>
-                          <p className={styles.label}>Tanggal & Jam Kunjungan</p>
-                          <p className={styles.value}>{activeQueue.date} ({activeQueue.time})</p>
-                        </div>
-                        <div className={styles.confirm}>
-                          <p className={styles.label}>Estimasi Pelayanan</p>
-                          <p className={styles.value}>{activeQueue.estimatedTime}</p>
+                        <div
+                          className={`${styles.button} ${styles.buttonDanger}`}
+                          onClick={handleCancelQueue}
+                        >
+                          Batalkan Antrean
                         </div>
                       </div>
-                      <div className={styles.confirm}>
-                        <p className={styles.label}>Status Antrean</p>
-                        <p className={styles.value}>{activeQueue.status} (Dipanggil saat ini: {activeQueue.currentCalling})</p>
-                      </div>
-                      <div className={styles.confirm}>
-                        <p className={styles.label}>Lokasi Ruangan</p>
-                        <p className={styles.value}>{activeQueue.location}</p>
-                      </div>
-                    </div>
-
-                    <div className={styles.input}>
-                      <div
-                        className={styles.button}
-                        onClick={() => alert(`Lokasi Ruangan: ${activeQueue.location}`)}
-                      >
-                        Detail Lokasi
-                      </div>
-                      <div
-                        className={`${styles.button} ${styles.buttonDanger}`}
-                        onClick={handleCancelQueue}
-                      >
-                        Batalkan Antrean
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p className={styles.title}>Anda Belum Memiliki Antrean Aktif</p>
-                    <p className={styles.desc} style={{ margin: 0, fontFamily: "var(--font-artico)" }}>
-                      Silakan pilih tanggal dan praktisi medis dari daftar jadwal di bawah untuk membuat antrean baru.
-                    </p>
-
-                    <div className={styles.inputWrapper}>
-                      <InputSelect
-                        label="Tanggal Layanan"
-                        options={["Hari Ini", "Besok"]}
-                        value={newQueueData.tanggalLayanan}
-                        onChange={(val) => {
-                          setNewQueueData({
-                            ...newQueueData,
-                            tanggalLayanan: val,
-                            dokter: ""
-                          });
-                        }}
-                        placeholder="Pilih Tanggal Layanan"
-                      />
-
-                      <InputRadio
-                        label="Kategori Layanan"
-                        options={layanan.map((item) => item.title)}
-                        value={newQueueData.kategoriLayanan}
-                        onChange={(val) => {
-                          setNewQueueData({
-                            ...newQueueData,
-                            kategoriLayanan: val,
-                            layanan: "",
-                            dokter: ""
-                          });
-                        }}
-                      />
-
-                      <InputSelect
-                        label="Layanan"
-                        options={listLayanan}
-                        value={newQueueData.layanan}
-                        onChange={(val) => {
-                          setNewQueueData({
-                            ...newQueueData,
-                            layanan: val,
-                            dokter: ""
-                          });
-                        }}
-                        placeholder="Pilih Layanan"
-                      />
-
-                      <InputSelect
-                        label="Pilih Dokter / Bidan"
-                        options={doctorOptions}
-                        value={newQueueData.dokter}
-                        onChange={(val) => {
-                          setNewQueueData({
-                            ...newQueueData,
-                            dokter: val
-                          });
-                        }}
-                        placeholder="Pilih Dokter / Bidan"
-                      />
-
-                      {queueFormError && (
-                        <p style={{ color: "#ef4444", fontSize: "14px", margin: "4px 0 0 0", fontFamily: "var(--font-artico)" }}>
-                          {queueFormError}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className={styles.button} onClick={handleCreateQueue}>
-                      Buat Antrean Baru
-                    </div>
-                  </>
-                )}
-              </div>
-            </>
-          )}
-
-          {activeMenu === "riwayat" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Riwayat Pelayanan Pasien</p>
-                <p className={styles.desc}>Catatan riwayat kunjungan dan rekam medis digital Anda.</p>
-              </div>
-
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Daftar Kunjungan Medis</p>
-                {currentUser.visitHistory.length > 0 ? (
-                  currentUser.visitHistory.map((item) => (
-                    <div key={item.id} className={styles.inputWrapper}>
-                      <div className={styles.confirm}>
-                        <p className={styles.label}>{item.date} - {item.service}</p>
-                        <p className={styles.value}>{item.doctor}</p>
-                      </div>
-                      <div className={styles.confirm}>
-                        <p className={styles.label}>Diagnosa / Hasil Pemeriksaan</p>
-                        <p className={styles.value}>{item.diagnosis}</p>
-                      </div>
-                      <div className={styles.confirm}>
-                        <p className={styles.label}>Catatan Medis</p>
-                        <p className={styles.value}>{item.notes}</p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className={styles.desc}>Belum ada riwayat kunjungan medis tercatat.</p>
-                )}
-              </div>
-            </>
-          )}
-
-          {activeMenu === "berita" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Berita & Edukasi Kesehatan</p>
-                <p className={styles.desc}>Informasi dan tips seputar pelayanan kesehatan ibu dan anak.</p>
-              </div>
-
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Artikel Terbaru</p>
-                {dummyData.news.map((item) => (
-                  <div key={item.id} className={styles.inputWrapper}>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>{item.category} • {item.date}</p>
-                      <p className={styles.value} style={{ fontWeight: 600, fontSize: "18px" }}>{item.title}</p>
-                    </div>
-                    <div className={styles.confirm}>
-                      <p className={styles.value}>{item.summary}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {activeMenu === "faq" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Pertanyaan Umum (FAQ)</p>
-                <p className={styles.desc}>Jawaban atas pertanyaan yang paling sering ditanyakan mengenai pelayanan klinik.</p>
-              </div>
-
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Pusat Bantuan</p>
-                {dummyData.faqs.map((item) => (
-                  <div key={item.id} className={styles.inputWrapper}>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>{item.question}</p>
-                      <p className={styles.value}>{item.answer}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {activeMenu === "pengaturan" && (
-            <>
-              <div className={styles.header}>
-                <p className={styles.title}>Pengaturan Akun</p>
-                <p className={styles.desc}>Ubah kata sandi dan kelola keamanan akun Anda.</p>
-              </div>
-
-              <div className={styles.inputContainer}>
-                <p className={styles.title}>Ubah Kata Sandi</p>
-                <div className={styles.inputWrapper}>
-                  <InputPassword
-                    label="Password Lama"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    placeholder="Masukkan password lama anda"
-                  />
-                  <InputPassword
-                    label="Password Baru"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Masukkan password baru anda"
-                  />
-                  <InputPassword
-                    label="Konfirmasi Password Baru"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Konfirmasi password baru anda"
-                    error={settingsError}
-                  />
-                  {settingsSuccess && (
-                    <div className={styles.confirm}>
-                      <p className={styles.value} style={{ color: "#10b981", fontWeight: 600 }}>
-                        {settingsSuccess}
+                    </>
+                  ) : (
+                    <>
+                      <p className={styles.title}>Anda Belum Memiliki Antrean Aktif</p>
+                      <p className={styles.desc} style={{ margin: 0, fontFamily: "var(--font-artico)" }}>
+                        Silakan pilih tanggal dan praktisi medis dari daftar jadwal di bawah untuk membuat antrean baru.
                       </p>
-                    </div>
+
+                      <div className={styles.inputWrapper}>
+                        <InputSelect
+                          label="Tanggal Layanan"
+                          options={["Hari Ini", "Besok"]}
+                          value={newQueueData.tanggalLayanan}
+                          onChange={(val) => {
+                            setNewQueueData({
+                              ...newQueueData,
+                              tanggalLayanan: val,
+                              dokter: ""
+                            });
+                          }}
+                          placeholder="Pilih Tanggal Layanan"
+                        />
+
+                        <InputRadio
+                          label="Kategori Layanan"
+                          options={layanan.map((item) => item.title)}
+                          value={newQueueData.kategoriLayanan}
+                          onChange={(val) => {
+                            setNewQueueData({
+                              ...newQueueData,
+                              kategoriLayanan: val,
+                              layanan: "",
+                              dokter: ""
+                            });
+                          }}
+                        />
+
+                        <InputSelect
+                          label="Layanan"
+                          options={listLayanan}
+                          value={newQueueData.layanan}
+                          onChange={(val) => {
+                            setNewQueueData({
+                              ...newQueueData,
+                              layanan: val,
+                              dokter: ""
+                            });
+                          }}
+                          placeholder="Pilih Layanan"
+                        />
+
+                        <InputSelect
+                          label="Pilih Dokter / Bidan"
+                          options={doctorOptions}
+                          value={newQueueData.dokter}
+                          onChange={(val) => {
+                            setNewQueueData({
+                              ...newQueueData,
+                              dokter: val
+                            });
+                          }}
+                          placeholder="Pilih Dokter / Bidan"
+                        />
+
+                        {queueFormError && (
+                          <p style={{ color: "#ef4444", fontSize: "14px", margin: "4px 0 0 0", fontFamily: "var(--font-artico)" }}>
+                            {queueFormError}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className={styles.button} onClick={handleCreateQueue}>
+                        Buat Antrean Baru
+                      </div>
+                    </>
                   )}
                 </div>
+              </>
+            )}
 
-                <div className={styles.button} onClick={handlePasswordChange}>
-                  Simpan Perubahan
+            {activeMenu === "riwayat" && (
+              <>
+                <div className={styles.header}>
+                  <p className={styles.title}>Riwayat Pelayanan Pasien</p>
+                  <p className={styles.desc}>Catatan riwayat kunjungan dan rekam medis digital Anda.</p>
                 </div>
-              </div>
-            </>
-          )}
+
+                <div className={styles.inputContainer}>
+                  <p className={styles.title}>Daftar Kunjungan Medis</p>
+                  {currentUser.visitHistory.length > 0 ? (
+                    currentUser.visitHistory.map((item) => (
+                      <div key={item.id} className={styles.inputWrapper}>
+                        <div className={styles.confirm}>
+                          <p className={styles.label}>{item.date} - {item.service}</p>
+                          <p className={styles.value}>{item.doctor}</p>
+                        </div>
+                        <div className={styles.confirm}>
+                          <p className={styles.label}>Diagnosa / Hasil Pemeriksaan</p>
+                          <p className={styles.value}>{item.diagnosis}</p>
+                        </div>
+                        <div className={styles.confirm}>
+                          <p className={styles.label}>Catatan Medis</p>
+                          <p className={styles.value}>{item.notes}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className={styles.desc}>Belum ada riwayat kunjungan medis tercatat.</p>
+                  )}
+                </div>
+              </>
+            )}
+
+            {activeMenu === "berita" && (
+              <>
+                <div className={styles.header}>
+                  <p className={styles.title}>Berita & Edukasi Kesehatan</p>
+                  <p className={styles.desc}>Informasi dan tips seputar pelayanan kesehatan ibu dan anak.</p>
+                </div>
+
+                <div className={styles.inputContainer}>
+                  <p className={styles.title}>Artikel & Edukasi Terbaru</p>
+                  {dummyData.news.map((item) => (
+                    <div
+                      key={item.id}
+                      className={styles.inputWrapper}
+                      style={{ cursor: "pointer", transition: "transform 0.2s ease" }}
+                      onClick={() => setSelectedArticle(item)}
+                    >
+                      {item.image && (
+                        <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "12px" }}>
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>
+                          {item.category} • {item.readTime || item.read_time || "3 min read"} • {item.date}
+                        </p>
+                        <p className={styles.value} style={{ fontWeight: 700, fontSize: "17px", color: "var(--primary)" }}>
+                          {item.title}
+                        </p>
+                      </div>
+                      <div className={styles.confirm}>
+                        <p className={styles.value} style={{ color: "#4b5563" }}>{item.summary}</p>
+                      </div>
+                      <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
+                        <Button
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedArticle(item);
+                          }}
+                        >
+                          Baca Selengkapnya →
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {activeMenu === "faq" && (
+              <>
+                <div className={styles.header}>
+                  <p className={styles.title}>Pertanyaan Umum (FAQ)</p>
+                  <p className={styles.desc}>Jawaban atas pertanyaan yang paling sering ditanyakan mengenai pelayanan klinik.</p>
+                </div>
+
+                <div className={styles.inputContainer}>
+                  <p className={styles.title}>Pusat Bantuan</p>
+                  {dummyData.faqs.map((item) => (
+                    <div key={item.id} className={styles.inputWrapper}>
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>{item.question}</p>
+                        <p className={styles.value}>{item.answer}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {activeMenu === "pengaturan" && (
+              <>
+                <div className={styles.header}>
+                  <p className={styles.title}>Pengaturan Akun</p>
+                  <p className={styles.desc}>Ubah kata sandi dan kelola keamanan akun Anda.</p>
+                </div>
+
+                <div className={styles.inputContainer}>
+                  <p className={styles.title}>Ubah Kata Sandi</p>
+                  <div className={styles.inputWrapper}>
+                    <InputPassword
+                      label="Password Lama"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="Masukkan password lama anda"
+                    />
+                    <InputPassword
+                      label="Password Baru"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Masukkan password baru anda"
+                    />
+                    <InputPassword
+                      label="Konfirmasi Password Baru"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Konfirmasi password baru anda"
+                      error={settingsError}
+                    />
+                    {settingsSuccess && (
+                      <div className={styles.confirm}>
+                        <p className={styles.value} style={{ color: "#10b981", fontWeight: 600 }}>
+                          {settingsSuccess}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={styles.button} onClick={handlePasswordChange}>
+                    Simpan Perubahan
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
+        {/* Blog Reader Modal for Patient */}
+        <BlogReaderModal
+          isOpen={!!selectedArticle}
+          onClose={() => setSelectedArticle(null)}
+          article={selectedArticle}
+        />
       </div>
     </div>
   );

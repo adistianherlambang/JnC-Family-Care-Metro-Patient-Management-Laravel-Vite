@@ -19,6 +19,10 @@ class NewsController extends Controller
             'title' => 'required|string',
             'category' => 'required|string',
             'summary' => 'required|string',
+            'content' => 'nullable|string',
+            'author' => 'nullable|string',
+            'image' => 'nullable|string',
+            'read_time' => 'nullable|string',
             'date' => 'nullable|string',
         ]);
 
@@ -26,6 +30,10 @@ class NewsController extends Controller
             'title' => $validated['title'],
             'category' => $validated['category'],
             'summary' => $validated['summary'],
+            'content' => $validated['content'] ?? null,
+            'author' => $validated['author'] ?? 'Tim Redaksi Klinik',
+            'image' => $validated['image'] ?? null,
+            'read_time' => $validated['read_time'] ?? '3 min read',
             'date' => $validated['date'] ?? (date('d') . ' Agustus 2026'),
         ]);
 
@@ -40,6 +48,10 @@ class NewsController extends Controller
             'title' => 'required|string',
             'category' => 'required|string',
             'summary' => 'required|string',
+            'content' => 'nullable|string',
+            'author' => 'nullable|string',
+            'image' => 'nullable|string',
+            'read_time' => 'nullable|string',
         ]);
 
         $news->update($validated);

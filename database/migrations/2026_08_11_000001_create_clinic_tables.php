@@ -55,6 +55,10 @@ return new class extends Migration
             $table->string('title');
             $table->string('category');
             $table->text('summary');
+            $table->longText('content')->nullable();
+            $table->string('author')->nullable();
+            $table->string('image')->nullable();
+            $table->string('read_time')->nullable();
             $table->string('date');
             $table->timestamps();
         });

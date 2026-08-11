@@ -10,6 +10,8 @@ import { apiService } from "../../services/apiService";
 import dummyKategori from "../../json/Layanan.json";
 import dummyDokter from "../../json/DummyDokter.json";
 import userDummy from "../../json/UserDashboardDummy.json";
+import BlogEditorModal from "../../components/BlogEditor/BlogEditorModal";
+import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
 
 const dummyNews = userDummy.news || [];
 const dummyFaq = userDummy.faqs || [];
@@ -60,6 +62,11 @@ export default function AdminDashboard() {
   const [categories, setCategories] = useState(dummyKategori);
   const [news, setNews] = useState(dummyNews);
   const [faqs, setFaqs] = useState(dummyFaq);
+
+  // Blog Editor & Reader States
+  const [isBlogEditorOpen, setIsBlogEditorOpen] = useState(false);
+  const [selectedArticleForEdit, setSelectedArticleForEdit] = useState(null);
+  const [selectedArticleForPreview, setSelectedArticleForPreview] = useState(null);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("loggedInUser");
@@ -166,9 +173,8 @@ export default function AdminDashboard() {
   };
 
   const handleOpenAddNewsModal = () => {
-    setEditingNewsId(null);
-    setNewNews({ title: "", category: "Kesehatan Anak", summary: "" });
-    setIsModalOpen(true);
+    setSelectedArticleForEdit(null);
+    setIsBlogEditorOpen(true);
   };
 
   const handleOpenAddFaqModal = () => {
@@ -421,52 +427,47 @@ export default function AdminDashboard() {
     setCategories(categories.filter((c) => c.title !== title));
   };
 
-  // News Handlers
+  // News & Blog Handlers
   const handleStartEditNews = (n) => {
-    setEditingNewsId(n.id);
-    setNewNews({
-      title: n.title,
-      category: n.category,
-      summary: n.summary
-    });
-    setIsModalOpen(true);
+    setSelectedArticleForEdit(n);
+    setIsBlogEditorOpen(true);
   };
 
-  const handleCancelEditNews = () => {
-    setEditingNewsId(null);
-    setNewNews({ title: "", category: "Kesehatan Anak", summary: "" });
-  };
-
-  const handleAddNews = async () => {
-    if (!newNews.title.trim() || !newNews.summary.trim()) return;
-
+  const handleSaveBlogArticle = async (formData) => {
     const payload = {
-      title: newNews.title.trim(),
-      category: newNews.category,
-      summary: newNews.summary.trim()
+      title: formData.title.trim(),
+      category: formData.category,
+      summary: formData.summary.trim(),
+      content: formData.content,
+      author: formData.author,
+      image: formData.image,
+      readTime: formData.readTime,
+      read_time: formData.readTime,
     };
 
-    if (editingNewsId) {
-      await apiService.updateNews(editingNewsId, payload);
+    if (selectedArticleForEdit && selectedArticleForEdit.id) {
+      await apiService.updateNews(selectedArticleForEdit.id, payload);
       setNews(
-        news.map((n) => (n.id === editingNewsId ? { ...n, ...payload } : n))
+        news.map((n) =>
+          n.id === selectedArticleForEdit.id ? { ...n, ...payload } : n
+        )
       );
-      setEditingNewsId(null);
     } else {
       const now = new Date();
       const created = await apiService.createNews({
         ...payload,
-        date: `${now.getDate()} Agustus 2026`
+        date: `${now.getDate()} Agustus 2026`,
       });
       const item = created || {
         id: news.length + 1,
         date: `${now.getDate()} Agustus 2026`,
-        ...payload
+        ...payload,
       };
       setNews([item, ...news]);
     }
-    setNewNews({ title: "", category: "Kesehatan Anak", summary: "" });
-    setIsModalOpen(false);
+
+    setIsBlogEditorOpen(false);
+    setSelectedArticleForEdit(null);
   };
 
   const handleDeleteNews = async (id) => {
@@ -1048,6 +1049,7 @@ export default function AdminDashboard() {
                         <th>No.</th>
                         <th>Judul Artikel</th>
                         <th>Kategori</th>
+                        <th>Penulis</th>
                         <th>Tanggal Terbit</th>
                         <th>Ringkasan</th>
                         <th>Aksi</th>
@@ -1063,10 +1065,18 @@ export default function AdminDashboard() {
                               {n.category}
                             </span>
                           </td>
+                          <td style={{ fontSize: "13px", color: "#374151" }}>{n.author || "Tim Redaksi"}</td>
                           <td style={{ fontSize: "13px" }}>{n.date}</td>
-                          <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "280px" }}>{n.summary}</td>
+                          <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "260px" }}>{n.summary}</td>
                           <td>
                             <div className={styles.actionCell}>
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => setSelectedArticleForPreview(n)}
+                              >
+                                Prinjau
+                              </Button>
                               <Button
                                 size="sm"
                                 variant="secondary"
@@ -1153,7 +1163,6 @@ export default function AdminDashboard() {
             </>
           )}
         </div>
-      </div>
 
       {/* Modal Window Popup */}
       {isModalOpen && (
@@ -1437,6 +1446,25 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+        {/* Blog Editor Modal for Admin */}
+        <BlogEditorModal
+          isOpen={isBlogEditorOpen}
+          onClose={() => {
+            setIsBlogEditorOpen(false);
+            setSelectedArticleForEdit(null);
+          }}
+          onSave={handleSaveBlogArticle}
+          initialData={selectedArticleForEdit}
+        />
+
+        {/* Blog Reader Modal for Preview */}
+        <BlogReaderModal
+          isOpen={!!selectedArticleForPreview}
+          onClose={() => setSelectedArticleForPreview(null)}
+          article={selectedArticleForPreview}
+        />
+      </div>
     </div>
   );
 }
