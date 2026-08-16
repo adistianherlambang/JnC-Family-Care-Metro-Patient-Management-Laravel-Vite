@@ -4,6 +4,7 @@ import styles from "./UserDashboard.module.css";
 import Button from "../../components/Button/Button";
 import { InputSelect, InputPassword, InputRadio } from "../../components/Input";
 import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
+import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
 
 export default function UserDashboard() {
@@ -247,131 +248,87 @@ export default function UserDashboard() {
     return null;
   }
 
+  const userMenuItems = [
+    { id: "antrean", label: "Antrean Online" },
+    { id: "riwayat", label: "Riwayat Pelayanan" },
+    { id: "berita", label: "Berita & Edukasi" },
+    { id: "faq", label: "FAQ" },
+    { id: "pengaturan", label: "Pengaturan" }
+  ];
+
   return (
-    <div className={styles.container}>
+    <DashboardLayout
+      menuItems={userMenuItems}
+      activeMenu={activeMenu}
+      onMenuChange={setActiveMenu}
+      userInfo={{
+        title: `Selamat datang, ${currentUser.patient.name}`,
+        subtitle: currentUser.patient.noRM
+      }}
+    >
+      {activeMenu === "antrean" && (
+        <>
+          <div className={styles.header}>
+            <p className={styles.title}>Antrean Online Saya</p>
+            <p className={styles.desc}>
+              Pantau antrean aktif Anda atau buat janji antrean baru langsung dari jadwal praktisi.
+            </p>
+          </div>
 
-      <div className={styles.thirdContainer}>
-        <div className={styles.menuWrapper}>
-          <div className={styles.logo}>
-            <img src="/logo.png" alt="Logo" />
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "antrean" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("antrean")}
-          >
-            Antrean Online
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "riwayat" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("riwayat")}
-          >
-            Riwayat Pelayanan
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "berita" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("berita")}
-          >
-            Berita & Edukasi
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "faq" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("faq")}
-          >
-            FAQ
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "pengaturan" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("pengaturan")}
-          >
-            Pengaturan
-          </div>
-          <div
-            className={styles.menuItem}
-            onClick={() => {
-              localStorage.removeItem("loggedInUser");
-              navigate("/login");
-            }}
-          >
-            Keluar
-          </div>
-        </div>
-
-        <div className={styles.rightWrapper}>
-          <div className={styles.nav}>
-            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-              <div className={styles.confirm}>
-                <p className={styles.label}>Selamat datang, {currentUser.patient.name}</p>
-                <p className={styles.value}>{currentUser.patient.noRM}</p>
-              </div>
-            </div>
-          </div>
-          <div className={styles.content}>
-            {activeMenu === "antrean" && (
+          <div className={styles.inputContainer}>
+            {activeQueue ? (
               <>
-                <div className={styles.header}>
-                  <p className={styles.title}>Antrean Online Saya</p>
-                  <p className={styles.desc}>Pantau antrean aktif Anda atau buat janji antrean baru langsung dari jadwal praktisi.</p>
+                <p className={styles.title}>Detail Antrean Aktif Anda</p>
+                <div className={styles.inputWrapper}>
+                  <div className={styles.confirm}>
+                    <p className={styles.label}>Nomor Antrean</p>
+                    <p className={styles.value}>{activeQueue.queueNumber}</p>
+                  </div>
+                  <div className={styles.input}>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Dokter / Bidan</p>
+                      <p className={styles.value}>{activeQueue.doctor}</p>
+                    </div>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Spesialisasi / Peran</p>
+                      <p className={styles.value}>{activeQueue.specialty}</p>
+                    </div>
+                  </div>
+                  <div className={styles.confirm}>
+                    <p className={styles.label}>Layanan</p>
+                    <p className={styles.value}>{activeQueue.service}</p>
+                  </div>
+                  <div className={styles.input}>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Tanggal & Jam Kunjungan</p>
+                      <p className={styles.value}>{activeQueue.date} ({activeQueue.time})</p>
+                    </div>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Estimasi Pelayanan</p>
+                      <p className={styles.value}>{activeQueue.estimatedTime}</p>
+                    </div>
+                  </div>
+                  <div className={styles.confirm}>
+                    <p className={styles.label}>Status Antrean</p>
+                    <p className={styles.value}>{activeQueue.status}</p>
+                  </div>
+                  <div className={styles.input}>
+                    <div
+                      className={styles.button}
+                      onClick={() => alert(`Lokasi Ruangan: ${activeQueue.location}`)}
+                    >
+                      Detail Lokasi
+                    </div>
+                    <div
+                      className={`${styles.button} ${styles.buttonDanger}`}
+                      onClick={handleCancelQueue}
+                    >
+                      Batalkan Antrean
+                    </div>
+                  </div>
                 </div>
-
-                <div className={styles.inputContainer}>
-                  {activeQueue ? (
-                    <>
-                      <p className={styles.title}>Detail Antrean Aktif Anda</p>
-                      <div className={styles.inputWrapper}>
-                        <div className={styles.confirm}>
-                          <p className={styles.label}>Nomor Antrean</p>
-                          <p className={styles.value}>{activeQueue.queueNumber}</p>
-                        </div>
-                        <div className={styles.input}>
-                          <div className={styles.confirm}>
-                            <p className={styles.label}>Dokter / Bidan</p>
-                            <p className={styles.value}>{activeQueue.doctor}</p>
-                          </div>
-                          <div className={styles.confirm}>
-                            <p className={styles.label}>Spesialisasi / Peran</p>
-                            <p className={styles.value}>{activeQueue.specialty}</p>
-                          </div>
-                        </div>
-                        <div className={styles.confirm}>
-                          <p className={styles.label}>Layanan</p>
-                          <p className={styles.value}>{activeQueue.service}</p>
-                        </div>
-                        <div className={styles.input}>
-                          <div className={styles.confirm}>
-                            <p className={styles.label}>Tanggal & Jam Kunjungan</p>
-                            <p className={styles.value}>{activeQueue.date} ({activeQueue.time})</p>
-                          </div>
-                          <div className={styles.confirm}>
-                            <p className={styles.label}>Estimasi Pelayanan</p>
-                            <p className={styles.value}>{activeQueue.estimatedTime}</p>
-                          </div>
-                        </div>
-                        <div className={styles.confirm}>
-                          <p className={styles.label}>Status Antrean</p>
-                          <p className={styles.value}>{activeQueue.status} (Dipanggil saat ini: {activeQueue.currentCalling})</p>
-                        </div>
-                        <div className={styles.confirm}>
-                          <p className={styles.label}>Lokasi Ruangan</p>
-                          <p className={styles.value}>{activeQueue.location}</p>
-                        </div>
-                      </div>
-
-                      <div className={styles.input}>
-                        <div
-                          className={styles.button}
-                          onClick={() => alert(`Lokasi Ruangan: ${activeQueue.location}`)}
-                        >
-                          Detail Lokasi
-                        </div>
-                        <div
-                          className={`${styles.button} ${styles.buttonDanger}`}
-                          onClick={handleCancelQueue}
-                        >
-                          Batalkan Antrean
-                        </div>
-                      </div>
-                    </>
-                  ) : (
+              </>
+            ) : (
                     <>
                       <p className={styles.title}>Anda Belum Memiliki Antrean Aktif</p>
                       <p className={styles.desc} style={{ margin: 0, fontFamily: "var(--font-artico)" }}>
@@ -604,15 +561,12 @@ export default function UserDashboard() {
                 </div>
               </>
             )}
-          </div>
-        </div>
-        {/* Blog Reader Modal for Patient */}
-        <BlogReaderModal
-          isOpen={!!selectedArticle}
-          onClose={() => setSelectedArticle(null)}
-          article={selectedArticle}
-        />
-      </div>
-    </div>
+      {/* Blog Reader Modal for Patient */}
+      <BlogReaderModal
+        isOpen={!!selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+        article={selectedArticle}
+      />
+    </DashboardLayout>
   );
 }

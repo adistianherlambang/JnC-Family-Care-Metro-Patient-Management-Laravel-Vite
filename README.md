@@ -99,7 +99,7 @@ project/
 ├── storage/                         # Log & Storage File Aplikasi
 ├── tests/                           # Automated Tests (PHPUnit)
 ├── .env.example                     # Templat Variabel Lingkungan
-├── Dockerfile                       # Container Build Directive (PHP 8.4 + Apache)
+├── Dockerfile                       # Container Build Directive (PHP 8.2 + Apache)
 ├── docker-compose.yml               # Multi-container Docker Orchestration
 ├── package.json                     # Frontend Dependencies & Scripts
 ├── composer.json                    # Backend Dependencies & Scripts
@@ -271,7 +271,7 @@ sequenceDiagram
 ## 7. Dependensi Project
 
 ### A. Dependensi Backend (Composer / PHP)
-- **`php`**: `^8.3` (atau PHP `8.2.12` / `8.4` Docker)
+- **`php`**: `^8.2` (PHP `8.2` Docker)
 - **`laravel/framework`**: `^13.8` (Laravel 11/13 Framework Engine)
 - **`laravel/tinker`**: `^3.0` (REPL CLI untuk Laravel)
 - **`fakerphp/faker`**: `^1.23` (Generator mock data)
@@ -408,14 +408,14 @@ Setelah melakukan perintah `php artisan db:seed` atau `migrate --seed`, akun adm
 
 | Komponen | Teknologi / Library | Versi / Keterangan |
 |---|---|---|
-| **Core Framework** | Laravel | v11.x / v13.x (PHP 8.3 / 8.4) |
+| **Core Framework** | Laravel | v11.x / v13.x (PHP 8.2) |
 | **Frontend UI Library** | React JS | v18.3.1 |
 | **Client Router** | React Router DOM | v6.26.0 |
 | **Frontend Build Tool** | Vite | v5.0.0 |
 | **Styling Engine** | Tailwind CSS | v4.0.0 (Custom Color `#D896ED`) |
 | **Database Server** | MariaDB / MySQL | MariaDB 10.4 / MySQL 8.0 |
 | **Database Admin** | phpMyAdmin | v5.2.1 |
-| **Containerization** | Docker & Docker Compose | Apache PHP 8.4 Container |
+| **Containerization** | Docker & Docker Compose | Apache PHP 8.2 Container |
 | **Testing** | PHPUnit | v12.5.12 |
 | **API Pattern** | RESTful JSON API | Laravel ApiResource Controllers |
 

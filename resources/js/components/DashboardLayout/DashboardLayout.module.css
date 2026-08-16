@@ -1,0 +1,152 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.thirdContainer {
+  display: flex;
+  min-height: 100vh;
+}
+
+.menuWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  min-width: 280px;
+  gap: 12px;
+  padding: 20px 16px;
+  min-height: 100vh;
+  background-color: white;
+  border-right: 1px solid #f3f4f6;
+  box-sizing: border-box;
+}
+
+.logo {
+  padding: 8px 12px 16px 12px;
+}
+
+.logo img {
+  height: 48px;
+}
+
+.menuItem {
+  font-family: var(--artico);
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  padding: 14px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menuItem:hover {
+  background-color: rgba(216, 150, 237, 0.15);
+  color: var(--primary);
+}
+
+.menuItemActive {
+  background-color: var(--primary);
+  color: white !important;
+  font-weight: 600;
+}
+
+.menuItemActive:hover {
+  background-color: var(--primary);
+  color: white !important;
+}
+
+.rightWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+.nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: white;
+  padding: 16px 64px;
+  text-align: right;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+
+.userInfoWrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.label {
+  font-family: var(--artico);
+  font-size: 14px;
+  color: #4b5563;
+  margin: 0;
+}
+
+.value {
+  font-family: var(--artico);
+  font-size: 16px;
+  font-weight: 600;
+  color: black;
+  margin: 4px 0 0 0;
+}
+
+.badgeRole {
+  display: inline-block;
+  background-color: var(--primary);
+  color: white;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 48px 64px;
+  width: 100%;
+  background-color: var(--secondary);
+  flex: 1;
+  border-radius: 32px 0 0 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+  .thirdContainer {
+    flex-direction: column;
+  }
+  .menuWrapper {
+    width: 100%;
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .nav {
+    padding: 16px 24px;
+  }
+  .content {
+    padding: 24px;
+    border-radius: 0;
+  }
+}

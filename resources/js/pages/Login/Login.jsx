@@ -20,8 +20,11 @@ export default function Login() {
   useEffect(() => {
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (loggedInUser) {
-      const isAdmin = loggedInUser.toLowerCase() === "admin" || loggedInUser.toLowerCase() === "administrator";
-      navigate(isAdmin ? "/admin-dashboard" : "/dashboard", { replace: true });
+      const lower = loggedInUser.toLowerCase();
+      const isAdmin = lower === "admin" || lower === "administrator";
+      const isBidan = lower.includes("bidan") || lower.includes("praktisi");
+      const target = isAdmin ? "/admin-dashboard" : isBidan ? "/bidan-dashboard" : "/dashboard";
+      navigate(target, { replace: true });
       return;
     }
 
@@ -58,8 +61,10 @@ export default function Login() {
       localStorage.setItem("userPassword", data.password);
     }
 
-    const isAdmin = usernameInput.toLowerCase() === "admin" || usernameInput.toLowerCase() === "administrator";
-    const targetPath = isAdmin ? "/admin-dashboard" : "/dashboard";
+    const lower = usernameInput.toLowerCase();
+    const isAdmin = lower === "admin" || lower === "administrator";
+    const isBidan = lower.includes("bidan") || lower.includes("praktisi");
+    const targetPath = isAdmin ? "/admin-dashboard" : isBidan ? "/bidan-dashboard" : "/dashboard";
 
     navigate(targetPath);
   };
@@ -129,6 +134,13 @@ export default function Login() {
                 onClick={() => fillQuickUser("admin", "admin123")}
               >
                 admin (Role Admin)
+              </Button>
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={() => fillQuickUser("bidan", "bidan123")}
+              >
+                bidan (Role Bidan / Praktisi)
               </Button>
               <Button
                 size="sm"

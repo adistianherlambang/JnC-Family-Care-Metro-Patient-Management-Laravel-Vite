@@ -9,6 +9,7 @@ import Button from "../../components/Button/Button";
 import { apiService } from "../../services/apiService";
 import BlogEditorModal from "../../components/BlogEditor/BlogEditorModal";
 import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
+import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -549,74 +550,26 @@ export default function AdminDashboard() {
   );
   const doctorOptions = availableWalkinDoctors.map((d) => d.doctor);
 
+  const adminMenuItems = [
+    { id: "overview", label: "Overview" },
+    { id: "antrean", label: "Kelola Antrean" },
+    { id: "dokter", label: "Kelola Dokter & Jadwal" },
+    { id: "poli", label: "Poli & Layanan" },
+    { id: "artikel", label: "Kelola Artikel" },
+    { id: "faq", label: "Kelola FAQ" }
+  ];
+
   return (
-    <div className={styles.container}>
-      <div className={styles.thirdContainer}>
-        {/* Sidebar Menu */}
-        <div className={styles.menuWrapper}>
-          <div className={styles.logo}>
-            <img src="/logo.png" alt="Logo" />
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "overview" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("overview")}
-          >
-            Overview
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "antrean" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("antrean")}
-          >
-            Kelola Antrean
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "dokter" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("dokter")}
-          >
-            Kelola Dokter & Jadwal
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "poli" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("poli")}
-          >
-            Poli & Layanan
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "artikel" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("artikel")}
-          >
-            Kelola Artikel
-          </div>
-          <div
-            className={`${styles.menuItem} ${activeMenu === "faq" ? styles.menuItemActive : ""}`}
-            onClick={() => setActiveMenu("faq")}
-          >
-            Kelola FAQ
-          </div>
-          <div
-            className={styles.menuItem}
-            onClick={() => {
-              localStorage.removeItem("loggedInUser");
-              navigate("/login");
-            }}
-          >
-            Keluar
-          </div>
-        </div>
-
-        {/* Right Wrapper & Content Area */}
-        <div className={styles.rightWrapper}>
-          <div className={styles.nav}>
-            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-              <div className={styles.confirm}>
-                <p className={styles.label}>Administrator Klinik</p>
-                <p className={styles.value}>Panel Kelola Operasional & Pelayanan</p>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.content}>
-            {/* 0. Ringkasan Eksekutif & Operasional Overview */}
+    <DashboardLayout
+      menuItems={adminMenuItems}
+      activeMenu={activeMenu}
+      onMenuChange={setActiveMenu}
+      userInfo={{
+        title: "Administrator Klinik",
+        subtitle: "Panel Kelola Operasional & Pelayanan"
+      }}
+    >
+      {/* 0. Ringkasan Eksekutif & Operasional Overview */}
             {activeMenu === "overview" && (
               <>
                 <div className={styles.header}>
@@ -1163,8 +1116,6 @@ export default function AdminDashboard() {
                 </div>
               </>
             )}
-          </div>
-        </div>
 
         {/* Modal Window Popup */}
         {isModalOpen && (
@@ -1466,7 +1417,6 @@ export default function AdminDashboard() {
           onClose={() => setSelectedArticleForPreview(null)}
           article={selectedArticleForPreview}
         />
-      </div>
-    </div>
+    </DashboardLayout>
   );
 }
