@@ -623,11 +623,37 @@ export default function AdminDashboard() {
           <path d="M10 6V0H18V6H10ZM0 10V0H8V10H0ZM10 18V8H18V18H10ZM0 18V12H8V18H0Z" fill="currentColor" />
         </svg>
     },
-    { id: "antrean", label: "Kelola Antrean" },
-    { id: "dokter", label: "Kelola Dokter & Jadwal" },
-    { id: "poli", label: "Poli & Layanan" },
-    { id: "artikel", label: "Kelola Artikel" },
-    { id: "faq", label: "Kelola FAQ" }
+    {
+      id: "antrean", label: "Kelola Antrean", svg:
+        <svg width="24" height="15" viewBox="0 0 24 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.102 6.34707V8.07807H1.904V1.87207H0V14.2861H1.904V11.4491H22.102V14.5231H24V6.34507L22.102 6.34707Z" fill="currentColor" />
+          <path d="M8.709 6.365C8.709 6.929 8.252 7.387 7.687 7.387H3.793C3.65871 7.38726 3.5257 7.36101 3.40158 7.30974C3.27747 7.25848 3.1647 7.18321 3.06975 7.08825C2.97479 6.9933 2.89952 6.88053 2.84826 6.75641C2.79699 6.6323 2.77073 6.49928 2.771 6.365V6.363C2.771 5.799 3.228 5.341 3.793 5.341H7.687C8.251 5.341 8.709 5.798 8.709 6.363V6.365ZM19.743 2.364H17.373V0H15.693V2.365H13.328V4.045H15.692V6.41H17.372V4.045H19.742L19.743 2.364Z" fill="white" />
+        </svg>
+    },
+    {
+      id: "dokter", label: "Kelola Dokter & Jadwal", svg:
+        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 8C8.06087 8 9.07828 7.57857 9.82843 6.82843C10.5786 6.07828 11 5.06087 11 4C11 2.93913 10.5786 1.92172 9.82843 1.17157C9.07828 0.421427 8.06087 0 7 0C5.93913 0 4.92172 0.421427 4.17157 1.17157C3.42143 1.92172 3 2.93913 3 4C3 5.06087 3.42143 6.07828 4.17157 6.82843C4.92172 7.57857 5.93913 8 7 8ZM4 9.725C1.6875 10.4031 0 12.5406 0 15.0719C0 15.5844 0.415625 16 0.928125 16H13.0719C13.5844 16 14 15.5844 14 15.0719C14 12.5406 12.3125 10.4031 10 9.725V11.3125C10.8625 11.5344 11.5 12.3188 11.5 13.25V14.5C11.5 14.775 11.275 15 11 15H10.5C10.225 15 10 14.775 10 14.5C10 14.225 10.225 14 10.5 14V13.25C10.5 12.6969 10.0531 12.25 9.5 12.25C8.94687 12.25 8.5 12.6969 8.5 13.25V14C8.775 14 9 14.225 9 14.5C9 14.775 8.775 15 8.5 15H8C7.725 15 7.5 14.775 7.5 14.5V13.25C7.5 12.3188 8.1375 11.5344 9 11.3125V9.52812C8.8125 9.50937 8.62188 9.5 8.42813 9.5H5.57188C5.37813 9.5 5.1875 9.50937 5 9.52812V11.5719C5.72188 11.7875 6.25 12.4563 6.25 13.25C6.25 14.2156 5.46562 15 4.5 15C3.53438 15 2.75 14.2156 2.75 13.25C2.75 12.4563 3.27812 11.7875 4 11.5719V9.725ZM4.5 14C4.69891 14 4.88968 13.921 5.03033 13.7803C5.17098 13.6397 5.25 13.4489 5.25 13.25C5.25 13.0511 5.17098 12.8603 5.03033 12.7197C4.88968 12.579 4.69891 12.5 4.5 12.5C4.30109 12.5 4.11032 12.579 3.96967 12.7197C3.82902 12.8603 3.75 13.0511 3.75 13.25C3.75 13.4489 3.82902 13.6397 3.96967 13.7803C4.11032 13.921 4.30109 14 4.5 14Z" fill="currentColor" />
+        </svg>
+    },
+    {
+      id: "poli", label: "Poli & Layanan", svg:
+        <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.01 0.00999999H1C0.733626 0.0118505 0.478833 0.119173 0.29141 0.30847C0.103987 0.497768 -0.00079548 0.753616 4.54779e-06 1.02V6.6C4.54779e-06 6.79 0.0500045 6.97 0.150005 7.13C0.250005 7.29 0.390004 7.42 0.550004 7.51L5.33 10.35C5.54 10.46 5.77 10.51 6 10.51C6.23 10.51 6.46 10.46 6.67 10.35L11.45 7.51C11.62 7.42 11.76 7.29 11.85 7.13C11.95 6.97 12 6.79 12 6.6V1.02C12 0.89 11.98 0.76 11.93 0.63C11.88 0.51 11.81 0.4 11.72 0.3C11.5354 0.111586 11.2838 0.00375705 11.02 0L11.01 0.00999999ZM9.01 5.51H7.01V7.51H5.01V5.51H3.01V3.51H5.01V1.51H7.01V3.51H9.01V5.51Z" fill="currentColor" />
+        </svg>
+    },
+    {
+      id: "artikel", label: "Kelola Artikel", svg:
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1.44444 13C1.04722 13 0.707296 12.8587 0.424667 12.5761C0.142037 12.2934 0.000481481 11.9533 0 11.5556V1.44444C0 1.04722 0.141556 0.707296 0.424667 0.424667C0.707778 0.142037 1.0477 0.000481481 1.44444 0H11.5556C11.9528 0 12.2929 0.141556 12.5761 0.424667C12.8592 0.707778 13.0005 1.0477 13 1.44444V11.5556C13 11.9528 12.8587 12.2929 12.5761 12.5761C12.2934 12.8592 11.9533 13.0005 11.5556 13H1.44444ZM2.88889 10.1111H7.94444V8.66667H2.88889V10.1111ZM2.88889 7.22222H10.1111V5.77778H2.88889V7.22222ZM2.88889 4.33333H10.1111V2.88889H2.88889V4.33333Z" fill="currentColor" />
+        </svg>
+    },
+    {
+      id: "faq", label: "Kelola FAQ", svg:
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C6.95385 0 6.15385 0.8 6.15385 1.84615V5.53846C6.15385 6.58462 6.95385 7.38462 8 7.38462H11.6923L14.1538 9.84615V7.38462C15.2 7.38462 16 6.58462 16 5.53846V1.84615C16 0.8 15.2 0 14.1538 0H8ZM10.5772 1.84615H11.6345L12.6732 5.53846H11.7502L11.4997 4.61538H10.5766L10.3465 5.53846H9.53846L10.5772 1.84615ZM11.0769 2.46154C11.0154 2.70769 10.9465 3.008 10.8843 3.19262L10.712 4H11.4425L11.2689 3.192C11.1465 3.008 11.0769 2.70769 11.0769 2.46154ZM1.84615 6.15385C0.8 6.15385 0 6.95385 0 8V11.6923C0 12.7385 0.8 13.5385 1.84615 13.5385V16L4.30769 13.5385H8C9.04615 13.5385 9.84615 12.7385 9.84615 11.6923V8H8C6.83077 8 5.904 7.2 5.59631 6.15385H1.84615ZM4.67323 7.94215C5.71938 7.94215 6.21169 8.80369 6.21169 9.78831C6.21169 10.6498 5.91569 11.1963 5.42338 11.4425C5.66954 11.5655 5.96123 11.6308 6.26892 11.6923L6.03877 12.3077C5.608 12.1846 5.16123 11.9926 4.73046 11.8074C4.66892 11.7458 4.56123 11.7502 4.49969 11.7502C3.76123 11.6886 3.07692 11.0769 3.07692 9.84615C3.07692 8.8 3.68862 7.94215 4.67323 7.94215ZM4.67323 8.61538C4.18092 8.61538 3.94215 9.16923 3.94215 9.84615C3.94215 10.5846 4.18092 11.0769 4.67323 11.0769C5.16554 11.0769 5.42277 10.5231 5.42277 9.84615C5.42277 9.16923 5.16554 8.61538 4.67323 8.61538Z" fill="currentColor" />
+        </svg>
+    }
   ];
 
   return (
@@ -934,53 +960,66 @@ export default function AdminDashboard() {
                     <th>Foto</th>
                     <th>Nama Dokter & Gelar</th>
                     <th>Peran / Spesialisasi</th>
+                    <th>Info Akun Login</th>
                     <th>Jadwal Praktik</th>
                     <th>Layanan Utama</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {doctors.map((doc, idx) => (
-                    <tr key={idx} className={styles.tableTr}>
-                      <td>
-                        <img
-                          src={doc.image || "/img/landingPage/dummyDr.png"}
-                          alt={doc.doctor}
-                          style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(216, 150, 237, 0.4)" }}
-                        />
-                      </td>
-                      <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
-                      <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
-                      <td>
-                        {doc.schedules.map((s, i) => (
-                          <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
-                            {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
+                  {doctors.map((doc, idx) => {
+                    const docUsername = doc.username || (doc.doctor.toLowerCase().includes("fitri") ? "bidan" : doc.doctor.toLowerCase().includes("aulia") ? "dr.aulia" : "bidan.siti");
+                    const docPassword = doc.password || "bidan123";
+                    return (
+                      <tr key={idx} className={styles.tableTr}>
+                        <td>
+                          <img
+                            src={doc.image || "/img/landingPage/dummyDr.png"}
+                            alt={doc.doctor}
+                            style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(216, 150, 237, 0.4)" }}
+                          />
+                        </td>
+                        <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
+                        <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
+                        <td>
+                          <div style={{ fontSize: "13px", fontWeight: "600", color: "var(--primary)" }}>
+                            👤 Username: <code style={{ backgroundColor: "#faf0fc", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{docUsername}</code>
                           </div>
-                        ))}
-                      </td>
-                      <td style={{ fontSize: "13px" }}>
-                        {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
-                      </td>
-                      <td>
-                        <div className={styles.actionCell}>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => handleStartEditDoctor(doc)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => handleDeleteDoctor(doc.doctor)}
-                          >
-                            Hapus
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                          <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "4px" }}>
+                            🔑 Password: <code style={{ backgroundColor: "#f3f4f6", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{docPassword}</code>
+                          </div>
+                        </td>
+                        <td>
+                          {doc.schedules.map((s, i) => (
+                            <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
+                              {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
+                            </div>
+                          ))}
+                        </td>
+                        <td style={{ fontSize: "13px" }}>
+                          {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
+                        </td>
+                        <td>
+                          <div className={styles.actionCell}>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleStartEditDoctor(doc)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              onClick={() => handleDeleteDoctor(doc.doctor)}
+                            >
+                              Hapus
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -1265,6 +1304,20 @@ export default function AdminDashboard() {
                     onChange={(e) => setNewDoctor({ ...newDoctor, role: e.target.value })}
                     placeholder="Contoh: Spesialis Kandungan & Kebidanan"
                   />
+                  <div className={styles.input}>
+                    <InputText
+                      label="Username Login Dokter"
+                      value={newDoctor.username}
+                      onChange={(e) => setNewDoctor({ ...newDoctor, username: e.target.value })}
+                      placeholder="Contoh: bidan / dr.fitri"
+                    />
+                    <InputText
+                      label="Password Login Dokter"
+                      value={newDoctor.password}
+                      onChange={(e) => setNewDoctor({ ...newDoctor, password: e.target.value })}
+                      placeholder="Contoh: bidan123"
+                    />
+                  </div>
                   <InputImage
                     label="Foto Dokter (Opsional)"
                     value={newDoctor.image}

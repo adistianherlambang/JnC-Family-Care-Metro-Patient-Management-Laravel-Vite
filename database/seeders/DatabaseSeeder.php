@@ -23,6 +23,27 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('admin123'),
         ]);
 
+        User::firstOrCreate([
+            'email' => 'bidan@meikahealth.id'
+        ], [
+            'name' => 'dr. Fitri Handayani, Sp.A',
+            'password' => bcrypt('bidan123'),
+        ]);
+
+        User::firstOrCreate([
+            'email' => 'aulia@meikahealth.id'
+        ], [
+            'name' => 'dr. Aulia Rahma, Sp.OG',
+            'password' => bcrypt('dokter123'),
+        ]);
+
+        User::firstOrCreate([
+            'email' => 'siti@meikahealth.id'
+        ], [
+            'name' => 'Bidan Siti Rahmawati, S.Tr.Keb',
+            'password' => bcrypt('bidan123'),
+        ]);
+
         // 2. Categories & Services (Resmi sesuai AGENTS.md Rule 3)
         $categoriesData = [
             [

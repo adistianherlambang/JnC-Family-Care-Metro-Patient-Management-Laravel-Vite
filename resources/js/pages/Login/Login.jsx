@@ -22,7 +22,7 @@ export default function Login() {
     if (loggedInUser) {
       const lower = loggedInUser.toLowerCase();
       const isAdmin = lower === "admin" || lower === "administrator";
-      const isBidan = lower.includes("bidan") || lower.includes("praktisi");
+      const isBidan = lower.includes("bidan") || lower.includes("praktisi") || lower.includes("dokter") || lower.includes("dr.");
       const target = isAdmin ? "/admin-dashboard" : isBidan ? "/bidan-dashboard" : "/dashboard";
       navigate(target, { replace: true });
       return;
@@ -63,7 +63,7 @@ export default function Login() {
 
     const lower = usernameInput.toLowerCase();
     const isAdmin = lower === "admin" || lower === "administrator";
-    const isBidan = lower.includes("bidan") || lower.includes("praktisi");
+    const isBidan = lower.includes("bidan") || lower.includes("praktisi") || lower.includes("dokter") || lower.includes("dr.");
     const targetPath = isAdmin ? "/admin-dashboard" : isBidan ? "/bidan-dashboard" : "/dashboard";
 
     navigate(targetPath);
