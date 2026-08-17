@@ -53,7 +53,7 @@ class CategoryController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int|string $id)
     {
         $category = ServiceCategory::findOrFail($id);
 
@@ -85,7 +85,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(int|string $id)
     {
         $category = ServiceCategory::findOrFail($id);
         $category->delete();
