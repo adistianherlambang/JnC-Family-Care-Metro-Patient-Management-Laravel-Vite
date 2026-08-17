@@ -989,7 +989,7 @@ export default function AdminDashboard() {
                         <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
                         <td>
                           <div style={{ fontSize: "13px", fontWeight: "600", color: "var(--primary)" }}>
-                            👤 Username: <code style={{ backgroundColor: "#faf0fc", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{docUsername}</code>
+                            Username: {docUsername}
                           </div>
                           <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "4px" }}>
                             🔑 Password: <code style={{ backgroundColor: "#f3f4f6", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{docPassword}</code>
