@@ -58,7 +58,6 @@
 .menuItemActive {
   background-color: var(--primary);
   color: white !important;
-  font-weight: 600;
 }
 
 .menuItemActive:hover {
