@@ -421,16 +421,22 @@ export default function AdminDashboard() {
 
     const payload = {
       title: newCategory.title.trim(),
-      list: newCategory.servicesList
+      list: newCategory.servicesList,
+      services: newCategory.servicesList
     };
 
     if (editingCategoryTitle) {
       const catObj = categories.find((c) => c.title === editingCategoryTitle);
+      let updatedItem = { ...catObj, ...payload };
       if (catObj?.id) {
-        await apiService.updateCategory(catObj.id, payload);
+        const res = await apiService.updateCategory(catObj.id, payload);
+        if (res) updatedItem = res;
+      } else {
+        const res = await apiService.createCategory(payload);
+        if (res) updatedItem = res;
       }
       const updated = categories.map((c) =>
-        c.title === editingCategoryTitle ? { ...c, ...payload } : c
+        c.title === editingCategoryTitle ? updatedItem : c
       );
       setCategories(updated);
       apiService.saveCategoriesLocal(updated);
@@ -1239,7 +1245,7 @@ export default function AdminDashboard() {
               <p className={styles.modalTitle}>
                 {activeMenu === "antrean" && (editingQueueId ? "Edit Antrean Walk-In" : "Tambah Antrean Walk-In Baru")}
                 {activeMenu === "dokter" && (editingDoctorName ? "Edit Data & Jadwal Dokter" : "Tambah Dokter Baru")}
-                {activeMenu === "poli" && (editingCategoryTitle ? "Edit Kategori / Layanan" : "Tambah Kategori / Layanan Baru")}
+                {activeMenu === "poli" && (editingCategoryTitle ? "Edit Layanan" : "Tambah Layanan Baru")}
                 {activeMenu === "artikel" && (editingNewsId ? "Edit Artikel" : "Tambah Artikel Baru")}
                 {activeMenu === "faq" && (editingFaqId ? "Edit FAQ" : "Tambah Pertanyaan FAQ Baru")}
               </p>
@@ -1522,7 +1528,7 @@ export default function AdminDashboard() {
               >
                 {activeMenu === "antrean" && (editingQueueId ? "Simpan Perubahan Antrean" : "Terbitkan Antrean")}
                 {activeMenu === "dokter" && (editingDoctorName ? "Simpan Perubahan Dokter" : "Simpan Dokter Baru")}
-                {activeMenu === "poli" && (editingCategoryTitle ? "Simpan Perubahan Kategori" : "Simpan Kategori / Layanan")}
+                {activeMenu === "poli" && (editingCategoryTitle ? "Simpan Perubahan Kategori" : "Simpan Layanan")}
                 {activeMenu === "artikel" && (editingNewsId ? "Simpan Perubahan Artikel" : "Publikasikan Artikel")}
                 {activeMenu === "faq" && (editingFaqId ? "Simpan Perubahan FAQ" : "Simpan Pertanyaan FAQ")}
               </Button>

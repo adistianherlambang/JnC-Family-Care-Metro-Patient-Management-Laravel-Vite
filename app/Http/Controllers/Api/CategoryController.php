@@ -12,10 +12,12 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = ServiceCategory::with('services')->get()->map(function ($cat) {
+            $serviceNames = $cat->services->pluck('name')->toArray();
             return [
                 'id' => $cat->id,
                 'title' => $cat->title,
-                'list' => $cat->services->pluck('name')->toArray(),
+                'list' => $serviceNames,
+                'services' => $serviceNames,
             ];
         });
 
@@ -27,12 +29,15 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'list' => 'nullable|array',
+            'services' => 'nullable|array',
         ]);
+
+        $serviceList = $validated['list'] ?? $validated['services'] ?? [];
 
         $category = ServiceCategory::create(['title' => $validated['title']]);
 
-        if (!empty($validated['list'])) {
-            foreach ($validated['list'] as $serviceName) {
+        if (!empty($serviceList)) {
+            foreach ($serviceList as $serviceName) {
                 Service::create([
                     'category_id' => $category->id,
                     'name' => $serviceName,
@@ -43,7 +48,8 @@ class CategoryController extends Controller
         return response()->json([
             'id' => $category->id,
             'title' => $category->title,
-            'list' => $validated['list'] ?? [],
+            'list' => $serviceList,
+            'services' => $serviceList,
         ], 201);
     }
 
@@ -54,14 +60,16 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'list' => 'nullable|array',
+            'services' => 'nullable|array',
         ]);
+
+        $serviceList = $validated['list'] ?? $validated['services'] ?? [];
 
         $category->update(['title' => $validated['title']]);
 
-        // Sync services
         Service::where('category_id', $category->id)->delete();
-        if (!empty($validated['list'])) {
-            foreach ($validated['list'] as $serviceName) {
+        if (!empty($serviceList)) {
+            foreach ($serviceList as $serviceName) {
                 Service::create([
                     'category_id' => $category->id,
                     'name' => $serviceName,
@@ -72,7 +80,8 @@ class CategoryController extends Controller
         return response()->json([
             'id' => $category->id,
             'title' => $category->title,
-            'list' => $validated['list'] ?? [],
+            'list' => $serviceList,
+            'services' => $serviceList,
         ]);
     }
 

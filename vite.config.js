@@ -14,8 +14,12 @@ export default defineConfig({
         'process.env': {},
     },
     server: {
+        host: '0.0.0.0',
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
+        hmr: {
+            host: '192.168.101.83',
+        }
     },
 });

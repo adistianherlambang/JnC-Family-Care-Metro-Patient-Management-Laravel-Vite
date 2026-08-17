@@ -161,7 +161,7 @@ export default function UserDashboard() {
   };
 
   const selectCategoryObj = categoriesList.find((item) => item.title === newQueueData.kategoriLayanan);
-  const listLayanan = selectCategoryObj?.list || [];
+  const listLayanan = selectCategoryObj?.list || selectCategoryObj?.services || [];
 
   const currentDayName = getDayName(newQueueData.tanggalLayanan);
 

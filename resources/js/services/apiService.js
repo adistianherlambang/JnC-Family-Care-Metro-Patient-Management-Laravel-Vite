@@ -74,7 +74,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/categories`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -87,7 +87,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/categories/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -125,7 +125,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/doctors`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -138,7 +138,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/doctors/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -188,7 +188,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/queues`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -201,7 +201,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/queues/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -239,7 +239,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/news`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -252,7 +252,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/news/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -290,7 +290,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/faqs`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
@@ -303,7 +303,7 @@ export const apiService = {
     try {
       const res = await fetch(`${BASE_URL}/faqs/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
