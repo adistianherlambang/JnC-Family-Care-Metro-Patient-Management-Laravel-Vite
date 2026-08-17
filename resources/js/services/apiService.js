@@ -1,5 +1,57 @@
 const BASE_URL = "/api";
 
+const getFormattedDate = (offsetDays = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
+const DEFAULT_QUEUES = [
+  {
+    id: 1,
+    queueNumber: "A-014",
+    patientName: "Siti Nurhaliza",
+    doctor: "dr. Fitri Handayani, Sp.A",
+    service: "Konsultasi Tumbuh Kembang",
+    date: getFormattedDate(0),
+    time: "09:30 WIB",
+    status: "Menunggu Antrean"
+  },
+  {
+    id: 2,
+    queueNumber: "A-015",
+    patientName: "Budi Santoso",
+    doctor: "dr. Aulia Rahma, Sp.OG",
+    service: "Pemeriksaan Kehamilan",
+    date: getFormattedDate(0),
+    time: "10:00 WIB",
+    status: "Sedang Dilayani"
+  },
+  {
+    id: 3,
+    queueNumber: "A-012",
+    patientName: "Dewi Lestari",
+    doctor: "Bidan Siti Rahmawati, S.Tr.Keb",
+    service: "Treatment Laktasi",
+    date: getFormattedDate(-2),
+    time: "08:30 WIB",
+    status: "Selesai"
+  },
+  {
+    id: 4,
+    queueNumber: "A-016",
+    patientName: "Rina Anggraini",
+    doctor: "Bidan Siti Rahmawati, S.Tr.Keb",
+    service: "Baby Spa",
+    date: getFormattedDate(1),
+    time: "11:00 WIB",
+    status: "Menunggu Antrean"
+  }
+];
+
 export const apiService = {
   // Categories
   async getCategories(fallback) {
@@ -109,13 +161,25 @@ export const apiService = {
       const res = await fetch(`${BASE_URL}/queues`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (Array.isArray(data) && data.length > 0) return data;
       }
     } catch (e) {
       console.warn("MySQL API fetch error:", e);
     }
     const local = localStorage.getItem("clinic_queues");
-    return local ? JSON.parse(local) : (fallback || []);
+    if (local) {
+      try {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const isStaleLiteral = parsed.some((q) => q.date === "Hari Ini" || q.date === "Besok");
+          if (!isStaleLiteral) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+    }
+    localStorage.setItem("clinic_queues", JSON.stringify(DEFAULT_QUEUES));
+    return DEFAULT_QUEUES;
   },
   saveQueuesLocal(data) {
     localStorage.setItem("clinic_queues", JSON.stringify(data));

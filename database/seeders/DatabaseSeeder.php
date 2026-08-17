@@ -143,13 +143,17 @@ class DatabaseSeeder extends Seeder
         }
 
         // 4. Sample Queues
+        $todayStr = date('Y-m-d');
+        $tomorrowStr = date('Y-m-d', strtotime('+1 day'));
+        $pastStr = date('Y-m-d', strtotime('-2 days'));
+
         $appointments = [
             [
                 'queue_number' => 'A-014',
                 'patient_name' => 'Siti Nurhaliza',
                 'doctor_name' => 'dr. Fitri Handayani, Sp.A',
-                'service_name' => 'Konsultasi tumbuh kembang anak',
-                'date' => 'Hari Ini',
+                'service_name' => 'Konsultasi Tumbuh Kembang',
+                'date' => $todayStr,
                 'time' => '09:30 WIB',
                 'status' => 'Menunggu Antrean'
             ],
@@ -158,9 +162,27 @@ class DatabaseSeeder extends Seeder
                 'patient_name' => 'Budi Santoso',
                 'doctor_name' => 'dr. Aulia Rahma, Sp.OG',
                 'service_name' => 'Pemeriksaan Kehamilan',
-                'date' => 'Hari Ini',
+                'date' => $todayStr,
                 'time' => '10:00 WIB',
-                'status' => 'Dipanggil'
+                'status' => 'Sedang Dilayani'
+            ],
+            [
+                'queue_number' => 'A-012',
+                'patient_name' => 'Dewi Lestari',
+                'doctor_name' => 'Bidan Siti Rahmawati, S.Tr.Keb',
+                'service_name' => 'Treatment Laktasi',
+                'date' => $pastStr,
+                'time' => '08:30 WIB',
+                'status' => 'Selesai'
+            ],
+            [
+                'queue_number' => 'A-016',
+                'patient_name' => 'Rina Anggraini',
+                'doctor_name' => 'Bidan Siti Rahmawati, S.Tr.Keb',
+                'service_name' => 'Baby Spa',
+                'date' => $tomorrowStr,
+                'time' => '11:00 WIB',
+                'status' => 'Menunggu Antrean'
             ]
         ];
 

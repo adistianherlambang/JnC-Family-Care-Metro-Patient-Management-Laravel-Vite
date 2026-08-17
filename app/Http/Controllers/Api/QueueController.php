@@ -45,7 +45,7 @@ class QueueController extends Controller
             'patient_name' => $validated['patientName'],
             'doctor_name' => $validated['doctor'],
             'service_name' => $validated['service'],
-            'date' => $validated['date'] ?? 'Hari Ini',
+            'date' => $validated['date'] ?? date('Y-m-d'),
             'time' => $validated['time'] ?? '09:00 WIB',
             'status' => $validated['status'] ?? 'Menunggu Antrean',
         ]);

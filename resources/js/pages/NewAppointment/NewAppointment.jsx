@@ -747,7 +747,57 @@ function Seventh({ page, setPage, formData, updateFormData, errors = {}, onNext 
 function Eighth({ page, setPage, formData, updateFormData }) {
   const navigate = useNavigate();
 
-  const handleFinishRegistration = () => {
+  const handleFinishRegistration = async () => {
+    if (formData.tanggalLayanan || formData.layanan) {
+      const getRealDateTimestamp = (val) => {
+        const today = new Date();
+        if (!val) {
+          return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+        }
+        const lower = String(val).toLowerCase().trim();
+        if (lower === "hari ini" || lower === "today") {
+          return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+        }
+        if (lower === "besok" || lower === "tomorrow") {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          return `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+        }
+        return val;
+      };
+
+      const newQueueItem = {
+        id: Date.now(),
+        queueNumber: `A-0${Math.floor(Math.random() * 80) + 20}`,
+        patientName: formData.nama || formData.username,
+        doctor: formData.dokter || "dr. Fitri Handayani, Sp.A",
+        specialty: "Pelayanan Ibu & Anak",
+        service: formData.layanan || "Konsultasi Klinik",
+        date: getRealDateTimestamp(formData.tanggalLayanan),
+        time: "10:00 WIB",
+        estimatedTime: "10:15 WIB",
+        status: "Menunggu Antrean"
+      };
+
+      if (formData.username) {
+        localStorage.setItem("user_active_queue_" + formData.username, JSON.stringify(newQueueItem));
+      }
+
+      try {
+        const savedQueues = localStorage.getItem("clinic_queues");
+        let queuesArr = [];
+        if (savedQueues) {
+          queuesArr = JSON.parse(savedQueues);
+        }
+        queuesArr.push(newQueueItem);
+        localStorage.setItem("clinic_queues", JSON.stringify(queuesArr));
+      } catch (e) {}
+
+      try {
+        await apiService.createQueue(newQueueItem);
+      } catch (e) {}
+    }
+
     localStorage.setItem("registeredUser", JSON.stringify(formData));
     navigate("/login", { state: { username: formData.username, password: formData.password } });
   };

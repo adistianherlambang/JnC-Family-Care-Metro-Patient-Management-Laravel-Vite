@@ -92,7 +92,13 @@ export default function AdminDashboard() {
   }, [queues]);
 
   // Filter State
-  const [queueDateFilter, setQueueDateFilter] = useState("Hari Ini");
+  const [queueDateFilter, setQueueDateFilter] = useState(() => {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  });
 
   // Forms State
   const [newQueue, setNewQueue] = useState({
@@ -100,7 +106,7 @@ export default function AdminDashboard() {
     kategoriLayanan: "",
     service: "",
     doctor: "",
-    date: "Hari Ini"
+    date: ""
   });
 
   const [newDoctor, setNewDoctor] = useState({
@@ -200,12 +206,29 @@ export default function AdminDashboard() {
   const handleAddQueue = async () => {
     if (!newQueue.patientName.trim() || !newQueue.doctor || !newQueue.service) return;
 
+    const getRealDateTimestamp = (val) => {
+      const today = new Date();
+      if (!val) {
+        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+      }
+      const lower = String(val).toLowerCase().trim();
+      if (lower === "hari ini" || lower === "today") {
+        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+      }
+      if (lower === "besok" || lower === "tomorrow") {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+      }
+      return val;
+    };
+
     if (editingQueueId) {
       const payload = {
         patientName: newQueue.patientName.trim(),
         doctor: newQueue.doctor,
         service: newQueue.service,
-        date: newQueue.date
+        date: getRealDateTimestamp(newQueue.date)
       };
       await apiService.updateQueue(editingQueueId, payload);
       const updated = queues.map((q) => (q.id === editingQueueId ? { ...q, ...payload } : q));
@@ -217,7 +240,7 @@ export default function AdminDashboard() {
         patientName: newQueue.patientName.trim(),
         doctor: newQueue.doctor,
         service: newQueue.service,
-        date: newQueue.date,
+        date: getRealDateTimestamp(newQueue.date),
         time: "09:00 WIB",
         status: "Menunggu Antrean"
       };
@@ -535,10 +558,53 @@ export default function AdminDashboard() {
     apiService.saveFaqsLocal(updated);
   };
 
+  const getTodayStr = () => {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  const getTomorrowStr = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const y = tomorrow.getFullYear();
+    const m = String(tomorrow.getMonth() + 1).padStart(2, "0");
+    const d = String(tomorrow.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  const parseToTimestamp = (dateStr) => {
+    if (!dateStr) return "";
+    const lower = String(dateStr).toLowerCase().trim();
+    if (lower === "hari ini" || lower === "today") return getTodayStr();
+    if (lower === "besok" || lower === "tomorrow") return getTomorrowStr();
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+      const [d, m, y] = dateStr.split("/");
+      return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+    }
+
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    return dateStr;
+  };
+
   const filteredQueues = queues.filter((q) => {
-    if (queueDateFilter === "Semua") return true;
-    return q.date === queueDateFilter;
+    if (!queueDateFilter || queueDateFilter === "Semua") return true;
+    return parseToTimestamp(q.date) === parseToTimestamp(queueDateFilter);
   });
+
+  const isToday = (dateStr) => parseToTimestamp(dateStr) === getTodayStr();
 
   const adminCategoryObj = categories.find((c) => c.title === newQueue.kategoriLayanan);
   const adminServiceOptions = adminCategoryObj?.list || [];
@@ -580,9 +646,9 @@ export default function AdminDashboard() {
                 {/* 4 Stat Cards Grid */}
                 <div className={styles.overviewGrid}>
                   <div className={styles.statCard}>
-                    <span className={styles.statLabel}>Total Kunjungan / Antrean</span>
-                    <span className={styles.statValue}>{queues.length} Pasien</span>
-                    <span className={styles.statDesc}>Terdaftar di sistem klinik</span>
+                    <span className={styles.statLabel}>Total Antrean Hari Ini</span>
+                    <span className={styles.statValue}>{queues.filter((q) => isToday(q.date)).length} Pasien</span>
+                    <span className={styles.statDesc}>Terdaftar untuk pelayanan hari ini</span>
                   </div>
                   <div className={styles.statCard}>
                     <span className={styles.statLabel}>Dokter & Bidan Aktif</span>
@@ -713,7 +779,7 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {queues.slice(0, 5).map((q) => (
+                        {queues.filter((q) => isToday(q.date)).slice(0, 5).map((q) => (
                           <tr key={q.id} className={styles.tableTr}>
                             <td style={{ fontWeight: "600", color: "var(--primary)" }}>{q.queueNumber}</td>
                             <td style={{ fontWeight: "500" }}>{q.patientName}</td>
@@ -750,7 +816,11 @@ export default function AdminDashboard() {
                       <div style={{ width: "160px" }}>
                         <InputSelect
                           label=""
-                          options={["Hari Ini", "Besok", "Semua"]}
+                          options={[
+                            { value: getTodayStr(), label: `Hari Ini (${getTodayStr()})` },
+                            { value: getTomorrowStr(), label: `Besok (${getTomorrowStr()})` },
+                            { value: "Semua", label: "Semua Tanggal" }
+                          ]}
                           value={queueDateFilter}
                           onChange={(val) => setQueueDateFilter(val)}
                           placeholder="Filter Tanggal"
@@ -1145,7 +1215,10 @@ export default function AdminDashboard() {
                     />
                     <InputSelect
                       label="Tanggal Layanan"
-                      options={["Hari Ini", "Besok"]}
+                      options={[
+                        { value: getTodayStr(), label: `Hari Ini (${getTodayStr()})` },
+                        { value: getTomorrowStr(), label: `Besok (${getTomorrowStr()})` }
+                      ]}
                       value={newQueue.date}
                       onChange={(val) => setNewQueue({ ...newQueue, date: val, doctor: "", service: "" })}
                       placeholder="Pilih Tanggal Layanan"

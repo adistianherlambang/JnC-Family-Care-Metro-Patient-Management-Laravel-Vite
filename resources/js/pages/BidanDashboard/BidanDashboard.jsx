@@ -69,13 +69,64 @@ export default function BidanDashboard() {
     navigate("/login", { replace: true });
   };
 
-  const pendingQueues = queues.filter((q) => q.status === "Menunggu Antrean" || q.status === "Dipanggil");
-  const servingQueues = queues.filter((q) => q.status === "Sedang Dilayani");
-  const finishedQueues = queues.filter((q) => q.status === "Selesai");
+  const getTodayStr = () => {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  const getTomorrowStr = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const y = tomorrow.getFullYear();
+    const m = String(tomorrow.getMonth() + 1).padStart(2, "0");
+    const d = String(tomorrow.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  const parseToTimestamp = (dateStr) => {
+    if (!dateStr) return "";
+    const lower = String(dateStr).toLowerCase().trim();
+    if (lower === "hari ini" || lower === "today") return getTodayStr();
+    if (lower === "besok" || lower === "tomorrow") return getTomorrowStr();
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+      const [d, m, y] = dateStr.split("/");
+      return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+    }
+
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    return dateStr;
+  };
+
+  const [queueDateFilter, setQueueDateFilter] = useState(getTodayStr());
+
+  const todayTimestamp = getTodayStr();
+  const todayQueues = queues.filter((q) => parseToTimestamp(q.date) === todayTimestamp);
+
+  const filteredQueues = queues.filter((q) => {
+    if (!queueDateFilter || queueDateFilter === "Semua") return true;
+    return parseToTimestamp(q.date) === parseToTimestamp(queueDateFilter);
+  });
+
+  const pendingQueues = todayQueues.filter((q) => q.status === "Menunggu Antrean" || q.status === "Dipanggil");
+  const servingQueues = todayQueues.filter((q) => q.status === "Sedang Dilayani");
+  const finishedQueues = todayQueues.filter((q) => q.status === "Selesai");
 
   const bidanMenuItems = [
     { id: "overview", label: "Dashboard Ringkasan" },
-    { id: "antrean", label: `Antrean Pasien Saya (${queues.length})` },
+    { id: "antrean", label: `Antrean Pasien Saya (${filteredQueues.length})` },
     { id: "jadwal", label: "Jadwal Praktik & Layanan" },
     { id: "profil", label: "Profil Praktisi Medis" }
   ];
@@ -99,49 +150,49 @@ export default function BidanDashboard() {
       )}
 
       {activeMenu === "overview" && (
-              <>
-                <div className={styles.header}>
-                  <p className={styles.title}>Dasbor Pelayanan Bidan / Praktisi Medis</p>
-                  <p className={styles.desc}>Selamat bertugas! Pantau dan kelola kehadiran pasien serta rekam catatan pelayanan hari ini.</p>
-                </div>
+        <>
+          <div className={styles.header}>
+            <p className={styles.title}>Dasbor Pelayanan Bidan / Praktisi Medis</p>
+            <p className={styles.desc}>Selamat bertugas! Pantau dan kelola kehadiran pasien serta rekam catatan pelayanan hari ini.</p>
+          </div>
 
-                <div className={styles.statsGrid}>
-                  <div className={styles.statCard}>
-                    <span className={styles.statTitle}>Total Pasien Hari Ini</span>
-                    <span className={styles.statValue}>{queues.length}</span>
-                  </div>
-                  <div className={styles.statCard}>
-                    <span className={styles.statTitle}>Menunggu Pelayanan</span>
-                    <span className={styles.statValue} style={{ color: "#d97706" }}>{pendingQueues.length}</span>
-                  </div>
-                  <div className={styles.statCard}>
-                    <span className={styles.statTitle}>Sedang Dilayani</span>
-                    <span className={styles.statValue} style={{ color: "#2563eb" }}>{servingQueues.length}</span>
-                  </div>
-                  <div className={styles.statCard}>
-                    <span className={styles.statTitle}>Selesai Dilayani</span>
-                    <span className={styles.statValue} style={{ color: "#059669" }}>{finishedQueues.length}</span>
-                  </div>
-                </div>
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <span className={styles.statTitle}>Total Pasien Hari Ini</span>
+              <span className={styles.statValue}>{todayQueues.length}</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statTitle}>Menunggu Pelayanan</span>
+              <span className={styles.statValue} style={{ color: "#d97706" }}>{pendingQueues.length}</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statTitle}>Sedang Dilayani</span>
+              <span className={styles.statValue} style={{ color: "#2563eb" }}>{servingQueues.length}</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statTitle}>Selesai Dilayani</span>
+              <span className={styles.statValue} style={{ color: "#059669" }}>{finishedQueues.length}</span>
+            </div>
+          </div>
 
-                <div className={styles.tableWrapper}>
-                  <div className={styles.tableHeader}>
-                    <h3 className={styles.tableTitle}>Daftar Antrean Pasien Terkini</h3>
-                    <Button size="sm" onClick={() => setActiveMenu("antrean")}>Lihat Semua Antrean</Button>
-                  </div>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>No. Antrean</th>
-                        <th>Nama Pasien</th>
-                        <th>Layanan Medis</th>
-                        <th>Waktu Kunjungan</th>
-                        <th>Status Antrean</th>
-                        <th>Aksi Bidan</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {queues.slice(0, 5).map((item) => (
+          <div className={styles.tableWrapper}>
+            <div className={styles.tableHeader}>
+              <h3 className={styles.tableTitle}>Daftar Antrean Pasien Hari Ini</h3>
+              <Button size="sm" onClick={() => setActiveMenu("antrean")}>Lihat Semua Antrean</Button>
+            </div>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>No. Antrean</th>
+                  <th>Nama Pasien</th>
+                  <th>Layanan Medis</th>
+                  <th>Waktu Kunjungan</th>
+                  <th>Status Antrean</th>
+                  <th>Aksi Bidan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {todayQueues.slice(0, 5).map((item) => (
                         <tr key={item.id}>
                           <td><strong>{item.queueNumber || item.queue_number}</strong></td>
                           <td>{item.patientName || item.patient_name}</td>
@@ -178,6 +229,21 @@ export default function BidanDashboard() {
                 </div>
 
                 <div className={styles.tableWrapper}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                    <h3 className={styles.tableTitle}>Daftar Antrean Pasien</h3>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontSize: "14px", fontFamily: "var(--artico)", color: "#4b5563" }}>Filter Tanggal:</span>
+                      <select
+                        value={queueDateFilter}
+                        onChange={(e) => setQueueDateFilter(e.target.value)}
+                        style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontFamily: "var(--artico)", fontSize: "14px" }}
+                      >
+                        <option value={getTodayStr()}>Hari Ini ({getTodayStr()})</option>
+                        <option value={getTomorrowStr()}>Besok ({getTomorrowStr()})</option>
+                        <option value="Semua">Semua Tanggal</option>
+                      </select>
+                    </div>
+                  </div>
                   <table className={styles.table}>
                     <thead>
                       <tr>
@@ -191,7 +257,7 @@ export default function BidanDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {queues.map((item) => (
+                      {filteredQueues.map((item) => (
                         <tr key={item.id}>
                           <td><strong>{item.queueNumber || item.queue_number}</strong></td>
                           <td>{item.patientName || item.patient_name}</td>

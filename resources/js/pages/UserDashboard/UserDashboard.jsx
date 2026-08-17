@@ -110,29 +110,52 @@ export default function UserDashboard() {
     fetchDynamicData();
   }, [activeMenu]);
 
+  const getTodayStr = () => {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  const getTomorrowStr = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const y = tomorrow.getFullYear();
+    const m = String(tomorrow.getMonth() + 1).padStart(2, "0");
+    const d = String(tomorrow.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
   const getDayName = (dateVal) => {
     const daysMap = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const now = new Date();
+    if (!dateVal) return daysMap[new Date().getDay()];
 
-    if (dateVal === "Hari Ini" || !dateVal) {
-      return daysMap[now.getDay()];
+    const lower = String(dateVal).toLowerCase().trim();
+    if (lower === "hari ini" || lower === "today" || dateVal === getTodayStr()) {
+      return daysMap[new Date().getDay()];
     }
-    if (dateVal === "Besok") {
-      const tomorrow = new Date(now);
-      tomorrow.setDate(now.getDate() + 1);
+    if (lower === "besok" || lower === "tomorrow" || dateVal === getTomorrowStr()) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
       return daysMap[tomorrow.getDay()];
     }
-    if (dateVal && dateVal.length === 10) {
-      const parts = dateVal.split("/");
-      if (parts.length === 3) {
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1;
-        const year = parseInt(parts[2], 10);
-        const d = new Date(year, month, day);
-        if (!isNaN(d.getTime())) {
-          return daysMap[d.getDay()];
-        }
-      }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateVal)) {
+      const [y, m, d] = dateVal.split("-").map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      return daysMap[dateObj.getDay()];
+    }
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateVal)) {
+      const [d, m, y] = dateVal.split("/").map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      return daysMap[dateObj.getDay()];
+    }
+
+    const parsed = new Date(dateVal);
+    if (!isNaN(parsed.getTime())) {
+      return daysMap[parsed.getDay()];
     }
     return null;
   };
@@ -176,12 +199,29 @@ export default function UserDashboard() {
       return;
     }
 
+    const getRealDateTimestamp = (val) => {
+      const today = new Date();
+      if (!val) {
+        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+      }
+      const lower = String(val).toLowerCase().trim();
+      if (lower === "hari ini" || lower === "today") {
+        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+      }
+      if (lower === "besok" || lower === "tomorrow") {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+      }
+      return val;
+    };
+
     const payload = {
       patientName: currentUser?.patient?.name || "Pasien",
       doctor: newQueueData.dokter,
       specialty: "Pelayanan Ibu & Anak",
       service: newQueueData.layanan,
-      date: newQueueData.tanggalLayanan,
+      date: getRealDateTimestamp(newQueueData.tanggalLayanan),
       time: "10:00 WIB",
       estimatedTime: "10:15 WIB",
       status: "Menunggu Antrean",
@@ -338,7 +378,10 @@ export default function UserDashboard() {
                       <div className={styles.inputWrapper}>
                         <InputSelect
                           label="Tanggal Layanan"
-                          options={["Hari Ini", "Besok"]}
+                          options={[
+                            { value: getTodayStr(), label: `Hari Ini (${getTodayStr()})` },
+                            { value: getTomorrowStr(), label: `Besok (${getTomorrowStr()})` }
+                          ]}
                           value={newQueueData.tanggalLayanan}
                           onChange={(val) => {
                             setNewQueueData({
