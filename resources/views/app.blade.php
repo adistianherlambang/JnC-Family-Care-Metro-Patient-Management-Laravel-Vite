@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pelayanan Pasien Ibu & Anak</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    @viteReactRefresh
+    @if (file_exists(public_path('hot')))
+        @viteReactRefresh
+    @endif
     @vite(['resources/css/index.css', 'resources/js/main.jsx'])
 </head>
 <body>
