@@ -35,6 +35,7 @@ export default function DashboardLayout({
               className={`${styles.menuItem} ${activeMenu === item.id ? styles.menuItemActive : ""}`}
               onClick={() => onMenuChange && onMenuChange(item.id)}
             >
+              {item.svg}
               {item.label}
             </div>
           ))}
