@@ -541,6 +541,11 @@ export default function UserDashboard() {
         const totalNewsPages = Math.ceil(newsList.length / newsPerPage) || 1;
         const currentNewsList = newsList.slice((newsPage - 1) * newsPerPage, newsPage * newsPerPage);
 
+        const isFirstPage = newsPage === 1;
+        const featuredMain = isFirstPage && currentNewsList.length > 0 ? currentNewsList[0] : null;
+        const featuredSide = isFirstPage && currentNewsList.length > 1 ? currentNewsList.slice(1, 5) : [];
+        const gridList = isFirstPage ? currentNewsList.slice(5, 10) : currentNewsList;
+
         return (
           <>
             <div className={styles.header}>
@@ -550,55 +555,195 @@ export default function UserDashboard() {
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              {currentNewsList.map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    backgroundColor: "white",
-                    padding: "24px",
-                    borderRadius: "16px",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
-                    cursor: "pointer"
-                  }}
-                  onClick={() => setSelectedArticle(item)}
-                >
-                  {item.image && (
-                    <div style={{ width: "100%", height: "180px", borderRadius: "12px", overflow: "hidden", marginBottom: "16px" }}>
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        onError={(e) => {
-                          e.target.style.display = "none";
+            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+              {isFirstPage && (
+                <>
+                  <div style={{ display: "grid", gridTemplateColumns: currentNewsList.length > 1 ? "1.2fr 1fr" : "1fr", gap: "24px", alignItems: "stretch" }}>
+                    {featuredMain && (
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          borderRadius: "20px",
+                          padding: "24px",
+                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
+                          display: "flex",
+                          flexDirection: "column",
+                          justify: "space-between",
+                          cursor: "pointer"
                         }}
-                      />
+                        onClick={() => setSelectedArticle(featuredMain)}
+                      >
+                        <div>
+                          <div style={{ width: "100%", height: "240px", borderRadius: "14px", overflow: "hidden", marginBottom: "16px" }}>
+                            <img
+                              src={featuredMain.image || "/img/landingPage/artikel1.png"}
+                              alt={featuredMain.title}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              onError={(e) => { e.target.src = "/img/landingPage/artikel1.png"; }}
+                            />
+                          </div>
+                          <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 6px 0" }}>
+                            {featuredMain.category} • {featuredMain.readTime || featuredMain.read_time || "3 min read"} • {featuredMain.date}
+                          </p>
+                          <h3 style={{ fontFamily: "var(--font-antonia)", fontSize: "20px", fontWeight: 700, color: "var(--primary)", margin: "0 0 10px 0", lineHeight: "1.3" }}>
+                            {featuredMain.title}
+                          </h3>
+                          <p style={{ fontFamily: "var(--font-artico)", fontSize: "14px", color: "#4b5563", margin: 0, lineHeight: "1.5" }}>
+                            {featuredMain.summary}
+                          </p>
+                        </div>
+                        <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
+                          <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
+                            Baca Selengkapnya
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {featuredSide.length > 0 && (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "12px",
+                          maxHeight: "520px",
+                          overflowY: "auto"
+                        }}
+                      >
+                        {featuredSide.map((item) => (
+                          <div
+                            key={item.id}
+                            style={{
+                              backgroundColor: "white",
+                              borderRadius: "16px",
+                              padding: "16px",
+                              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
+                              display: "flex",
+                              gap: "14px",
+                              alignItems: "center",
+                              cursor: "pointer",
+                              flex: 1
+                            }}
+                            onClick={() => setSelectedArticle(item)}
+                          >
+                            <div style={{ width: "90px", height: "70px", borderRadius: "10px", overflow: "hidden", flexShrink: 0 }}>
+                              <img
+                                src={item.image || "/img/landingPage/artikel2.png"}
+                                alt={item.title}
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                onError={(e) => { e.target.src = "/img/landingPage/artikel2.png"; }}
+                              />
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
+                                {item.category} • {item.date}
+                              </p>
+                              <h4 style={{ fontFamily: "var(--font-antonia)", fontSize: "15px", fontWeight: 700, color: "#1F2937", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {item.title}
+                              </h4>
+                              <p style={{ fontSize: "13px", color: "#6b7280", margin: "4px 0 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {item.summary}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {gridList.length > 0 && (
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
+                      {gridList.map((item) => (
+                        <div
+                          key={item.id}
+                          style={{
+                            backgroundColor: "white",
+                            borderRadius: "16px",
+                            padding: "20px",
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
+                            display: "flex",
+                            flexDirection: "column",
+                            justify: "space-between",
+                            cursor: "pointer"
+                          }}
+                          onClick={() => setSelectedArticle(item)}
+                        >
+                          <div>
+                            <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "14px" }}>
+                              <img
+                                src={item.image || "/img/landingPage/artikel3.png"}
+                                alt={item.title}
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                onError={(e) => { e.target.src = "/img/landingPage/artikel3.png"; }}
+                              />
+                            </div>
+                            <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
+                              {item.category} • {item.date}
+                            </p>
+                            <h4 style={{ fontFamily: "var(--font-antonia)", fontSize: "16px", fontWeight: 700, color: "var(--primary)", margin: "0 0 8px 0" }}>
+                              {item.title}
+                            </h4>
+                            <p style={{ fontSize: "13px", color: "#4b5563", margin: 0, lineHeight: "1.5" }}>
+                              {item.summary}
+                            </p>
+                          </div>
+                          <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                            <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
+                              Baca Selengkapnya
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
-                  <div className={styles.confirm}>
-                    <p className={styles.label}>
-                      {item.category} • {item.readTime || item.read_time || "3 min read"} • {item.date}
-                    </p>
-                    <p className={styles.value} style={{ fontWeight: 700, fontSize: "18px", color: "var(--primary)", marginTop: "4px" }}>
-                      {item.title}
-                    </p>
-                  </div>
-                  <div className={styles.confirm} style={{ marginTop: "8px" }}>
-                    <p className={styles.value} style={{ color: "#4b5563", lineHeight: "1.6" }}>{item.summary}</p>
-                  </div>
-                  <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
-                    <Button
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedArticle(item);
+                </>
+              )}
+
+              {!isFirstPage && (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
+                  {gridList.map((item) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        backgroundColor: "white",
+                        borderRadius: "16px",
+                        padding: "20px",
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
+                        display: "flex",
+                        flexDirection: "column",
+                        justify: "space-between",
+                        cursor: "pointer"
                       }}
+                      onClick={() => setSelectedArticle(item)}
                     >
-                      Baca Selengkapnya
-                    </Button>
-                  </div>
+                      <div>
+                        <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "14px" }}>
+                          <img
+                            src={item.image || "/img/landingPage/artikel1.png"}
+                            alt={item.title}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            onError={(e) => { e.target.src = "/img/landingPage/artikel1.png"; }}
+                          />
+                        </div>
+                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
+                          {item.category} • {item.date}
+                        </p>
+                        <h4 style={{ fontFamily: "var(--font-antonia)", fontSize: "16px", fontWeight: 700, color: "var(--primary)", margin: "0 0 8px 0" }}>
+                          {item.title}
+                        </h4>
+                        <p style={{ fontSize: "13px", color: "#4b5563", margin: 0, lineHeight: "1.5" }}>
+                          {item.summary}
+                        </p>
+                      </div>
+                      <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                        <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
+                          Baca Selengkapnya
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
 
               {newsList.length > newsPerPage && (
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginTop: "12px", padding: "16px", backgroundColor: "white", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
