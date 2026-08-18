@@ -593,7 +593,7 @@ export default function UserDashboard() {
                           </p>
                         </div>
                         <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
-                          <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
+                          <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
                             Baca Selengkapnya
                           </Button>
                         </div>
@@ -626,7 +626,7 @@ export default function UserDashboard() {
                             }}
                             onClick={() => setSelectedArticle(item)}
                           >
-                            <div style={{ width: "90px", height: "70px", borderRadius: "10px", overflow: "hidden", flexShrink: 0 }}>
+                            <div style={{ width: "80px", height: "80px", aspectRatio: "1 / 1", borderRadius: "10px", overflow: "hidden", flexShrink: 0 }}>
                               <img
                                 src={item.image || "/img/landingPage/artikel2.png"}
                                 alt={item.title}
