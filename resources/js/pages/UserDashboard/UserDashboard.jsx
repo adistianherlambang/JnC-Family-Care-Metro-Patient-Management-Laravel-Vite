@@ -205,6 +205,8 @@ export default function UserDashboard() {
     });
   });
 
+  const doctorOptions = availableDoctors.map((doc) => doc.doctor || doc.name);
+
   const getCategoryForQueue = (item) => {
     if (item.category_name) return item.category_name;
     if (item.category) return item.category;
