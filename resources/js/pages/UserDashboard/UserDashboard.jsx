@@ -20,6 +20,7 @@ export default function UserDashboard() {
   const [newsList, setNewsList] = useState([]);
   const [newsPage, setNewsPage] = useState(1);
   const [faqList, setFaqList] = useState([]);
+  const [patientQueuesList, setPatientQueuesList] = useState([]);
 
   const [newQueueData, setNewQueueData] = useState({
     tanggalLayanan: "",
@@ -109,13 +110,22 @@ export default function UserDashboard() {
       const faqsData = await apiService.getFaqs();
       setFaqList(faqsData);
 
+      const allQueues = await apiService.getQueues();
+
       const loggedInUsername = localStorage.getItem("loggedInUser");
       if (loggedInUsername) {
+        const patientNameLower = (currentUser?.patient?.name || loggedInUsername || "").toLowerCase().trim();
+
+        const userQueues = allQueues.filter((q) => {
+          const qName = (q.patientName || q.patient_name || "").toLowerCase().trim();
+          return qName.includes(patientNameLower) || patientNameLower.includes(qName) || qName === patientNameLower;
+        });
+        setPatientQueuesList(userQueues);
+
         const savedUserQueue = localStorage.getItem("user_active_queue_" + loggedInUsername);
         if (savedUserQueue) {
           try {
             const parsed = JSON.parse(savedUserQueue);
-            const allQueues = await apiService.getQueues();
             const match = allQueues.find((q) => String(q.id) === String(parsed.id) || q.queueNumber === parsed.queueNumber);
             if (match) {
               setActiveQueue(match);
@@ -126,7 +136,7 @@ export default function UserDashboard() {
       }
     }
     fetchDynamicData();
-  }, [activeMenu]);
+  }, [activeMenu, currentUser]);
 
   const getTodayStr = () => {
     const today = new Date();
@@ -507,30 +517,86 @@ export default function UserDashboard() {
           <div className={styles.header}>
             <Title
               title="Riwayat Pelayanan Pasien"
-              desc="Catatan riwayat kunjungan dan rekam medis digital Anda."
+              desc="Catatan riwayat kunjungan antrean dan rekam medis digital Anda."
             />
           </div>
 
           <div className={styles.inputContainer}>
-            {currentUser.visitHistory.length > 0 ? (
-              currentUser.visitHistory.map((item) => (
-                <div key={item.id} className={styles.inputWrapper}>
-                  <div className={styles.confirm}>
-                    <p className={styles.label}>{item.date} - {item.service}</p>
-                    <p className={styles.value}>{item.doctor}</p>
+            {patientQueuesList.length > 0 ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {patientQueuesList.map((item) => (
+                  <div
+                    key={item.id}
+                    style={{
+                      backgroundColor: "white",
+                      padding: "20px",
+                      borderRadius: "16px",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px"
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>
+                        <span style={{ fontSize: "12px", color: "#6b7280", fontWeight: 600 }}>Nomor Antrean</span>
+                        <h4 style={{ fontSize: "18px", fontWeight: 700, color: "var(--primary)", margin: "2px 0 0 0" }}>
+                          {item.queueNumber || item.queue_number || `A-${String(item.id).padStart(3, "0")}`}
+                        </h4>
+                      </div>
+                      <span
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: "20px",
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          backgroundColor:
+                            item.status === "Selesai"
+                              ? "#ECFDF5"
+                              : item.status === "Dibatalkan"
+                              ? "#FEF2F2"
+                              : item.status === "Sedang Dilayani"
+                              ? "#EFF6FF"
+                              : "#FFFBEB",
+                          color:
+                            item.status === "Selesai"
+                              ? "#059669"
+                              : item.status === "Dibatalkan"
+                              ? "#DC2626"
+                              : item.status === "Sedang Dilayani"
+                              ? "#2563EB"
+                              : "#D97706"
+                        }}
+                      >
+                        {item.status || "Menunggu Antrean"}
+                      </span>
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginTop: "4px" }}>
+                      <div>
+                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 2px 0" }}>Layanan & Kategori</p>
+                        <p style={{ fontSize: "14px", fontWeight: 600, color: "#1F2937", margin: 0 }}>
+                          {item.service || item.service_name} {item.category_name ? `(${item.category_name})` : ""}
+                        </p>
+                      </div>
+                      <div>
+                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 2px 0" }}>Dokter / Praktisi</p>
+                        <p style={{ fontSize: "14px", fontWeight: 600, color: "#1F2937", margin: 0 }}>
+                          {item.doctor || item.doctor_name}
+                        </p>
+                      </div>
+                      <div>
+                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 2px 0" }}>Tanggal & Waktu</p>
+                        <p style={{ fontSize: "14px", fontWeight: 600, color: "#1F2937", margin: 0 }}>
+                          {item.date} • {item.time || "09:00 WIB"}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className={styles.confirm}>
-                    <p className={styles.label}>Diagnosa / Hasil Pemeriksaan</p>
-                    <p className={styles.value}>{item.diagnosis}</p>
-                  </div>
-                  <div className={styles.confirm}>
-                    <p className={styles.label}>Catatan Medis</p>
-                    <p className={styles.value}>{item.notes}</p>
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
-              <p className={styles.desc}>Belum ada riwayat kunjungan medis tercatat.</p>
+              <p className={styles.desc}>Belum ada riwayat kunjungan antrean medis tercatat.</p>
             )}
           </div>
         </>
@@ -771,7 +837,6 @@ export default function UserDashboard() {
               {newsList.length > newsPerPage && (
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginTop: "12px" }}>
                   <Button
-                    size="sm"
                     variant="secondary"
                     disabled={newsPage === 1}
                     onClick={() => setNewsPage((p) => Math.max(p - 1, 1))}
@@ -782,7 +847,6 @@ export default function UserDashboard() {
                     Halaman {newsPage} dari {totalNewsPages}
                   </span>
                   <Button
-                    size="sm"
                     variant="secondary"
                     disabled={newsPage === totalNewsPages}
                     onClick={() => setNewsPage((p) => Math.min(p + 1, totalNewsPages))}
