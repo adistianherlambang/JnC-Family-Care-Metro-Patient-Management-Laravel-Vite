@@ -871,59 +871,65 @@ export default function AdminDashboard() {
                 Status Antrean Pasien Hari Ini
               </p>
 
-              <div className={styles.progressItem}>
-                <div className={styles.progressLabelRow}>
-                  <span>Menunggu Antrean</span>
-                  <span>{queues.filter((q) => q.status === "Menunggu Antrean").length} Pasien</span>
-                </div>
-                <div className={styles.progressBarTrack}>
-                  <div
-                    className={styles.progressBarFill}
-                    style={{
-                      width: queues.length > 0
-                        ? `${(queues.filter((q) => q.status === "Menunggu Antrean").length / queues.length) * 100}%`
-                        : "0%",
-                      backgroundColor: "#c2410c"
-                    }}
-                  />
-                </div>
-              </div>
+              {(() => {
+                const todayOverviewQueues = queues.filter((q) => isToday(q.date));
+                const waitingCount = todayOverviewQueues.filter((q) => q.status === "Menunggu Antrean").length;
+                const servingCount = todayOverviewQueues.filter((q) => q.status === "Dipanggil" || q.status === "Sedang Dilayani").length;
+                const finishedCount = todayOverviewQueues.filter((q) => q.status === "Selesai").length;
+                const totalToday = todayOverviewQueues.length;
 
-              <div className={styles.progressItem}>
-                <div className={styles.progressLabelRow}>
-                  <span>Sedang Dipanggil / Pelayanan</span>
-                  <span>{queues.filter((q) => q.status === "Dipanggil").length} Pasien</span>
-                </div>
-                <div className={styles.progressBarTrack}>
-                  <div
-                    className={styles.progressBarFill}
-                    style={{
-                      width: queues.length > 0
-                        ? `${(queues.filter((q) => q.status === "Dipanggil").length / queues.length) * 100}%`
-                        : "0%",
-                      backgroundColor: "var(--primary)"
-                    }}
-                  />
-                </div>
-              </div>
+                return (
+                  <>
+                    <div className={styles.progressItem}>
+                      <div className={styles.progressLabelRow}>
+                        <span>Menunggu Antrean</span>
+                        <span>{waitingCount} Pasien</span>
+                      </div>
+                      <div className={styles.progressBarTrack}>
+                        <div
+                          className={styles.progressBarFill}
+                          style={{
+                            width: totalToday > 0 ? `${(waitingCount / totalToday) * 100}%` : "0%",
+                            backgroundColor: "#c2410c"
+                          }}
+                        />
+                      </div>
+                    </div>
 
-              <div className={styles.progressItem}>
-                <div className={styles.progressLabelRow}>
-                  <span>Selesai Konsultasi</span>
-                  <span>{queues.filter((q) => q.status === "Selesai").length} Pasien</span>
-                </div>
-                <div className={styles.progressBarTrack}>
-                  <div
-                    className={styles.progressBarFill}
-                    style={{
-                      width: queues.length > 0
-                        ? `${(queues.filter((q) => q.status === "Selesai").length / queues.length) * 100}%`
-                        : "0%",
-                      backgroundColor: "#16a34a"
-                    }}
-                  />
-                </div>
-              </div>
+                    <div className={styles.progressItem}>
+                      <div className={styles.progressLabelRow}>
+                        <span>Sedang Dipanggil / Pelayanan</span>
+                        <span>{servingCount} Pasien</span>
+                      </div>
+                      <div className={styles.progressBarTrack}>
+                        <div
+                          className={styles.progressBarFill}
+                          style={{
+                            width: totalToday > 0 ? `${(servingCount / totalToday) * 100}%` : "0%",
+                            backgroundColor: "var(--primary)"
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.progressItem}>
+                      <div className={styles.progressLabelRow}>
+                        <span>Selesai Konsultasi</span>
+                        <span>{finishedCount} Pasien</span>
+                      </div>
+                      <div className={styles.progressBarTrack}>
+                        <div
+                          className={styles.progressBarFill}
+                          style={{
+                            width: totalToday > 0 ? `${(finishedCount / totalToday) * 100}%` : "0%",
+                            backgroundColor: "#16a34a"
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Kategori Pelayanan Utama */}
