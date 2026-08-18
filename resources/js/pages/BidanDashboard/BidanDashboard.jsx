@@ -381,17 +381,18 @@ export default function BidanDashboard() {
           <Table
             title="Daftar Antrean Pasien"
             headerAction={
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "14px", fontFamily: "var(--artico)", color: "#4b5563" }}>Filter Tanggal:</span>
-                <select
+              <div style={{ width: "160px" }}>
+                <InputSelect
+                  label=""
+                  options={[
+                    { value: getTodayStr(), label: `Hari Ini` },
+                    { value: getTomorrowStr(), label: `Besok` },
+                    { value: "Semua", label: "Semua Tanggal" }
+                  ]}
                   value={queueDateFilter}
-                  onChange={(e) => setQueueDateFilter(e.target.value)}
-                  style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontFamily: "var(--artico)", fontSize: "14px" }}
-                >
-                  <option value={getTodayStr()}>Hari Ini ({getTodayStr()})</option>
-                  <option value={getTomorrowStr()}>Besok ({getTomorrowStr()})</option>
-                  <option value="Semua">Semua Tanggal</option>
-                </select>
+                  onChange={(val) => setQueueDateFilter(val)}
+                  placeholder="Filter Tanggal"
+                />
               </div>
             }
           >
