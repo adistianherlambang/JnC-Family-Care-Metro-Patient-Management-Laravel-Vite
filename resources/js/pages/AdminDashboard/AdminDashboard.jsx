@@ -1042,7 +1042,7 @@ export default function AdminDashboard() {
 
           <div className={styles.inputContainer}>
             <Table
-              title={`Daftar Dokter Terdaftar (${doctors.length})`}
+              title={`Daftar Dokter Terdaftar`}
               headerAction={
                 <Button onClick={handleOpenAddDoctorModal}>
                   + Tambah Dokter Baru
@@ -1054,7 +1054,8 @@ export default function AdminDashboard() {
                   <th>Foto</th>
                   <th>Nama Dokter & Gelar</th>
                   <th>Peran / Spesialisasi</th>
-                  <th>Info Akun Login</th>
+                  <th>Username</th>
+                  <th>Password</th>
                   <th>Jadwal Praktik</th>
                   <th>Layanan Utama</th>
                   <th>Aksi</th>
@@ -1062,7 +1063,7 @@ export default function AdminDashboard() {
               </thead>
               <tbody>
                 {doctors.map((doc, idx) => {
-                  const docUsername = doc.username || (doc.doctor.toLowerCase().includes("fitri") ? "bidan" : doc.doctor.toLowerCase().includes("aulia") ? "dr.aulia" : "bidan.siti");
+                  const docUsername = doc.username || (doc.doctor.toLowerCase().includes("fitri") ? "bidan" : doc.doctor.toLowerCase().includes("aulia") ? "dr.aulia" : doc.doctor.toLowerCase().includes("nabila") ? "bidan.nabila" : "bidan.siti");
                   const docPassword = doc.password || "bidan123";
                   return (
                     <tr key={idx}>
@@ -1075,14 +1076,8 @@ export default function AdminDashboard() {
                       </td>
                       <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
                       <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
-                      <td>
-                        <div style={{ fontSize: "13px", fontWeight: "600", color: "var(--primary)" }}>
-                          Username: {docUsername}
-                        </div>
-                        <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "4px" }}>
-                          🔑 Password: <code style={{ backgroundColor: "#f3f4f6", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{docPassword}</code>
-                        </div>
-                      </td>
+                      <td><span className={styles.codeBadge}>{docUsername}</span></td>
+                      <td><span className={styles.codeBadge}>•••••••• ({docPassword})</span></td>
                       <td>
                         {doc.schedules.map((s, i) => (
                           <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
@@ -1132,7 +1127,7 @@ export default function AdminDashboard() {
 
           <div className={styles.inputContainer}>
             <Table
-              title={`Daftar Akun Pasien (${patients.length})`}
+              title={`Daftar Akun Pasien`}
               headerAction={
                 <Button onClick={handleOpenAddPatientModal}>
                   + Tambah Pasien Baru
@@ -1157,7 +1152,7 @@ export default function AdminDashboard() {
                     <td>{item.name || item.patient_name}</td>
                     <td><span className={styles.codeBadge}>{item.username}</span></td>
                     <td><span className={styles.codeBadge}>•••••••• ({item.password || "user123"})</span></td>
-                    <td>{item.phone || "-"} <br/><small style={{ color: "#6b7280" }}>{item.email || "-"}</small></td>
+                    <td>{item.phone || "-"} <br /><small style={{ color: "#6b7280" }}>{item.email || "-"}</small></td>
                     <td>{item.address || "-"}</td>
                     <td>
                       <Table.ActionCell>
@@ -1210,7 +1205,7 @@ export default function AdminDashboard() {
 
           <div className={styles.inputContainer}>
             <Table
-              title={`Daftar Kategori Layanan (${categories.length})`}
+              title={`Daftar Kategori Layanan`}
               headerAction={
                 <Button onClick={handleOpenAddCategoryModal}>
                   + Tambah Kategori Layanan
@@ -1273,7 +1268,7 @@ export default function AdminDashboard() {
 
           <div className={styles.inputContainer}>
             <Table
-              title={`Daftar Artikel Terbit (${news.length})`}
+              title={`Daftar Artikel Terbit`}
               headerAction={
                 <Button onClick={handleOpenAddNewsModal}>
                   + Tambah Artikel Baru
@@ -1347,7 +1342,7 @@ export default function AdminDashboard() {
 
           <div className={styles.inputContainer}>
             <Table
-              title={`Daftar Pertanyaan FAQ (${faqs.length})`}
+              title={`Daftar Pertanyaan FAQ`}
               headerAction={
                 <Button onClick={handleOpenAddFaqModal}>
                   + Tambah FAQ Baru
@@ -1400,11 +1395,11 @@ export default function AdminDashboard() {
         onClose={() => setIsModalOpen(false)}
         title={
           activeMenu === "antrean" ? (editingQueueId ? "Edit Antrean Walk-In" : "Tambah Antrean Walk-In Baru") :
-          activeMenu === "dokter" ? (editingDoctorName ? "Edit Data & Jadwal Dokter" : "Tambah Dokter Baru") :
-          activeMenu === "pasien" ? (editingPatientId ? "Edit Akun & Data Pasien" : "Tambah Pasien Baru") :
-          activeMenu === "poli" ? (editingCategoryTitle ? "Edit Layanan" : "Tambah Layanan Baru") :
-          activeMenu === "artikel" ? (editingNewsId ? "Edit Artikel" : "Tambah Artikel Baru") :
-          activeMenu === "faq" ? (editingFaqId ? "Edit FAQ" : "Tambah Pertanyaan FAQ Baru") : ""
+            activeMenu === "dokter" ? (editingDoctorName ? "Edit Data & Jadwal Dokter" : "Tambah Dokter Baru") :
+              activeMenu === "pasien" ? (editingPatientId ? "Edit Akun & Data Pasien" : "Tambah Pasien Baru") :
+                activeMenu === "poli" ? (editingCategoryTitle ? "Edit Layanan" : "Tambah Layanan Baru") :
+                  activeMenu === "artikel" ? (editingNewsId ? "Edit Artikel" : "Tambah Artikel Baru") :
+                    activeMenu === "faq" ? (editingFaqId ? "Edit FAQ" : "Tambah Pertanyaan FAQ Baru") : ""
         }
         footer={
           <>
