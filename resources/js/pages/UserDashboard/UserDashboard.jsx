@@ -534,9 +534,7 @@ export default function UserDashboard() {
             )}
           </div>
         </>
-      )}
-
-      {activeMenu === "berita" && (() => {
+      )}      {activeMenu === "berita" && (() => {
         const newsPerPage = 10;
         const totalNewsPages = Math.ceil(newsList.length / newsPerPage) || 1;
         const currentNewsList = newsList.slice((newsPage - 1) * newsPerPage, newsPage * newsPerPage);
@@ -545,6 +543,19 @@ export default function UserDashboard() {
         const featuredMain = isFirstPage && currentNewsList.length > 0 ? currentNewsList[0] : null;
         const featuredSide = isFirstPage && currentNewsList.length > 1 ? currentNewsList.slice(1, 5) : [];
         const gridList = isFirstPage ? currentNewsList.slice(5, 10) : currentNewsList;
+
+        const defaultFallbacks = [
+          "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&q=80",
+          "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80",
+          "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=800&q=80"
+        ];
+
+        const getImgSrc = (item, idx) => {
+          if (item && item.image && String(item.image).trim() !== "") {
+            return item.image;
+          }
+          return defaultFallbacks[idx % defaultFallbacks.length];
+        };
 
         return (
           <>
@@ -576,10 +587,13 @@ export default function UserDashboard() {
                         <div>
                           <div style={{ width: "100%", height: "240px", borderRadius: "14px", overflow: "hidden", marginBottom: "16px" }}>
                             <img
-                              src={featuredMain.image || "/img/landingPage/artikel1.png"}
+                              src={getImgSrc(featuredMain, 0)}
                               alt={featuredMain.title}
                               style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                              onError={(e) => { e.target.src = "/img/landingPage/artikel1.png"; }}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = defaultFallbacks[0];
+                              }}
                             />
                           </div>
                           <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 6px 0" }}>
@@ -610,7 +624,7 @@ export default function UserDashboard() {
                           overflowY: "auto"
                         }}
                       >
-                        {featuredSide.map((item) => (
+                        {featuredSide.map((item, idx) => (
                           <div
                             key={item.id}
                             style={{
@@ -628,10 +642,13 @@ export default function UserDashboard() {
                           >
                             <div style={{ width: "80px", height: "80px", aspectRatio: "1 / 1", borderRadius: "10px", overflow: "hidden", flexShrink: 0 }}>
                               <img
-                                src={item.image || "/img/landingPage/artikel2.png"}
+                                src={getImgSrc(item, idx + 1)}
                                 alt={item.title}
                                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                onError={(e) => { e.target.src = "/img/landingPage/artikel2.png"; }}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = defaultFallbacks[1];
+                                }}
                               />
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
@@ -653,7 +670,7 @@ export default function UserDashboard() {
 
                   {gridList.length > 0 && (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
-                      {gridList.map((item) => (
+                      {gridList.map((item, idx) => (
                         <div
                           key={item.id}
                           style={{
@@ -671,10 +688,13 @@ export default function UserDashboard() {
                           <div>
                             <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "14px" }}>
                               <img
-                                src={item.image || "/img/landingPage/artikel3.png"}
+                                src={getImgSrc(item, idx + 5)}
                                 alt={item.title}
                                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                onError={(e) => { e.target.src = "/img/landingPage/artikel3.png"; }}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = defaultFallbacks[2];
+                                }}
                               />
                             </div>
                             <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
@@ -701,7 +721,7 @@ export default function UserDashboard() {
 
               {!isFirstPage && (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
-                  {gridList.map((item) => (
+                  {gridList.map((item, idx) => (
                     <div
                       key={item.id}
                       style={{
@@ -719,10 +739,13 @@ export default function UserDashboard() {
                       <div>
                         <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "14px" }}>
                           <img
-                            src={item.image || "/img/landingPage/artikel1.png"}
+                            src={getImgSrc(item, idx)}
                             alt={item.title}
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                            onError={(e) => { e.target.src = "/img/landingPage/artikel1.png"; }}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = defaultFallbacks[0];
+                            }}
                           />
                         </div>
                         <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
