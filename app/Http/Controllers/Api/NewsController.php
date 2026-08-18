@@ -23,18 +23,21 @@ class NewsController extends Controller
             'author' => 'nullable|string',
             'image' => 'nullable|string',
             'read_time' => 'nullable|string',
+            'readTime' => 'nullable|string',
             'date' => 'nullable|string',
         ]);
+
+        $readTime = $request->input('read_time') ?? $request->input('readTime') ?? '3 min read';
 
         $news = News::create([
             'title' => $validated['title'],
             'category' => $validated['category'],
             'summary' => $validated['summary'],
-            'content' => $validated['content'] ?? null,
-            'author' => $validated['author'] ?? 'Tim Redaksi Klinik',
-            'image' => $validated['image'] ?? null,
-            'read_time' => $validated['read_time'] ?? '3 min read',
-            'date' => $validated['date'] ?? (date('d') . ' Agustus 2026'),
+            'content' => $request->input('content'),
+            'author' => $request->input('author', 'Tim Redaksi Klinik'),
+            'image' => $request->input('image'),
+            'read_time' => $readTime,
+            'date' => $request->input('date', date('d') . ' Agustus 2026'),
         ]);
 
         return response()->json($news, 201);
@@ -52,9 +55,22 @@ class NewsController extends Controller
             'author' => 'nullable|string',
             'image' => 'nullable|string',
             'read_time' => 'nullable|string',
+            'readTime' => 'nullable|string',
+            'date' => 'nullable|string',
         ]);
 
-        $news->update($validated);
+        $readTime = $request->input('read_time') ?? $request->input('readTime') ?? $news->read_time;
+
+        $news->update([
+            'title' => $request->input('title', $news->title),
+            'category' => $request->input('category', $news->category),
+            'summary' => $request->input('summary', $news->summary),
+            'content' => $request->input('content', $news->content),
+            'author' => $request->input('author', $news->author),
+            'image' => $request->input('image', $news->image),
+            'read_time' => $readTime,
+            'date' => $request->input('date', $news->date),
+        ]);
 
         return response()->json($news);
     }

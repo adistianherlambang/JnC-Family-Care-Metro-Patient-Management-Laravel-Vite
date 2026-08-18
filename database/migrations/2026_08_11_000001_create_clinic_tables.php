@@ -28,7 +28,7 @@ return new class extends Migration
             $table->id();
             $table->string('doctor');
             $table->string('role')->default('Praktisi Medis');
-            $table->string('image')->nullable();
+            $table->longText('image')->nullable();
             $table->string('start_day')->default('Senin');
             $table->string('end_day')->default('Jumat');
             $table->string('start_time')->default('08:00');
@@ -57,7 +57,7 @@ return new class extends Migration
             $table->text('summary');
             $table->longText('content')->nullable();
             $table->string('author')->nullable();
-            $table->string('image')->nullable();
+            $table->longText('image')->nullable();
             $table->string('read_time')->nullable();
             $table->string('date');
             $table->timestamps();
