@@ -11,6 +11,7 @@ import BlogEditorModal from "../../components/BlogEditor/BlogEditorModal";
 import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import Table, { TableBadge } from "../../components/Table/Table";
+import Title from "../../components/Title/Title";
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -677,8 +678,10 @@ export default function AdminDashboard() {
       {activeMenu === "overview" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Ringkasan Eksekutif & Operasional Klinik</p>
-            <p className={styles.desc}>Overview statistik kunjungan pasien, praktisi medis, poli layanan, dan berita kesehatan.</p>
+            <Title
+              title="Ringkasan Statistik"
+              desc="Overview statistik kunjungan pasien, praktisi medis, poli layanan, dan berita kesehatan."
+            />
           </div>
 
           {/* 4 Stat Cards Grid */}
