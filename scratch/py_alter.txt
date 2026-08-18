@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import mysql.connector; conn = mysql.connector.connect(host='127.0.0.1', port=3306, user='root', password='root', database='pelayanan_pasien'); cursor = conn.cursor(); cursor.execute('ALTER TABLE news MODIFY image LONGTEXT NULL'); cursor.execute('ALTER TABLE practitioners MODIFY image LONGTEXT NULL'); conn.commit(); print('ALTER SUCCESSFUL');
+    ^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'mysql'
