@@ -548,21 +548,25 @@ export default function BidanDashboard() {
             <p className={styles.desc}>Kelola foto profil, data kredensial praktisi, dan Surat Izin Praktik (STR/SIP).</p>
           </div>
 
-          <div className={styles.formCard}>
-            <InputImage
-              label="Foto Profil Praktisi Medis (Dibuat oleh Admin / Dapat Diperbarui)"
-              value={mySchedule.image}
-              onChange={(file, previewUrl) => {
-                setMySchedule({ ...mySchedule, image: previewUrl || file });
-              }}
-              placeholder="Klik atau seret foto baru ke sini untuk mengganti foto profil dokter/bidan"
-            />
-            <InputText label="Nama Lengkap & Gelar Bidan" value={mySchedule.doctor} onChange={(e) => setMySchedule({ ...mySchedule, doctor: e.target.value })} />
-            <InputText label="Peran / Spesialisasi Medis" value={mySchedule.role} onChange={(e) => setMySchedule({ ...mySchedule, role: e.target.value })} />
-            <InputText label="Nomor Surat Tanda Registrasi (STR/SIP)" value={mySchedule.strNumber} onChange={(e) => setMySchedule({ ...mySchedule, strNumber: e.target.value })} />
-            <Button onClick={handleSaveProfile}>
-              Simpan Profil & Foto Bidan
-            </Button>
+          <div className={styles.formProfilCard}>
+            <div className={styles.formProfilContent}>
+              <InputImage
+                label="Perbarui Foto Profil"
+                value={mySchedule.image}
+                onChange={(file, previewUrl) => {
+                  setMySchedule({ ...mySchedule, image: previewUrl || file });
+                }}
+                placeholder="Klik atau seret foto baru ke sini untuk mengganti foto profil dokter/bidan"
+              />
+            </div>
+            <div className={styles.formProfilContent}>
+              <InputText label="Nama Lengkap & Gelar Bidan" value={mySchedule.doctor} onChange={(e) => setMySchedule({ ...mySchedule, doctor: e.target.value })} />
+              <InputText label="Peran / Spesialisasi Medis" value={mySchedule.role} onChange={(e) => setMySchedule({ ...mySchedule, role: e.target.value })} />
+              <InputText label="Nomor Surat Tanda Registrasi (STR/SIP)" value={mySchedule.strNumber} onChange={(e) => setMySchedule({ ...mySchedule, strNumber: e.target.value })} />
+              <Button onClick={handleSaveProfile}>
+                Simpan Profil & Foto Bidan
+              </Button>
+            </div>
           </div>
         </>
       )}

@@ -53,13 +53,11 @@
   background-color: var(--primary);
   color: #ffffff;
   border-color: var(--primary);
-  box-shadow: 0 4px 14px rgba(216, 150, 237, 0.35);
 }
 
 .primary:hover:not(:disabled) {
   background-color: #C47BDC;
   border-color: #C47BDC;
-  box-shadow: 0 6px 18px rgba(216, 150, 237, 0.45);
 }
 
 .secondary {
