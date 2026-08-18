@@ -487,7 +487,6 @@ export default function UserDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <p className={styles.title}>Daftar Kunjungan Medis</p>
             {currentUser.visitHistory.length > 0 ? (
               currentUser.visitHistory.map((item) => (
                 <div key={item.id} className={styles.inputWrapper}>
@@ -522,7 +521,6 @@ export default function UserDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <p className={styles.title}>Artikel & Edukasi Terbaru</p>
             {newsList.map((item) => (
               <div
                 key={item.id}
@@ -580,7 +578,6 @@ export default function UserDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <p className={styles.title}>Pusat Bantuan</p>
             {faqList.map((item) => (
               <div key={item.id} className={styles.inputWrapper}>
                 <div className={styles.confirm}>
@@ -603,7 +600,6 @@ export default function UserDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <p className={styles.title}>Ubah Kata Sandi</p>
             <div className={styles.inputWrapper}>
               <InputPassword
                 label="Password Lama"

@@ -12,6 +12,7 @@ import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import Table, { TableBadge } from "../../components/Table/Table";
 import Title from "../../components/Title/Title";
+import Modal from "../../components/Modal/Modal";
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -1218,304 +1219,298 @@ export default function AdminDashboard() {
       )}
 
       {/* Modal Window Popup */}
-      {isModalOpen && (
-        <div className={styles.modalBackdrop} onClick={() => setIsModalOpen(false)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <p className={styles.modalTitle}>
-                {activeMenu === "antrean" && (editingQueueId ? "Edit Antrean Walk-In" : "Tambah Antrean Walk-In Baru")}
-                {activeMenu === "dokter" && (editingDoctorName ? "Edit Data & Jadwal Dokter" : "Tambah Dokter Baru")}
-                {activeMenu === "poli" && (editingCategoryTitle ? "Edit Layanan" : "Tambah Layanan Baru")}
-                {activeMenu === "artikel" && (editingNewsId ? "Edit Artikel" : "Tambah Artikel Baru")}
-                {activeMenu === "faq" && (editingFaqId ? "Edit FAQ" : "Tambah Pertanyaan FAQ Baru")}
-              </p>
-              <button type="button" className={styles.modalCloseBtn} onClick={() => setIsModalOpen(false)}>
-                ✕
-              </button>
-            </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={
+          activeMenu === "antrean" ? (editingQueueId ? "Edit Antrean Walk-In" : "Tambah Antrean Walk-In Baru") :
+          activeMenu === "dokter" ? (editingDoctorName ? "Edit Data & Jadwal Dokter" : "Tambah Dokter Baru") :
+          activeMenu === "poli" ? (editingCategoryTitle ? "Edit Layanan" : "Tambah Layanan Baru") :
+          activeMenu === "artikel" ? (editingNewsId ? "Edit Artikel" : "Tambah Artikel Baru") :
+          activeMenu === "faq" ? (editingFaqId ? "Edit FAQ" : "Tambah Pertanyaan FAQ Baru") : ""
+        }
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Batal
+            </Button>
+            <Button
+              onClick={() => {
+                if (activeMenu === "antrean") handleAddQueue();
+                if (activeMenu === "dokter") handleAddDoctor();
+                if (activeMenu === "poli") handleAddCategory();
+                if (activeMenu === "artikel") handleAddNews();
+                if (activeMenu === "faq") handleAddFaq();
+              }}
+            >
+              {activeMenu === "antrean" && (editingQueueId ? "Simpan Perubahan Antrean" : "Terbitkan Antrean")}
+              {activeMenu === "dokter" && (editingDoctorName ? "Simpan Perubahan Dokter" : "Simpan Dokter Baru")}
+              {activeMenu === "poli" && (editingCategoryTitle ? "Simpan Perubahan Kategori" : "Simpan Layanan")}
+              {activeMenu === "artikel" && (editingNewsId ? "Simpan Perubahan Artikel" : "Publikasikan Artikel")}
+              {activeMenu === "faq" && (editingFaqId ? "Simpan Perubahan FAQ" : "Simpan Pertanyaan FAQ")}
+            </Button>
+          </>
+        }
+      >
+        <div className={styles.inputWrapper}>
+          {activeMenu === "antrean" && (
+            <>
+              <InputText
+                label="Nama Pasien"
+                value={newQueue.patientName}
+                onChange={(e) => setNewQueue({ ...newQueue, patientName: e.target.value })}
+                placeholder="Masukkan nama lengkap pasien"
+              />
+              <InputSelect
+                label="Tanggal Layanan"
+                options={[
+                  { value: getTodayStr(), label: `Hari Ini (${getTodayStr()})` },
+                  { value: getTomorrowStr(), label: `Besok (${getTomorrowStr()})` }
+                ]}
+                value={newQueue.date}
+                onChange={(val) => setNewQueue({ ...newQueue, date: val, doctor: "", service: "" })}
+                placeholder="Pilih Tanggal Layanan"
+              />
+              <InputRadio
+                label="Kategori Layanan"
+                options={categories.map((item) => item.title)}
+                value={newQueue.kategoriLayanan}
+                onChange={(val) => setNewQueue({ ...newQueue, kategoriLayanan: val, service: "", doctor: "" })}
+              />
+              <InputSelect
+                label="Pilih Layanan"
+                options={adminServiceOptions}
+                value={newQueue.service}
+                onChange={(val) => setNewQueue({ ...newQueue, service: val, doctor: "" })}
+                placeholder="Pilih Layanan"
+              />
+              <InputSelect
+                label="Pilih Dokter / Bidan"
+                options={doctorOptions}
+                value={newQueue.doctor}
+                onChange={(val) => setNewQueue({ ...newQueue, doctor: val })}
+                placeholder="Pilih Dokter / Bidan"
+              />
+            </>
+          )}
 
-            <div className={styles.inputWrapper}>
-              {activeMenu === "antrean" && (
-                <>
-                  <InputText
-                    label="Nama Pasien"
-                    value={newQueue.patientName}
-                    onChange={(e) => setNewQueue({ ...newQueue, patientName: e.target.value })}
-                    placeholder="Masukkan nama lengkap pasien"
-                  />
+          {activeMenu === "dokter" && (
+            <>
+              <InputText
+                label="Nama Dokter & Gelar"
+                value={newDoctor.doctor}
+                onChange={(e) => setNewDoctor({ ...newDoctor, doctor: e.target.value })}
+                placeholder="Contoh: dr. Fitri Handayani, Sp.A"
+              />
+              <InputText
+                label="Peran / Spesialisasi"
+                value={newDoctor.role}
+                onChange={(e) => setNewDoctor({ ...newDoctor, role: e.target.value })}
+                placeholder="Contoh: Spesialis Kandungan & Kebidanan"
+              />
+              <div className={styles.input}>
+                <InputText
+                  label="Username Login Dokter"
+                  value={newDoctor.username}
+                  onChange={(e) => setNewDoctor({ ...newDoctor, username: e.target.value })}
+                  placeholder="Contoh: bidan / dr.fitri"
+                />
+                <InputText
+                  label="Password Login Dokter"
+                  value={newDoctor.password}
+                  onChange={(e) => setNewDoctor({ ...newDoctor, password: e.target.value })}
+                  placeholder="Contoh: bidan123"
+                />
+              </div>
+              <InputImage
+                label="Foto Dokter (Opsional)"
+                value={newDoctor.image}
+                onChange={(file, preview) => setNewDoctor({ ...newDoctor, image: preview })}
+                placeholder="Unggah foto profil dokter untuk ditampilkan di Landing Page"
+              />
+
+              <div className={styles.input}>
+                <InputSelect
+                  label="Hari Praktik Mulai"
+                  options={DAYS_OF_WEEK}
+                  value={newDoctor.startDay}
+                  onChange={(val) => setNewDoctor({ ...newDoctor, startDay: val })}
+                  placeholder="Hari Mulai"
+                />
+                <InputSelect
+                  label="Hari Praktik Selesai"
+                  options={DAYS_OF_WEEK}
+                  value={newDoctor.endDay}
+                  onChange={(val) => setNewDoctor({ ...newDoctor, endDay: val })}
+                  placeholder="Hari Selesai"
+                />
+              </div>
+
+              <div className={styles.input}>
+                <InputText
+                  label="Jam Mulai Praktik"
+                  value={newDoctor.startTime}
+                  onChange={(e) => setNewDoctor({ ...newDoctor, startTime: e.target.value })}
+                  placeholder="08:00"
+                />
+                <InputText
+                  label="Jam Selesai Praktik"
+                  value={newDoctor.endTime}
+                  onChange={(e) => setNewDoctor({ ...newDoctor, endTime: e.target.value })}
+                  placeholder="14:00"
+                />
+              </div>
+
+              <div className={styles.addInputRow}>
+                <div style={{ flex: 1 }}>
                   <InputSelect
-                    label="Tanggal Layanan"
-                    options={[
-                      { value: getTodayStr(), label: `Hari Ini (${getTodayStr()})` },
-                      { value: getTomorrowStr(), label: `Besok (${getTomorrowStr()})` }
-                    ]}
-                    value={newQueue.date}
-                    onChange={(val) => setNewQueue({ ...newQueue, date: val, doctor: "", service: "" })}
-                    placeholder="Pilih Tanggal Layanan"
+                    label="Daftar Layanan Medis yang Diberikan"
+                    options={allClinicServices.filter((s) => !newDoctor.servicesList.some((existing) => existing.toLowerCase() === s.toLowerCase()))}
+                    value={newDoctor.selectedServiceInput || ""}
+                    onChange={(val) => setNewDoctor({ ...newDoctor, selectedServiceInput: val })}
+                    placeholder="Pilih Layanan dari Daftar Resmi Klinik"
                   />
-                  <InputRadio
-                    label="Kategori Layanan"
-                    options={categories.map((item) => item.title)}
-                    value={newQueue.kategoriLayanan}
-                    onChange={(val) => setNewQueue({ ...newQueue, kategoriLayanan: val, service: "", doctor: "" })}
-                  />
-                  <InputSelect
-                    label="Pilih Layanan"
-                    options={adminServiceOptions}
-                    value={newQueue.service}
-                    onChange={(val) => setNewQueue({ ...newQueue, service: val, doctor: "" })}
-                    placeholder="Pilih Layanan"
-                  />
-                  <InputSelect
-                    label="Pilih Dokter / Bidan"
-                    options={doctorOptions}
-                    value={newQueue.doctor}
-                    onChange={(val) => setNewQueue({ ...newQueue, doctor: val })}
-                    placeholder="Pilih Dokter / Bidan"
-                  />
-                </>
-              )}
+                </div>
+                <Button
+                  onClick={() => {
+                    const val = newDoctor.selectedServiceInput?.trim();
+                    if (val && !newDoctor.servicesList.some((s) => s.toLowerCase() === val.toLowerCase())) {
+                      setNewDoctor({
+                        ...newDoctor,
+                        servicesList: [...newDoctor.servicesList, val],
+                        selectedServiceInput: ""
+                      });
+                    }
+                  }}
+                >
+                  + Tambah Layanan
+                </Button>
+              </div>
 
-              {activeMenu === "dokter" && (
-                <>
-                  <InputText
-                    label="Nama Dokter & Gelar"
-                    value={newDoctor.doctor}
-                    onChange={(e) => setNewDoctor({ ...newDoctor, doctor: e.target.value })}
-                    placeholder="Contoh: dr. Fitri Handayani, Sp.A"
-                  />
-                  <InputText
-                    label="Peran / Spesialisasi"
-                    value={newDoctor.role}
-                    onChange={(e) => setNewDoctor({ ...newDoctor, role: e.target.value })}
-                    placeholder="Contoh: Spesialis Kandungan & Kebidanan"
-                  />
-                  <div className={styles.input}>
-                    <InputText
-                      label="Username Login Dokter"
-                      value={newDoctor.username}
-                      onChange={(e) => setNewDoctor({ ...newDoctor, username: e.target.value })}
-                      placeholder="Contoh: bidan / dr.fitri"
-                    />
-                    <InputText
-                      label="Password Login Dokter"
-                      value={newDoctor.password}
-                      onChange={(e) => setNewDoctor({ ...newDoctor, password: e.target.value })}
-                      placeholder="Contoh: bidan123"
-                    />
-                  </div>
-                  <InputImage
-                    label="Foto Dokter (Opsional)"
-                    value={newDoctor.image}
-                    onChange={(file, preview) => setNewDoctor({ ...newDoctor, image: preview })}
-                    placeholder="Unggah foto profil dokter untuk ditampilkan di Landing Page"
-                  />
-
-                  <div className={styles.input}>
-                    <InputSelect
-                      label="Hari Praktik Mulai"
-                      options={DAYS_OF_WEEK}
-                      value={newDoctor.startDay}
-                      onChange={(val) => setNewDoctor({ ...newDoctor, startDay: val })}
-                      placeholder="Hari Mulai"
-                    />
-                    <InputSelect
-                      label="Hari Praktik Selesai"
-                      options={DAYS_OF_WEEK}
-                      value={newDoctor.endDay}
-                      onChange={(val) => setNewDoctor({ ...newDoctor, endDay: val })}
-                      placeholder="Hari Selesai"
-                    />
-                  </div>
-
-                  <div className={styles.input}>
-                    <InputText
-                      label="Jam Mulai Praktik"
-                      value={newDoctor.startTime}
-                      onChange={(e) => setNewDoctor({ ...newDoctor, startTime: e.target.value })}
-                      placeholder="08:00"
-                    />
-                    <InputText
-                      label="Jam Selesai Praktik"
-                      value={newDoctor.endTime}
-                      onChange={(e) => setNewDoctor({ ...newDoctor, endTime: e.target.value })}
-                      placeholder="14:00"
-                    />
-                  </div>
-
-                  <div className={styles.addInputRow}>
-                    <div style={{ flex: 1 }}>
-                      <InputSelect
-                        label="Daftar Layanan Medis yang Diberikan"
-                        options={allClinicServices.filter((s) => !newDoctor.servicesList.some((existing) => existing.toLowerCase() === s.toLowerCase()))}
-                        value={newDoctor.selectedServiceInput || ""}
-                        onChange={(val) => setNewDoctor({ ...newDoctor, selectedServiceInput: val })}
-                        placeholder="Pilih Layanan dari Daftar Resmi Klinik"
-                      />
-                    </div>
-                    <Button
-                      onClick={() => {
-                        const val = newDoctor.selectedServiceInput?.trim();
-                        if (val && !newDoctor.servicesList.some((s) => s.toLowerCase() === val.toLowerCase())) {
+              {newDoctor.servicesList.length > 0 && (
+                <div className={styles.chipContainer}>
+                  {newDoctor.servicesList.map((svc, i) => (
+                    <span key={i} className={styles.chip}>
+                      {svc}
+                      <span
+                        className={styles.chipRemove}
+                        onClick={() =>
                           setNewDoctor({
                             ...newDoctor,
-                            servicesList: [...newDoctor.servicesList, val],
-                            selectedServiceInput: ""
-                          });
+                            servicesList: newDoctor.servicesList.filter((_, idx) => idx !== i)
+                          })
                         }
-                      }}
-                    >
-                      + Tambah Layanan
-                    </Button>
-                  </div>
-
-                  {newDoctor.servicesList.length > 0 && (
-                    <div className={styles.chipContainer}>
-                      {newDoctor.servicesList.map((svc, i) => (
-                        <span key={i} className={styles.chip}>
-                          {svc}
-                          <span
-                            className={styles.chipRemove}
-                            onClick={() =>
-                              setNewDoctor({
-                                ...newDoctor,
-                                servicesList: newDoctor.servicesList.filter((_, idx) => idx !== i)
-                              })
-                            }
-                          >
-                            ✕
-                          </span>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </>
+                      >
+                        ✕
+                      </span>
+                    </span>
+                  ))}
+                </div>
               )}
+            </>
+          )}
 
-              {activeMenu === "poli" && (
-                <>
+          {activeMenu === "poli" && (
+            <>
+              <InputText
+                label="Nama Kategori (Poli / Mom's Treatment / dll)"
+                value={newCategory.title}
+                onChange={(e) => setNewCategory({ ...newCategory, title: e.target.value })}
+                placeholder="Contoh: Poli Kebidanan"
+              />
+              <div className={styles.addInputRow}>
+                <div style={{ flex: 1 }}>
                   <InputText
-                    label="Nama Kategori (Poli / Mom's Treatment / dll)"
-                    value={newCategory.title}
-                    onChange={(e) => setNewCategory({ ...newCategory, title: e.target.value })}
-                    placeholder="Contoh: Poli Kebidanan"
+                    label="Nama Layanan Spesifik"
+                    value={newCategory.tempServiceName || ""}
+                    onChange={(e) => setNewCategory({ ...newCategory, tempServiceName: e.target.value })}
+                    placeholder="Contoh: Pemeriksaan USG 4D"
                   />
-                  <div className={styles.addInputRow}>
-                    <div style={{ flex: 1 }}>
-                      <InputText
-                        label="Nama Layanan Spesifik"
-                        value={newCategory.tempServiceName || ""}
-                        onChange={(e) => setNewCategory({ ...newCategory, tempServiceName: e.target.value })}
-                        placeholder="Contoh: Pemeriksaan USG 4D"
-                      />
-                    </div>
-                    <Button
-                      onClick={() => {
-                        const val = newCategory.tempServiceName?.trim();
-                        if (val && !newCategory.servicesList.some((s) => s.toLowerCase() === val.toLowerCase())) {
+                </div>
+                <Button
+                  onClick={() => {
+                    const val = newCategory.tempServiceName?.trim();
+                    if (val && !newCategory.servicesList.some((s) => s.toLowerCase() === val.toLowerCase())) {
+                      setNewCategory({
+                        ...newCategory,
+                        servicesList: [...newCategory.servicesList, val],
+                        tempServiceName: ""
+                      });
+                    }
+                  }}
+                >
+                  + Tambah Layanan
+                </Button>
+              </div>
+
+              {newCategory.servicesList.length > 0 && (
+                <div className={styles.chipContainer}>
+                  {newCategory.servicesList.map((svc, i) => (
+                    <span key={i} className={styles.chip}>
+                      {svc}
+                      <span
+                        className={styles.chipRemove}
+                        onClick={() =>
                           setNewCategory({
                             ...newCategory,
-                            servicesList: [...newCategory.servicesList, val],
-                            tempServiceName: ""
-                          });
+                            servicesList: newCategory.servicesList.filter((_, idx) => idx !== i)
+                          })
                         }
-                      }}
-                    >
-                      + Tambah Layanan
-                    </Button>
-                  </div>
-
-                  {newCategory.servicesList.length > 0 && (
-                    <div className={styles.chipContainer}>
-                      {newCategory.servicesList.map((svc, i) => (
-                        <span key={i} className={styles.chip}>
-                          {svc}
-                          <span
-                            className={styles.chipRemove}
-                            onClick={() =>
-                              setNewCategory({
-                                ...newCategory,
-                                servicesList: newCategory.servicesList.filter((_, idx) => idx !== i)
-                              })
-                            }
-                          >
-                            ✕
-                          </span>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </>
+                      >
+                        ✕
+                      </span>
+                    </span>
+                  ))}
+                </div>
               )}
+            </>
+          )}
 
-              {activeMenu === "artikel" && (
-                <>
-                  <InputText
-                    label="Judul Artikel"
-                    value={newNews.title}
-                    onChange={(e) => setNewNews({ ...newNews, title: e.target.value })}
-                    placeholder="Masukkan judul artikel"
-                  />
-                  <InputSelect
-                    label="Kategori Artikel"
-                    options={["Kesehatan Anak", "Kehamilan & Persalinan", "Mom & Baby Care"]}
-                    value={newNews.category}
-                    onChange={(val) => setNewNews({ ...newNews, category: val })}
-                    placeholder="Pilih Kategori"
-                  />
-                  <InputText
-                    label="Ringkasan Artikel"
-                    value={newNews.summary}
-                    onChange={(e) => setNewNews({ ...newNews, summary: e.target.value })}
-                    placeholder="Masukkan ringkasan singkat artikel"
-                  />
-                </>
-              )}
+          {activeMenu === "artikel" && (
+            <>
+              <InputText
+                label="Judul Artikel"
+                value={newNews.title}
+                onChange={(e) => setNewNews({ ...newNews, title: e.target.value })}
+                placeholder="Masukkan judul artikel"
+              />
+              <InputSelect
+                label="Kategori Artikel"
+                options={["Kesehatan Anak", "Kehamilan & Persalinan", "Mom & Baby Care"]}
+                value={newNews.category}
+                onChange={(val) => setNewNews({ ...newNews, category: val })}
+                placeholder="Pilih Kategori"
+              />
+              <InputText
+                label="Ringkasan Artikel"
+                value={newNews.summary}
+                onChange={(e) => setNewNews({ ...newNews, summary: e.target.value })}
+                placeholder="Masukkan ringkasan singkat artikel"
+              />
+            </>
+          )}
 
-              {activeMenu === "faq" && (
-                <>
-                  <InputText
-                    label="Pertanyaan"
-                    value={newFaq.question}
-                    onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })}
-                    placeholder="Masukkan pertanyaan"
-                  />
-                  <InputText
-                    label="Jawaban"
-                    value={newFaq.answer}
-                    onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })}
-                    placeholder="Masukkan jawaban"
-                  />
-                </>
-              )}
-            </div>
-
-            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end", marginTop: "12px" }}>
-              <Button
-                variant="secondary"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Batal
-              </Button>
-              <Button
-                onClick={() => {
-                  if (activeMenu === "antrean") handleAddQueue();
-                  if (activeMenu === "dokter") handleAddDoctor();
-                  if (activeMenu === "poli") handleAddCategory();
-                  if (activeMenu === "artikel") handleAddNews();
-                  if (activeMenu === "faq") handleAddFaq();
-                }}
-              >
-                {activeMenu === "antrean" && (editingQueueId ? "Simpan Perubahan Antrean" : "Terbitkan Antrean")}
-                {activeMenu === "dokter" && (editingDoctorName ? "Simpan Perubahan Dokter" : "Simpan Dokter Baru")}
-                {activeMenu === "poli" && (editingCategoryTitle ? "Simpan Perubahan Kategori" : "Simpan Layanan")}
-                {activeMenu === "artikel" && (editingNewsId ? "Simpan Perubahan Artikel" : "Publikasikan Artikel")}
-                {activeMenu === "faq" && (editingFaqId ? "Simpan Perubahan FAQ" : "Simpan Pertanyaan FAQ")}
-              </Button>
-            </div>
-          </div>
+          {activeMenu === "faq" && (
+            <>
+              <InputText
+                label="Pertanyaan"
+                value={newFaq.question}
+                onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })}
+                placeholder="Masukkan pertanyaan"
+              />
+              <InputText
+                label="Jawaban"
+                value={newFaq.answer}
+                onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })}
+                placeholder="Masukkan jawaban"
+              />
+            </>
+          )}
         </div>
-      )}
+      </Modal>
 
       {/* Blog Editor Modal for Admin */}
       <BlogEditorModal
