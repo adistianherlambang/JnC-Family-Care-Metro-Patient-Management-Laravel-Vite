@@ -39,6 +39,7 @@ export default function AdminDashboard() {
   const [news, setNews] = useState([]);
   const [faqs, setFaqs] = useState([]);
   const [patients, setPatients] = useState([]);
+  const [patientSearchQuery, setPatientSearchQuery] = useState("");
 
   // Blog Editor & Reader States
   const [isBlogEditorOpen, setIsBlogEditorOpen] = useState(false);
@@ -1120,86 +1121,116 @@ export default function AdminDashboard() {
       )}
 
       {/* 2.5. CRUD Kelola Akun Pasien */}
-      {activeMenu === "pasien" && (
-        <>
-          <div className={styles.header}>
-            <Title
-              title="Kelola Akun & Data Pasien"
-              desc="Tambah, edit, dan kelola data akun login pasien, username, kata sandi, serta informasi rekam medis."
-            />
-          </div>
+      {activeMenu === "pasien" && (() => {
+        const filteredPatients = patients.filter((p) => {
+          if (!patientSearchQuery.trim()) return true;
+          const q = patientSearchQuery.toLowerCase();
+          const name = (p.name || p.patient_name || "").toLowerCase();
+          const username = (p.username || "").toLowerCase();
+          const noRM = (p.noRM || p.no_rm || "").toLowerCase();
+          const phone = (p.phone || "").toLowerCase();
+          const email = (p.email || "").toLowerCase();
+          return name.includes(q) || username.includes(q) || noRM.includes(q) || phone.includes(q) || email.includes(q);
+        });
 
-          <div className={styles.inputContainer}>
-            <Table
-              title={`Daftar Akun Pasien`}
-              headerAction={
-                <Button onClick={handleOpenAddPatientModal}>
-                  + Tambah Pasien Baru
-                </Button>
-              }
-            >
-              <thead>
-                <tr>
-                  <th>No. RM</th>
-                  <th>Nama Lengkap</th>
-                  <th>Username</th>
-                  <th>Password</th>
-                  <th>No. Telepon / Email</th>
-                  <th>Alamat</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patients.map((item) => (
-                  <tr key={item.id}>
-                    <td><strong>{item.noRM || item.no_rm}</strong></td>
-                    <td>{item.name || item.patient_name}</td>
-                    <td><span className={styles.codeBadge}>{item.username}</span></td>
-                    <td><span className={styles.codeBadge}>•••••••• ({item.password || "user123"})</span></td>
-                    <td>{item.phone || "-"} <br /><small style={{ color: "#6b7280" }}>{item.email || "-"}</small></td>
-                    <td>{item.address || "-"}</td>
-                    <td>
-                      <Table.ActionCell>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => {
-                            setEditingPatientId(item.id);
-                            const bpjsNum = item.noBpjs || item.no_bpjs || "";
-                            const hasBpjsVal = item.hasBpjs ? item.hasBpjs : (bpjsNum ? "Ya" : "Tidak");
-                            setNewPatient({
-                              name: item.name || item.patient_name || "",
-                              username: item.username || "",
-                              password: item.password || "",
-                              noRM: item.noRM || item.no_rm || "",
-                              phone: item.phone || "",
-                              email: item.email || "",
-                              hasBpjs: hasBpjsVal,
-                              noBpjs: bpjsNum,
-                              bpjsImage: item.bpjsImage || item.bpjs_image || "",
-                              address: item.address || ""
-                            });
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => handleDeletePatient(item.id)}
-                        >
-                          Hapus
-                        </Button>
-                      </Table.ActionCell>
-                    </td>
+        return (
+          <>
+            <div className={styles.header}>
+              <Title
+                title="Kelola Akun & Data Pasien"
+                desc="Tambah, edit, dan kelola data akun login pasien, username, kata sandi, serta informasi rekam medis."
+              />
+            </div>
+
+            <div className={styles.inputContainer}>
+              <Table
+                title="Daftar Akun Pasien"
+                headerAction={
+                  <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+                    <div style={{ minWidth: "220px", flex: 1 }}>
+                      <InputText
+                        placeholder="Cari nama pasien, No. RM, username..."
+                        value={patientSearchQuery}
+                        onChange={(e) => setPatientSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <Button onClick={handleOpenAddPatientModal}>
+                      + Tambah Pasien Baru
+                    </Button>
+                  </div>
+                }
+              >
+                <thead>
+                  <tr>
+                    <th>No. RM</th>
+                    <th>Nama Lengkap</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>No. Telepon / Email</th>
+                    <th>Alamat</th>
+                    <th>Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        </>
-      )}
+                </thead>
+                <tbody>
+                  {filteredPatients.length > 0 ? (
+                    filteredPatients.map((item) => (
+                      <tr key={item.id}>
+                        <td><strong>{item.noRM || item.no_rm}</strong></td>
+                        <td>{item.name || item.patient_name}</td>
+                        <td><span className={styles.codeBadge}>{item.username}</span></td>
+                        <td><span className={styles.codeBadge}>•••••••• ({item.password || "user123"})</span></td>
+                        <td>{item.phone || "-"} <br /><small style={{ color: "#6b7280" }}>{item.email || "-"}</small></td>
+                        <td>{item.address || "-"}</td>
+                        <td>
+                          <Table.ActionCell>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => {
+                                setEditingPatientId(item.id);
+                                const bpjsNum = item.noBpjs || item.no_bpjs || "";
+                                const hasBpjsVal = item.hasBpjs ? item.hasBpjs : (bpjsNum ? "Ya" : "Tidak");
+                                setNewPatient({
+                                  name: item.name || item.patient_name || "",
+                                  username: item.username || "",
+                                  password: item.password || "",
+                                  noRM: item.noRM || item.no_rm || "",
+                                  phone: item.phone || "",
+                                  email: item.email || "",
+                                  hasBpjs: hasBpjsVal,
+                                  noBpjs: bpjsNum,
+                                  bpjsImage: item.bpjsImage || item.bpjs_image || "",
+                                  address: item.address || ""
+                                });
+                                setIsModalOpen(true);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              onClick={() => handleDeletePatient(item.id)}
+                            >
+                              Hapus
+                            </Button>
+                          </Table.ActionCell>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7} style={{ textAlign: "center", color: "#6b7280", padding: "24px" }}>
+                        Pasien tidak ditemukan.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </>
+        );
+      })()}
 
       {/* 3. CRUD Poli & Kategori Layanan */}
       {activeMenu === "poli" && (
