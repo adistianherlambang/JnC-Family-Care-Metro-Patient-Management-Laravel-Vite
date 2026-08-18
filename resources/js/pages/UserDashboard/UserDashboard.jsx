@@ -25,6 +25,7 @@ export default function UserDashboard() {
   const [newQueueData, setNewQueueData] = useState({
     peruntukan: "Untuk Sendiri",
     namaAnak: "",
+    usiaAnak: "",
     keluhan: "",
     tanggalLayanan: "",
     kategoriLayanan: "",
@@ -263,13 +264,14 @@ export default function UserDashboard() {
 
     const patientDisplayName =
       newQueueData.peruntukan === "Untuk Anak" && newQueueData.namaAnak
-        ? `${currentUser?.patient?.name || "Pasien"} (Anak: ${newQueueData.namaAnak})`
+        ? `${currentUser?.patient?.name || "Pasien"} (Anak: ${newQueueData.namaAnak}${newQueueData.usiaAnak ? `, Usia ${newQueueData.usiaAnak}` : ""})`
         : currentUser?.patient?.name || "Pasien";
 
     const payload = {
       patientName: patientDisplayName,
       peruntukan: newQueueData.peruntukan,
       namaAnak: newQueueData.namaAnak,
+      usiaAnak: newQueueData.usiaAnak,
       keluhan: newQueueData.keluhan,
       notes: newQueueData.keluhan,
       doctor: newQueueData.dokter,
@@ -298,7 +300,7 @@ export default function UserDashboard() {
     }
 
     setActiveQueue(createdQueue);
-    setNewQueueData({ peruntukan: "Untuk Sendiri", namaAnak: "", keluhan: "", tanggalLayanan: "", kategoriLayanan: "", layanan: "", dokter: "" });
+    setNewQueueData({ peruntukan: "Untuk Sendiri", namaAnak: "", usiaAnak: "", keluhan: "", tanggalLayanan: "", kategoriLayanan: "", layanan: "", dokter: "" });
   };
 
   const handleCancelQueue = async () => {
@@ -485,12 +487,20 @@ export default function UserDashboard() {
                   />
 
                   {newQueueData.peruntukan === "Untuk Anak" && (
-                    <InputText
-                      label="Nama Lengkap Anak"
-                      placeholder="Masukkan nama lengkap anak..."
-                      value={newQueueData.namaAnak}
-                      onChange={(e) => setNewQueueData({ ...newQueueData, namaAnak: e.target.value })}
-                    />
+                    <div className={styles.input}>
+                      <InputText
+                        label="Nama Lengkap Anak"
+                        placeholder="Masukkan nama lengkap anak..."
+                        value={newQueueData.namaAnak}
+                        onChange={(e) => setNewQueueData({ ...newQueueData, namaAnak: e.target.value })}
+                      />
+                      <InputText
+                        label="Usia Anak"
+                        placeholder="Contoh: 2 Tahun 6 Bulan"
+                        value={newQueueData.usiaAnak}
+                        onChange={(e) => setNewQueueData({ ...newQueueData, usiaAnak: e.target.value })}
+                      />
+                    </div>
                   )}
 
                   <InputSelect
