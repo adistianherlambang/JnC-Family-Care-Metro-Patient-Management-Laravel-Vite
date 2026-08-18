@@ -329,8 +329,8 @@ export default function UserDashboard() {
       activeMenu={activeMenu}
       onMenuChange={setActiveMenu}
       userInfo={{
-        title: `Selamat datang, ${currentUser.patient.name}`,
-        subtitle: currentUser.patient.noRM
+        title: currentUser.patient.name,
+        subtitle: "Pasien"
       }}
     >
       {activeMenu === "antrean" && (

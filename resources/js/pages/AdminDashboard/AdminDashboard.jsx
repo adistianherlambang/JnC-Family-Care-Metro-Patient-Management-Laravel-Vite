@@ -670,8 +670,9 @@ export default function AdminDashboard() {
       activeMenu={activeMenu}
       onMenuChange={setActiveMenu}
       userInfo={{
-        title: "Administrator Klinik",
-        subtitle: "Panel Kelola Operasional & Pelayanan"
+        title: "Administrator",
+        subtitle: "Administrator Klinik",
+        avatar: "A"
       }}
     >
       {/* 0. Ringkasan Eksekutif & Operasional Overview */}

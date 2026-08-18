@@ -290,9 +290,9 @@ export default function BidanDashboard() {
       activeMenu={activeMenu}
       onMenuChange={setActiveMenu}
       userInfo={{
-        title: `Halo, ${mySchedule.doctor}`,
-        badge: "Bidan / Praktisi Medis",
-        subtitle: mySchedule.role
+        title: mySchedule.doctor,
+        subtitle: mySchedule.role,
+        image: mySchedule.image
       }}
       onLogout={handleLogout}
     >

@@ -6,7 +6,7 @@ export default function DashboardLayout({
   menuItems = [],
   activeMenu,
   onMenuChange,
-  userInfo = { title: "", subtitle: "", badge: "" },
+  userInfo = { title: "", subtitle: "", badge: "", avatar: "", image: "" },
   onLogout,
   children
 }) {
@@ -19,6 +19,45 @@ export default function DashboardLayout({
       localStorage.removeItem("loggedInUser");
       navigate("/login", { replace: true });
     }
+  };
+
+  const renderAvatar = () => {
+    const avatarSrc = userInfo.avatar || userInfo.image;
+
+    // 1. If valid image URL or image File object
+    if (
+      avatarSrc &&
+      (typeof avatarSrc === "string"
+        ? avatarSrc.startsWith("http") || avatarSrc.startsWith("/") || avatarSrc.startsWith("data:") || avatarSrc.startsWith("blob:")
+        : avatarSrc instanceof File || avatarSrc instanceof Blob)
+    ) {
+      const srcUrl = typeof avatarSrc === "string" ? avatarSrc : URL.createObjectURL(avatarSrc);
+      return <img src={srcUrl} alt={userInfo.title || "Avatar"} className={styles.avatarImage} />;
+    }
+
+    // 2. If explicit initials string passed (e.g., "A", "TS", "SR")
+    if (typeof avatarSrc === "string" && avatarSrc.trim().length > 0 && avatarSrc.trim().length <= 3 && !avatarSrc.includes(" ")) {
+      return <div className={styles.avatarInitials}>{avatarSrc.trim().toUpperCase()}</div>;
+    }
+
+    // 3. Compute initials from title (first letter of 1st word & 2nd word)
+    let nameToParse = userInfo.title || "";
+    // Clean common doctor/bidan prefixes
+    nameToParse = nameToParse.replace(/^(Bidan|dr\.|drg\.|Dokter)\s+/i, "").trim();
+    // Remove degree suffixes after comma
+    if (nameToParse.includes(",")) {
+      nameToParse = nameToParse.split(",")[0].trim();
+    }
+
+    const words = nameToParse.split(/\s+/).filter(Boolean);
+    let initials = "U";
+    if (words.length >= 2) {
+      initials = (words[0][0] + words[1][0]).toUpperCase();
+    } else if (words.length === 1) {
+      initials = words[0].substring(0, 2).toUpperCase();
+    }
+
+    return <div className={styles.avatarInitials}>{initials}</div>;
   };
 
   return (
@@ -52,12 +91,15 @@ export default function DashboardLayout({
           {/* Top Navbar */}
           <header className={styles.nav}>
             <div className={styles.userInfoWrapper}>
-              <div className={styles.confirm}>
-                <p className={styles.label}>
+              <div className={styles.avatarContainer}>
+                {renderAvatar()}
+              </div>
+              <div className={styles.userTextWrapper}>
+                <p className={styles.userTitle}>
                   {userInfo.title}
                   {userInfo.badge && <span className={styles.badgeRole}>{userInfo.badge}</span>}
                 </p>
-                {userInfo.subtitle && <p className={styles.value}>{userInfo.subtitle}</p>}
+                {userInfo.subtitle && <p className={styles.userSubtitle}>{userInfo.subtitle}</p>}
               </div>
             </div>
           </header>
