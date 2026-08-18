@@ -6,6 +6,7 @@ import { InputSelect, InputPassword, InputRadio } from "../../components/Input";
 import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
+import Title from "../../components/Title/Title";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -335,10 +336,10 @@ export default function UserDashboard() {
       {activeMenu === "antrean" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Antrean Online Saya</p>
-            <p className={styles.desc}>
-              Pantau antrean aktif Anda atau buat janji antrean baru langsung dari jadwal praktisi.
-            </p>
+            <Title
+              title="Antrean Online Saya"
+              desc="Pantau antrean aktif Anda atau buat janji antrean baru langsung dari jadwal praktisi."
+            />
           </div>
 
           <div className={styles.inputContainer}>
@@ -479,8 +480,10 @@ export default function UserDashboard() {
       {activeMenu === "riwayat" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Riwayat Pelayanan Pasien</p>
-            <p className={styles.desc}>Catatan riwayat kunjungan dan rekam medis digital Anda.</p>
+            <Title
+              title="Riwayat Pelayanan Pasien"
+              desc="Catatan riwayat kunjungan dan rekam medis digital Anda."
+            />
           </div>
 
           <div className={styles.inputContainer}>
@@ -512,8 +515,10 @@ export default function UserDashboard() {
       {activeMenu === "berita" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Berita & Edukasi Kesehatan</p>
-            <p className={styles.desc}>Informasi dan tips seputar pelayanan kesehatan ibu dan anak.</p>
+            <Title
+              title="Berita & Edukasi Kesehatan"
+              desc="Informasi dan tips seputar pelayanan kesehatan ibu dan anak."
+            />
           </div>
 
           <div className={styles.inputContainer}>
@@ -568,8 +573,10 @@ export default function UserDashboard() {
       {activeMenu === "faq" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Pertanyaan Umum (FAQ)</p>
-            <p className={styles.desc}>Jawaban atas pertanyaan yang paling sering ditanyakan mengenai pelayanan klinik.</p>
+            <Title
+              title="Pertanyaan Umum (FAQ)"
+              desc="Jawaban atas pertanyaan yang paling sering ditanyakan mengenai pelayanan klinik."
+            />
           </div>
 
           <div className={styles.inputContainer}>
@@ -589,8 +596,10 @@ export default function UserDashboard() {
       {activeMenu === "pengaturan" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Pengaturan Akun</p>
-            <p className={styles.desc}>Ubah kata sandi dan kelola keamanan akun Anda.</p>
+            <Title
+              title="Pengaturan Akun"
+              desc="Ubah kata sandi dan kelola keamanan akun Anda."
+            />
           </div>
 
           <div className={styles.inputContainer}>

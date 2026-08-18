@@ -306,7 +306,7 @@ export default function BidanDashboard() {
         <>
           <div className={styles.header}>
             <Title
-              title="Overview & Ringkasan Pelayanan Klinik"
+              title="Ringkasan Pelayanan"
               desc="Monitoring antrean pasien dan aktivitas pelayanan medis hari ini."
             />
           </div>
