@@ -77,6 +77,8 @@ export default function AdminDashboard() {
   const [faqs, setFaqs] = useState([]);
   const [patients, setPatients] = useState([]);
   const [patientSearchQuery, setPatientSearchQuery] = useState("");
+  const [queueSearchQuery, setQueueSearchQuery] = useState("");
+  const [doctorSearchQuery, setDoctorSearchQuery] = useState("");
 
   // Blog Editor & Reader States
   const [isBlogEditorOpen, setIsBlogEditorOpen] = useState(false);
@@ -743,8 +745,19 @@ export default function AdminDashboard() {
   };
 
   const filteredQueues = queues.filter((q) => {
-    if (!queueDateFilter || queueDateFilter === "Semua") return true;
-    return parseToTimestamp(q.date) === parseToTimestamp(queueDateFilter);
+    if (queueDateFilter && queueDateFilter !== "Semua") {
+      if (parseToTimestamp(q.date) !== parseToTimestamp(queueDateFilter)) return false;
+    }
+    if (!queueSearchQuery.trim()) return true;
+    const search = queueSearchQuery.toLowerCase();
+    const patient = (q.patientName || q.patient_name || "").toLowerCase();
+    const queueNum = (q.queueNumber || q.queue_number || "").toLowerCase();
+    const doc = (q.doctor || "").toLowerCase();
+    const svc = (q.service || "").toLowerCase();
+    const status = (q.status || "").toLowerCase();
+    const dateStr = (q.date || "").toLowerCase();
+
+    return patient.includes(search) || queueNum.includes(search) || doc.includes(search) || svc.includes(search) || status.includes(search) || dateStr.includes(search);
   });
 
   const isToday = (dateStr) => parseToTimestamp(dateStr) === getTodayStr();
@@ -990,8 +1003,15 @@ export default function AdminDashboard() {
             <Table
               title={`Daftar Antrean Aktif`}
               headerAction={
-                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                  <div style={{ width: "160px" }}>
+                <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+                  <div style={{ minWidth: "200px", flex: 1 }}>
+                    <InputText
+                      placeholder="Cari pasien, no. antrean, dokter..."
+                      value={queueSearchQuery}
+                      onChange={(e) => setQueueSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <div style={{ width: "150px" }}>
                     <InputSelect
                       label=""
                       options={[
@@ -1023,49 +1043,57 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {filteredQueues.map((q) => (
-                  <tr key={q.id}>
-                    <td style={{ fontWeight: "600", color: "var(--primary)" }}>{q.queueNumber}</td>
-                    <td style={{ fontWeight: "500" }}>{q.patientName}</td>
-                    <td>{q.doctor}</td>
-                    <td>{q.service}</td>
-                    <td>{q.date} • {q.time}</td>
-                    <td>
-                      <TableBadge status={q.status} />
-                    </td>
-                    <td>
-                      <Table.ActionCell>
-                        <Button
-                          size="sm"
-                          onClick={() => handleUpdateQueueStatus(q.id, "Dipanggil")}
-                        >
-                          Panggil
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => handleStartEditQueue(q)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => handleUpdateQueueStatus(q.id, "Selesai")}
-                        >
-                          Selesai
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => handleDeleteQueue(q.id)}
-                        >
-                          Hapus
-                        </Button>
-                      </Table.ActionCell>
+                {filteredQueues.length > 0 ? (
+                  filteredQueues.map((q) => (
+                    <tr key={q.id}>
+                      <td style={{ fontWeight: "600", color: "var(--primary)" }}>{q.queueNumber}</td>
+                      <td style={{ fontWeight: "500" }}>{q.patientName}</td>
+                      <td>{q.doctor}</td>
+                      <td>{q.service}</td>
+                      <td>{q.date} • {q.time}</td>
+                      <td>
+                        <TableBadge status={q.status} />
+                      </td>
+                      <td>
+                        <Table.ActionCell>
+                          <Button
+                            size="sm"
+                            onClick={() => handleUpdateQueueStatus(q.id, "Dipanggil")}
+                          >
+                            Panggil
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => handleStartEditQueue(q)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => handleUpdateQueueStatus(q.id, "Selesai")}
+                          >
+                            Selesai
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDeleteQueue(q.id)}
+                          >
+                            Hapus
+                          </Button>
+                        </Table.ActionCell>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: "center", color: "#6b7280", padding: "24px" }}>
+                      Data antrean tidak ditemukan.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </Table>
           </div>
@@ -1073,89 +1101,120 @@ export default function AdminDashboard() {
       )}
 
       {/* 2. CRUD Dokter & Jadwal */}
-      {activeMenu === "dokter" && (
-        <>
-          <div className={styles.header}>
-            <Title
-              title={"Kelola Data & Jadwal Praktik Dokter"}
-              desc={"Tambah, edit, dan kelola profil dokter, foto, serta jadwal jam kerja praktik."}
-            />
-          </div>
+      {activeMenu === "dokter" && (() => {
+        const filteredDoctors = doctors.filter((doc) => {
+          if (!doctorSearchQuery.trim()) return true;
+          const search = doctorSearchQuery.toLowerCase();
+          const name = (doc.doctor || "").toLowerCase();
+          const role = (doc.role || "").toLowerCase();
+          const username = (doc.username || (doc.doctor.toLowerCase().includes("fitri") ? "bidan" : doc.doctor.toLowerCase().includes("aulia") ? "dr.aulia" : doc.doctor.toLowerCase().includes("nabila") ? "bidan.nabila" : "bidan.siti")).toLowerCase();
+          const services = (doc.schedules ? doc.schedules.flatMap(s => s.services).join(" ") : "").toLowerCase();
+          const days = (doc.schedules ? doc.schedules.flatMap(s => s.days).join(" ") : "").toLowerCase();
 
-          <div className={styles.inputContainer}>
-            <Table
-              title={`Daftar Dokter`}
-              headerAction={
-                <Button onClick={handleOpenAddDoctorModal}>
-                  + Tambah Dokter Baru
-                </Button>
-              }
-            >
-              <thead>
-                <tr>
-                  <th>Foto</th>
-                  <th>Nama Dokter & Gelar</th>
-                  <th>Peran / Spesialisasi</th>
-                  <th>Username</th>
-                  <th>Password</th>
-                  <th>Jadwal Praktik</th>
-                  <th>Layanan Utama</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {doctors.map((doc, idx) => {
-                  const docUsername = doc.username || (doc.doctor.toLowerCase().includes("fitri") ? "bidan" : doc.doctor.toLowerCase().includes("aulia") ? "dr.aulia" : doc.doctor.toLowerCase().includes("nabila") ? "bidan.nabila" : "bidan.siti");
-                  const docPassword = doc.password || "bidan123";
-                  return (
-                    <tr key={idx}>
-                      <td>
-                        <img
-                          src={doc.image || "/img/landingPage/dummyDr.png"}
-                          alt={doc.doctor}
-                          style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(216, 150, 237, 0.4)" }}
-                        />
-                      </td>
-                      <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
-                      <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
-                      <td><span className={styles.codeBadge}>{docUsername}</span></td>
-                      <td><PasswordCell password={docPassword} /></td>
-                      <td>
-                        {doc.schedules.map((s, i) => (
-                          <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
-                            {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
-                          </div>
-                        ))}
-                      </td>
-                      <td style={{ fontSize: "13px" }}>
-                        {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
-                      </td>
-                      <td>
-                        <Table.ActionCell>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => handleStartEditDoctor(doc)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => handleDeleteDoctor(doc.doctor)}
-                          >
-                            Hapus
-                          </Button>
-                        </Table.ActionCell>
+          return name.includes(search) || role.includes(search) || username.includes(search) || services.includes(search) || days.includes(search);
+        });
+
+        return (
+          <>
+            <div className={styles.header}>
+              <Title
+                title={"Kelola Data & Jadwal Praktik Dokter"}
+                desc={"Tambah, edit, dan kelola profil dokter, foto, serta jadwal jam kerja praktik."}
+              />
+            </div>
+
+            <div className={styles.inputContainer}>
+              <Table
+                title="Daftar Dokter"
+                headerAction={
+                  <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+                    <div style={{ minWidth: "220px", flex: 1 }}>
+                      <InputText
+                        placeholder="Cari dokter, spesialisasi, username..."
+                        value={doctorSearchQuery}
+                        onChange={(e) => setDoctorSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <Button onClick={handleOpenAddDoctorModal}>
+                      + Tambah Dokter Baru
+                    </Button>
+                  </div>
+                }
+              >
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Nama Dokter & Gelar</th>
+                    <th>Peran / Spesialisasi</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Jadwal Praktik</th>
+                    <th>Layanan Utama</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredDoctors.length > 0 ? (
+                    filteredDoctors.map((doc, idx) => {
+                      const docUsername = doc.username || (doc.doctor.toLowerCase().includes("fitri") ? "bidan" : doc.doctor.toLowerCase().includes("aulia") ? "dr.aulia" : doc.doctor.toLowerCase().includes("nabila") ? "bidan.nabila" : "bidan.siti");
+                      const docPassword = doc.password || "bidan123";
+                      return (
+                        <tr key={idx}>
+                          <td>
+                            <img
+                              src={doc.image || "/img/landingPage/dummyDr.png"}
+                              alt={doc.doctor}
+                              style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(216, 150, 237, 0.4)" }}
+                            />
+                          </td>
+                          <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
+                          <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
+                          <td><span className={styles.codeBadge}>{docUsername}</span></td>
+                          <td><PasswordCell password={docPassword} /></td>
+                          <td>
+                            {doc.schedules.map((s, i) => (
+                              <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
+                                {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
+                              </div>
+                            ))}
+                          </td>
+                          <td style={{ fontSize: "13px" }}>
+                            {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
+                          </td>
+                          <td>
+                            <Table.ActionCell>
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => handleStartEditDoctor(doc)}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="danger"
+                                onClick={() => handleDeleteDoctor(doc.doctor)}
+                              >
+                                Hapus
+                              </Button>
+                            </Table.ActionCell>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={8} style={{ textAlign: "center", color: "#6b7280", padding: "24px" }}>
+                        Data dokter tidak ditemukan.
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </div>
-        </>
-      )}
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </>
+        );
+      })()}
 
       {/* 2.5. CRUD Kelola Akun Pasien */}
       {activeMenu === "pasien" && (() => {
