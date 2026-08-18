@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./UserDashboard.module.css";
 import Button from "../../components/Button/Button";
-import { InputSelect, InputPassword, InputRadio } from "../../components/Input";
+import { InputSelect, InputPassword, InputRadio, InputText } from "../../components/Input";
 import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
@@ -23,6 +23,9 @@ export default function UserDashboard() {
   const [patientQueuesList, setPatientQueuesList] = useState([]);
 
   const [newQueueData, setNewQueueData] = useState({
+    peruntukan: "Untuk Sendiri",
+    namaAnak: "",
+    keluhan: "",
     tanggalLayanan: "",
     kategoriLayanan: "",
     layanan: "",
@@ -241,6 +244,10 @@ export default function UserDashboard() {
       setQueueFormError("Dokter wajib dipilih.");
       return;
     }
+    if (newQueueData.peruntukan === "Untuk Anak" && !newQueueData.namaAnak) {
+      setQueueFormError("Nama anak wajib diisi.");
+      return;
+    }
 
     const getRealDateTimestamp = (val) => {
       const today = new Date();
@@ -254,8 +261,17 @@ export default function UserDashboard() {
       return val;
     };
 
+    const patientDisplayName =
+      newQueueData.peruntukan === "Untuk Anak" && newQueueData.namaAnak
+        ? `${currentUser?.patient?.name || "Pasien"} (Anak: ${newQueueData.namaAnak})`
+        : currentUser?.patient?.name || "Pasien";
+
     const payload = {
-      patientName: currentUser?.patient?.name || "Pasien",
+      patientName: patientDisplayName,
+      peruntukan: newQueueData.peruntukan,
+      namaAnak: newQueueData.namaAnak,
+      keluhan: newQueueData.keluhan,
+      notes: newQueueData.keluhan,
       doctor: newQueueData.dokter,
       specialty: newQueueData.kategoriLayanan || "Pelayanan Ibu & Anak",
       category_name: newQueueData.kategoriLayanan || "Pelayanan Ibu & Anak",
@@ -282,7 +298,7 @@ export default function UserDashboard() {
     }
 
     setActiveQueue(createdQueue);
-    setNewQueueData({ tanggalLayanan: "", kategoriLayanan: "", layanan: "", dokter: "" });
+    setNewQueueData({ peruntukan: "Untuk Sendiri", namaAnak: "", keluhan: "", tanggalLayanan: "", kategoriLayanan: "", layanan: "", dokter: "" });
   };
 
   const handleCancelQueue = async () => {
@@ -418,6 +434,12 @@ export default function UserDashboard() {
                     <p className={styles.label}>Status Antrean</p>
                     <p className={styles.value}>{activeQueue.status}</p>
                   </div>
+                  {activeQueue.keluhan && (
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Keterangan Keluhan</p>
+                      <p className={styles.value}>{activeQueue.keluhan}</p>
+                    </div>
+                  )}
                   <div className={styles.input} style={{ marginTop: "8px", gap: "12px" }}>
                     <Button
                       variant="secondary"
@@ -449,6 +471,28 @@ export default function UserDashboard() {
                 </div>
 
                 <div className={styles.inputWrapper}>
+                  <InputRadio
+                    label="Layanan Untuk Siapa?"
+                    options={["Untuk Sendiri", "Untuk Anak"]}
+                    value={newQueueData.peruntukan}
+                    onChange={(val) => {
+                      setNewQueueData({
+                        ...newQueueData,
+                        peruntukan: val,
+                        namaAnak: val === "Untuk Sendiri" ? "" : newQueueData.namaAnak
+                      });
+                    }}
+                  />
+
+                  {newQueueData.peruntukan === "Untuk Anak" && (
+                    <InputText
+                      label="Nama Lengkap Anak"
+                      placeholder="Masukkan nama lengkap anak..."
+                      value={newQueueData.namaAnak}
+                      onChange={(e) => setNewQueueData({ ...newQueueData, namaAnak: e.target.value })}
+                    />
+                  )}
+
                   <InputSelect
                     label="Tanggal Layanan"
                     options={[
@@ -505,6 +549,13 @@ export default function UserDashboard() {
                       });
                     }}
                     placeholder="Pilih Dokter / Bidan"
+                  />
+
+                  <InputText
+                    label="Keterangan Keluhan Detail"
+                    placeholder="Jelaskan keluhan atau gejala medis yang dirasakan secara detail..."
+                    value={newQueueData.keluhan}
+                    onChange={(e) => setNewQueueData({ ...newQueueData, keluhan: e.target.value })}
                   />
 
                   {queueFormError && (
@@ -571,6 +622,13 @@ export default function UserDashboard() {
                         <p className={styles.value}>{getCategoryForQueue(item)}</p>
                       </div>
                     </div>
+
+                    {(item.keluhan || item.notes) && (
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>Keterangan Keluhan</p>
+                        <p className={styles.value}>{item.keluhan || item.notes}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
