@@ -8,6 +8,7 @@ import InputImage from "../../components/Input/InputImage";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
 import Table, { TableBadge } from "../../components/Table/Table";
+import Title from "../../components/Title/Title";
 
 export default function BidanDashboard() {
   const navigate = useNavigate();
@@ -304,8 +305,10 @@ export default function BidanDashboard() {
       {activeMenu === "overview" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Overview & Ringkasan Pelayanan Klinik</p>
-            <p className={styles.desc}>Monitoring antrean pasien dan aktivitas pelayanan medis hari ini.</p>
+            <Title
+              title="Overview & Ringkasan Pelayanan Klinik"
+              desc="Monitoring antrean pasien dan aktivitas pelayanan medis hari ini."
+            />
           </div>
 
           <div className={styles.statsGrid}>
@@ -369,8 +372,10 @@ export default function BidanDashboard() {
       {activeMenu === "antrean" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Manajemen Antrean & Catatan Pelayanan Pasien</p>
-            <p className={styles.desc}>Kelola status kehadiran pasien dan berikan catatan rekam pelayanan medis.</p>
+            <Title
+              title="Manajemen Antrean & Catatan Pelayanan Pasien"
+              desc="Kelola status kehadiran pasien dan berikan catatan rekam pelayanan medis."
+            />
           </div>
 
           <Table
@@ -451,8 +456,10 @@ export default function BidanDashboard() {
       {activeMenu === "jadwal" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Jadwal Praktik & Jenis Layanan Medis</p>
-            <p className={styles.desc}>Kelola dan perbarui jadwal kerja harian serta daftar jenis layanan medis yang aktif ditangani.</p>
+            <Title
+              title="Jadwal Praktik & Jenis Layanan Medis"
+              desc="Kelola dan perbarui jadwal kerja harian serta daftar jenis layanan medis yang aktif ditangani."
+            />
           </div>
 
           <div className={styles.formCard}>
@@ -533,8 +540,10 @@ export default function BidanDashboard() {
       {activeMenu === "profil" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Profil Identitas Bidan / Praktisi Medis</p>
-            <p className={styles.desc}>Kelola foto profil, data kredensial praktisi, dan Surat Izin Praktik (STR/SIP).</p>
+            <Title
+              title="Profil Identitas Bidan / Praktisi Medis"
+              desc="Kelola foto profil, data kredensial praktisi, dan Surat Izin Praktik (STR/SIP)."
+            />
           </div>
 
           <div className={styles.formProfilCard}>
