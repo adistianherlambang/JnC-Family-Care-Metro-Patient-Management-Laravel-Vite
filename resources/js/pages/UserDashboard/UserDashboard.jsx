@@ -523,78 +523,42 @@ export default function UserDashboard() {
 
           <div className={styles.inputContainer}>
             {patientQueuesList.length > 0 ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {patientQueuesList.map((item) => (
-                  <div
-                    key={item.id}
-                    style={{
-                      backgroundColor: "white",
-                      padding: "20px",
-                      borderRadius: "16px",
-                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "12px"
-                    }}
-                  >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <span style={{ fontSize: "12px", color: "#6b7280", fontWeight: 600 }}>Nomor Antrean</span>
-                        <h4 style={{ fontSize: "18px", fontWeight: 700, color: "var(--primary)", margin: "2px 0 0 0" }}>
-                          {item.queueNumber || item.queue_number || `A-${String(item.id).padStart(3, "0")}`}
-                        </h4>
-                      </div>
-                      <span
-                        style={{
-                          padding: "6px 12px",
-                          borderRadius: "20px",
-                          fontSize: "12px",
-                          fontWeight: 700,
-                          backgroundColor:
-                            item.status === "Selesai"
-                              ? "#ECFDF5"
-                              : item.status === "Dibatalkan"
-                              ? "#FEF2F2"
-                              : item.status === "Sedang Dilayani"
-                              ? "#EFF6FF"
-                              : "#FFFBEB",
-                          color:
-                            item.status === "Selesai"
-                              ? "#059669"
-                              : item.status === "Dibatalkan"
-                              ? "#DC2626"
-                              : item.status === "Sedang Dilayani"
-                              ? "#2563EB"
-                              : "#D97706"
-                        }}
-                      >
-                        {item.status || "Menunggu Antrean"}
-                      </span>
+              patientQueuesList.map((item) => (
+                <div key={item.id} className={styles.inputWrapper}>
+                  <div className={styles.input}>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Nomor Antrean</p>
+                      <p className={styles.value}>{item.queueNumber || item.queue_number || `A-${String(item.id).padStart(3, "0")}`}</p>
                     </div>
-
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginTop: "4px" }}>
-                      <div>
-                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 2px 0" }}>Layanan & Kategori</p>
-                        <p style={{ fontSize: "14px", fontWeight: 600, color: "#1F2937", margin: 0 }}>
-                          {item.service || item.service_name} {item.category_name ? `(${item.category_name})` : ""}
-                        </p>
-                      </div>
-                      <div>
-                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 2px 0" }}>Dokter / Praktisi</p>
-                        <p style={{ fontSize: "14px", fontWeight: 600, color: "#1F2937", margin: 0 }}>
-                          {item.doctor || item.doctor_name}
-                        </p>
-                      </div>
-                      <div>
-                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 2px 0" }}>Tanggal & Waktu</p>
-                        <p style={{ fontSize: "14px", fontWeight: 600, color: "#1F2937", margin: 0 }}>
-                          {item.date} • {item.time || "09:00 WIB"}
-                        </p>
-                      </div>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Status Antrean</p>
+                      <p className={styles.value}>{item.status || "Menunggu Antrean"}</p>
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  <div className={styles.input}>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Dokter / Bidan</p>
+                      <p className={styles.value}>{item.doctor || item.doctor_name}</p>
+                    </div>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Layanan</p>
+                      <p className={styles.value}>{item.service || item.service_name}</p>
+                    </div>
+                  </div>
+
+                  <div className={styles.input}>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Tanggal & Jam Kunjungan</p>
+                      <p className={styles.value}>{item.date} ({item.time || "09:00 WIB"})</p>
+                    </div>
+                    <div className={styles.confirm}>
+                      <p className={styles.label}>Kategori Layanan</p>
+                      <p className={styles.value}>{item.category_name || "Pelayanan Medis"}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
             ) : (
               <p className={styles.desc}>Belum ada riwayat kunjungan antrean medis tercatat.</p>
             )}
