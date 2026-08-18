@@ -521,48 +521,52 @@ export default function UserDashboard() {
             />
           </div>
 
-          <div className={styles.inputContainer}>
-            {patientQueuesList.length > 0 ? (
-              patientQueuesList.map((item) => (
-                <div key={item.id} className={styles.inputWrapper}>
-                  <div className={styles.input}>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>Nomor Antrean</p>
-                      <p className={styles.value}>{item.queueNumber || item.queue_number || `A-${String(item.id).padStart(3, "0")}`}</p>
+          {patientQueuesList.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {patientQueuesList.map((item) => (
+                <div key={item.id} className={styles.inputContainer}>
+                  <div className={styles.inputWrapper}>
+                    <div className={styles.input}>
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>Nomor Antrean</p>
+                        <p className={styles.value}>{item.queueNumber || item.queue_number || `A-${String(item.id).padStart(3, "0")}`}</p>
+                      </div>
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>Status Antrean</p>
+                        <p className={styles.value}>{item.status || "Menunggu Antrean"}</p>
+                      </div>
                     </div>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>Status Antrean</p>
-                      <p className={styles.value}>{item.status || "Menunggu Antrean"}</p>
-                    </div>
-                  </div>
 
-                  <div className={styles.input}>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>Dokter / Bidan</p>
-                      <p className={styles.value}>{item.doctor || item.doctor_name}</p>
+                    <div className={styles.input}>
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>Dokter / Bidan</p>
+                        <p className={styles.value}>{item.doctor || item.doctor_name}</p>
+                      </div>
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>Layanan</p>
+                        <p className={styles.value}>{item.service || item.service_name}</p>
+                      </div>
                     </div>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>Layanan</p>
-                      <p className={styles.value}>{item.service || item.service_name}</p>
-                    </div>
-                  </div>
 
-                  <div className={styles.input}>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>Tanggal & Jam Kunjungan</p>
-                      <p className={styles.value}>{item.date} ({item.time || "09:00 WIB"})</p>
-                    </div>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>Kategori Layanan</p>
-                      <p className={styles.value}>{item.category_name || "Pelayanan Medis"}</p>
+                    <div className={styles.input}>
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>Tanggal & Jam Kunjungan</p>
+                        <p className={styles.value}>{item.date} ({item.time || "09:00 WIB"})</p>
+                      </div>
+                      <div className={styles.confirm}>
+                        <p className={styles.label}>Kategori Layanan</p>
+                        <p className={styles.value}>{item.category_name || "Pelayanan Medis"}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              ))
-            ) : (
+              ))}
+            </div>
+          ) : (
+            <div className={styles.inputContainer}>
               <p className={styles.desc}>Belum ada riwayat kunjungan antrean medis tercatat.</p>
-            )}
-          </div>
+            </div>
+          )}
         </>
       )}      {activeMenu === "berita" && (() => {
         const newsPerPage = 10;
