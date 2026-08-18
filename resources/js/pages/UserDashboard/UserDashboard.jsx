@@ -769,7 +769,7 @@ export default function UserDashboard() {
               )}
 
               {newsList.length > newsPerPage && (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginTop: "12px", padding: "16px", backgroundColor: "white", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginTop: "12px" }}>
                   <Button
                     size="sm"
                     variant="secondary"
