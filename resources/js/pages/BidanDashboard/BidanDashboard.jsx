@@ -7,6 +7,7 @@ import InputSelect from "../../components/Input/InputSelect";
 import InputImage from "../../components/Input/InputImage";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
+import Table, { TableBadge } from "../../components/Table/Table";
 
 export default function BidanDashboard() {
   const navigate = useNavigate();
@@ -326,48 +327,42 @@ export default function BidanDashboard() {
             </div>
           </div>
 
-          <div className={styles.tableWrapper}>
-            <div className={styles.tableHeader}>
-              <h3 className={styles.tableTitle}>Pratinjau Antrean Pasien Hari Ini</h3>
+          <Table
+            title="Pratinjau Antrean Pasien Hari Ini"
+            headerAction={
               <Button size="sm" onClick={() => setActiveMenu("antrean")}>Lihat Semua Antrean →</Button>
-            </div>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>No. Antrean</th>
-                  <th>Nama Pasien</th>
-                  <th>Layanan Medis</th>
-                  <th>Waktu Kunjungan</th>
-                  <th>Status Antrean</th>
-                  <th>Aksi Bidan</th>
+            }
+          >
+            <thead>
+              <tr>
+                <th>No. Antrean</th>
+                <th>Nama Pasien</th>
+                <th>Layanan Medis</th>
+                <th>Waktu Kunjungan</th>
+                <th>Status Antrean</th>
+                <th>Aksi Bidan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {todayQueues.slice(0, 5).map((item) => (
+                <tr key={item.id}>
+                  <td><strong>{item.queueNumber || item.queue_number}</strong></td>
+                  <td>{item.patientName || item.patient_name}</td>
+                  <td>{item.service || item.service_name}</td>
+                  <td>{item.time || "09:00 WIB"}</td>
+                  <td>
+                    <TableBadge status={item.status || "Menunggu Antrean"} />
+                  </td>
+                  <td>
+                    <Table.ActionCell>
+                      <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Sedang Dilayani")}>Panggil</Button>
+                      <Button size="sm" onClick={() => handleStatusChange(item.id, "Selesai")}>Selesai</Button>
+                    </Table.ActionCell>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {todayQueues.slice(0, 5).map((item) => (
-                  <tr key={item.id}>
-                    <td><strong>{item.queueNumber || item.queue_number}</strong></td>
-                    <td>{item.patientName || item.patient_name}</td>
-                    <td>{item.service || item.service_name}</td>
-                    <td>{item.time || "09:00 WIB"}</td>
-                    <td>
-                      <span className={`${styles.statusBadge} ${item.status === "Sedang Dilayani" ? styles.statusProses :
-                        item.status === "Selesai" ? styles.statusSelesai :
-                          item.status === "Dibatalkan" ? styles.statusBatal : styles.statusMenunggu
-                        }`}>
-                        {item.status || "Menunggu Antrean"}
-                      </span>
-                    </td>
-                    <td>
-                      <div className={styles.actionButtons}>
-                        <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Sedang Dilayani")}>Panggil</Button>
-                        <Button size="sm" onClick={() => handleStatusChange(item.id, "Selesai")}>Selesai</Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </Table>
         </>
       )}
 
@@ -378,9 +373,9 @@ export default function BidanDashboard() {
             <p className={styles.desc}>Kelola status kehadiran pasien dan berikan catatan rekam pelayanan medis.</p>
           </div>
 
-          <div className={styles.tableWrapper}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 className={styles.tableTitle}>Daftar Antrean Pasien</h3>
+          <Table
+            title="Daftar Antrean Pasien"
+            headerAction={
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ fontSize: "14px", fontFamily: "var(--artico)", color: "#4b5563" }}>Filter Tanggal:</span>
                 <select
@@ -393,69 +388,63 @@ export default function BidanDashboard() {
                   <option value="Semua">Semua Tanggal</option>
                 </select>
               </div>
-            </div>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>No. Antrean</th>
-                  <th>Nama Pasien</th>
-                  <th>Praktisi Medis</th>
-                  <th>Layanan</th>
-                  <th>Status</th>
-                  <th>Catatan Bidan</th>
-                  <th>Aksi Ubah Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredQueues.map((item) => (
-                  <tr key={item.id}>
-                    <td><strong>{item.queueNumber || item.queue_number}</strong></td>
-                    <td>{item.patientName || item.patient_name}</td>
-                    <td>{item.doctor || item.doctor_name}</td>
-                    <td>{item.service || item.service_name}</td>
-                    <td>
-                      <span className={`${styles.statusBadge} ${item.status === "Sedang Dilayani" ? styles.statusProses :
-                        item.status === "Selesai" ? styles.statusSelesai :
-                          item.status === "Dibatalkan" ? styles.statusBatal : styles.statusMenunggu
-                        }`}>
-                        {item.status || "Menunggu Antrean"}
-                      </span>
-                    </td>
-                    <td>
-                      {notes[item.id] ? (
-                        <span style={{ fontSize: "13px", color: "#374151" }}>{notes[item.id]}</span>
-                      ) : editingNoteId === item.id ? (
-                        <div style={{ display: "flex", gap: "4px" }}>
-                          <input
-                            type="text"
-                            placeholder="Tulis catatan..."
-                            value={tempNoteText}
-                            onChange={(e) => setTempNoteText(e.target.value)}
-                            style={{ padding: "4px 8px", borderRadius: "6px", border: "1px solid #ccc" }}
-                          />
-                          <Button size="sm" onClick={() => handleSaveNote(item.id)}>Simpan</Button>
-                        </div>
-                      ) : (
-                        <button
-                          style={{ background: "none", border: "none", color: "#db2777", cursor: "pointer", textDecoration: "underline", fontSize: "13px" }}
-                          onClick={() => { setEditingNoteId(item.id); setTempNoteText(""); }}
-                        >
-                          + Catatan
-                        </button>
-                      )}
-                    </td>
-                    <td>
-                      <div className={styles.actionButtons}>
-                        <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Sedang Dilayani")}>Layani</Button>
-                        <Button size="sm" onClick={() => handleStatusChange(item.id, "Selesai")}>Selesai</Button>
-                        <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Dibatalkan")}>Batal</Button>
+            }
+          >
+            <thead>
+              <tr>
+                <th>No. Antrean</th>
+                <th>Nama Pasien</th>
+                <th>Praktisi Medis</th>
+                <th>Layanan</th>
+                <th>Status</th>
+                <th>Catatan Bidan</th>
+                <th>Aksi Ubah Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredQueues.map((item) => (
+                <tr key={item.id}>
+                  <td><strong>{item.queueNumber || item.queue_number}</strong></td>
+                  <td>{item.patientName || item.patient_name}</td>
+                  <td>{item.doctor || item.doctor_name}</td>
+                  <td>{item.service || item.service_name}</td>
+                  <td>
+                    <TableBadge status={item.status || "Menunggu Antrean"} />
+                  </td>
+                  <td>
+                    {notes[item.id] ? (
+                      <span style={{ fontSize: "13px", color: "#374151" }}>{notes[item.id]}</span>
+                    ) : editingNoteId === item.id ? (
+                      <div style={{ display: "flex", gap: "4px" }}>
+                        <input
+                          type="text"
+                          placeholder="Tulis catatan..."
+                          value={tempNoteText}
+                          onChange={(e) => setTempNoteText(e.target.value)}
+                          style={{ padding: "4px 8px", borderRadius: "6px", border: "1px solid #ccc" }}
+                        />
+                        <Button size="sm" onClick={() => handleSaveNote(item.id)}>Simpan</Button>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    ) : (
+                      <button
+                        style={{ background: "none", border: "none", color: "#db2777", cursor: "pointer", textDecoration: "underline", fontSize: "13px" }}
+                        onClick={() => { setEditingNoteId(item.id); setTempNoteText(""); }}
+                      >
+                        + Catatan
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    <Table.ActionCell>
+                      <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Sedang Dilayani")}>Layani</Button>
+                      <Button size="sm" onClick={() => handleStatusChange(item.id, "Selesai")}>Selesai</Button>
+                      <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Dibatalkan")}>Batal</Button>
+                    </Table.ActionCell>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </>
       )}
 

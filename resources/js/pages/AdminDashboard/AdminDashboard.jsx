@@ -10,6 +10,7 @@ import { apiService } from "../../services/apiService";
 import BlogEditorModal from "../../components/BlogEditor/BlogEditorModal";
 import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
+import Table, { TableBadge } from "../../components/Table/Table";
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -804,34 +805,37 @@ export default function AdminDashboard() {
               </Button>
             </div>
 
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>No. Antrean</th>
-                    <th>Nama Pasien</th>
-                    <th>Dokter / Bidan</th>
-                    <th>Layanan</th>
-                    <th>Status</th>
+            <Table
+              title="Antrean Terbaru Hari Ini"
+              headerAction={
+                <Button onClick={() => setActiveMenu("antrean")}>
+                  Lihat Semua Antrean →
+                </Button>
+              }
+            >
+              <thead>
+                <tr>
+                  <th>No. Antrean</th>
+                  <th>Nama Pasien</th>
+                  <th>Dokter / Bidan</th>
+                  <th>Layanan</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {queues.filter((q) => isToday(q.date)).slice(0, 5).map((q) => (
+                  <tr key={q.id}>
+                    <td style={{ fontWeight: "600", color: "var(--primary)" }}>{q.queueNumber}</td>
+                    <td style={{ fontWeight: "500" }}>{q.patientName}</td>
+                    <td>{q.doctor}</td>
+                    <td>{q.service}</td>
+                    <td>
+                      <TableBadge status={q.status} />
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {queues.filter((q) => isToday(q.date)).slice(0, 5).map((q) => (
-                    <tr key={q.id} className={styles.tableTr}>
-                      <td style={{ fontWeight: "600", color: "var(--primary)" }}>{q.queueNumber}</td>
-                      <td style={{ fontWeight: "500" }}>{q.patientName}</td>
-                      <td>{q.doctor}</td>
-                      <td>{q.service}</td>
-                      <td>
-                        <span className={`${styles.statusText} ${q.status === "Dipanggil" ? styles.statusActive : q.status === "Selesai" ? styles.statusDone : styles.statusPending}`}>
-                          {q.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </Table>
           </div>
         </>
       )}
@@ -845,98 +849,87 @@ export default function AdminDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <div className={styles.tableHeaderRow}>
-              <div>
-                <p className={styles.title}>Daftar Antrean Aktif ({filteredQueues.length})</p>
-              </div>
-              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                <div style={{ width: "160px" }}>
-                  <InputSelect
-                    label=""
-                    options={[
-                      { value: getTodayStr(), label: `Hari Ini (${getTodayStr()})` },
-                      { value: getTomorrowStr(), label: `Besok (${getTomorrowStr()})` },
-                      { value: "Semua", label: "Semua Tanggal" }
-                    ]}
-                    value={queueDateFilter}
-                    onChange={(val) => setQueueDateFilter(val)}
-                    placeholder="Filter Tanggal"
-                  />
+            <Table
+              title={`Daftar Antrean Aktif (${filteredQueues.length})`}
+              headerAction={
+                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                  <div style={{ width: "160px" }}>
+                    <InputSelect
+                      label=""
+                      options={[
+                        { value: getTodayStr(), label: `Hari Ini (${getTodayStr()})` },
+                        { value: getTomorrowStr(), label: `Besok (${getTomorrowStr()})` },
+                        { value: "Semua", label: "Semua Tanggal" }
+                      ]}
+                      value={queueDateFilter}
+                      onChange={(val) => setQueueDateFilter(val)}
+                      placeholder="Filter Tanggal"
+                    />
+                  </div>
+                  <Button onClick={handleOpenAddQueueModal}>
+                    + Tambah Antrean Walk-In
+                  </Button>
                 </div>
-                <Button
-                  onClick={handleOpenAddQueueModal}
-                >
-                  + Tambah Antrean Walk-In
-                </Button>
-              </div>
-            </div>
-
-            {filteredQueues.length > 0 ? (
-              <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th>No. Antrean</th>
-                      <th>Nama Pasien</th>
-                      <th>Dokter / Bidan</th>
-                      <th>Layanan</th>
-                      <th>Tanggal & Waktu</th>
-                      <th>Status</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredQueues.map((q) => (
-                      <tr key={q.id} className={styles.tableTr}>
-                        <td style={{ fontWeight: "600", color: "var(--primary)" }}>{q.queueNumber}</td>
-                        <td style={{ fontWeight: "500" }}>{q.patientName}</td>
-                        <td>{q.doctor}</td>
-                        <td>{q.service}</td>
-                        <td>{q.date} • {q.time}</td>
-                        <td>
-                          <span className={`${styles.statusText} ${q.status === "Dipanggil" ? styles.statusActive : q.status === "Selesai" ? styles.statusDone : styles.statusPending}`}>
-                            {q.status}
-                          </span>
-                        </td>
-                        <td>
-                          <div className={styles.actionCell}>
-                            <Button
-                              size="sm"
-                              onClick={() => handleUpdateQueueStatus(q.id, "Dipanggil")}
-                            >
-                              Panggil
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleStartEditQueue(q)}
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleUpdateQueueStatus(q.id, "Selesai")}
-                            >
-                              Selesai
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="danger"
-                              onClick={() => handleDeleteQueue(q.id)}
-                            >
-                              Hapus
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className={styles.desc}>Tidak ada antrean aktif pada tanggal terpilih ({queueDateFilter}).</p>
-            )}
+              }
+              emptyMessage={`Tidak ada antrean aktif pada tanggal terpilih (${queueDateFilter}).`}
+            >
+              <thead>
+                <tr>
+                  <th>No. Antrean</th>
+                  <th>Nama Pasien</th>
+                  <th>Dokter / Bidan</th>
+                  <th>Layanan</th>
+                  <th>Tanggal & Waktu</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredQueues.map((q) => (
+                  <tr key={q.id}>
+                    <td style={{ fontWeight: "600", color: "var(--primary)" }}>{q.queueNumber}</td>
+                    <td style={{ fontWeight: "500" }}>{q.patientName}</td>
+                    <td>{q.doctor}</td>
+                    <td>{q.service}</td>
+                    <td>{q.date} • {q.time}</td>
+                    <td>
+                      <TableBadge status={q.status} />
+                    </td>
+                    <td>
+                      <Table.ActionCell>
+                        <Button
+                          size="sm"
+                          onClick={() => handleUpdateQueueStatus(q.id, "Dipanggil")}
+                        >
+                          Panggil
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleStartEditQueue(q)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleUpdateQueueStatus(q.id, "Selesai")}
+                        >
+                          Selesai
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDeleteQueue(q.id)}
+                        >
+                          Hapus
+                        </Button>
+                      </Table.ActionCell>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           </div>
         </>
       )}
@@ -950,85 +943,81 @@ export default function AdminDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <div className={styles.tableHeaderRow}>
-              <p className={styles.title}>Daftar Dokter Terdaftar ({doctors.length})</p>
-              <Button
-                onClick={handleOpenAddDoctorModal}
-              >
-                + Tambah Dokter Baru
-              </Button>
-            </div>
-
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Foto</th>
-                    <th>Nama Dokter & Gelar</th>
-                    <th>Peran / Spesialisasi</th>
-                    <th>Info Akun Login</th>
-                    <th>Jadwal Praktik</th>
-                    <th>Layanan Utama</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {doctors.map((doc, idx) => {
-                    const docUsername = doc.username || (doc.doctor.toLowerCase().includes("fitri") ? "bidan" : doc.doctor.toLowerCase().includes("aulia") ? "dr.aulia" : "bidan.siti");
-                    const docPassword = doc.password || "bidan123";
-                    return (
-                      <tr key={idx} className={styles.tableTr}>
-                        <td>
-                          <img
-                            src={doc.image || "/img/landingPage/dummyDr.png"}
-                            alt={doc.doctor}
-                            style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(216, 150, 237, 0.4)" }}
-                          />
-                        </td>
-                        <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
-                        <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
-                        <td>
-                          <div style={{ fontSize: "13px", fontWeight: "600", color: "var(--primary)" }}>
-                            Username: {docUsername}
+            <Table
+              title={`Daftar Dokter Terdaftar (${doctors.length})`}
+              headerAction={
+                <Button onClick={handleOpenAddDoctorModal}>
+                  + Tambah Dokter Baru
+                </Button>
+              }
+            >
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>Nama Dokter & Gelar</th>
+                  <th>Peran / Spesialisasi</th>
+                  <th>Info Akun Login</th>
+                  <th>Jadwal Praktik</th>
+                  <th>Layanan Utama</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doctors.map((doc, idx) => {
+                  const docUsername = doc.username || (doc.doctor.toLowerCase().includes("fitri") ? "bidan" : doc.doctor.toLowerCase().includes("aulia") ? "dr.aulia" : "bidan.siti");
+                  const docPassword = doc.password || "bidan123";
+                  return (
+                    <tr key={idx}>
+                      <td>
+                        <img
+                          src={doc.image || "/img/landingPage/dummyDr.png"}
+                          alt={doc.doctor}
+                          style={{ width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(216, 150, 237, 0.4)" }}
+                        />
+                      </td>
+                      <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
+                      <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
+                      <td>
+                        <div style={{ fontSize: "13px", fontWeight: "600", color: "var(--primary)" }}>
+                          Username: {docUsername}
+                        </div>
+                        <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "4px" }}>
+                          🔑 Password: <code style={{ backgroundColor: "#f3f4f6", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{docPassword}</code>
+                        </div>
+                      </td>
+                      <td>
+                        {doc.schedules.map((s, i) => (
+                          <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
+                            {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
                           </div>
-                          <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "4px" }}>
-                            🔑 Password: <code style={{ backgroundColor: "#f3f4f6", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{docPassword}</code>
-                          </div>
-                        </td>
-                        <td>
-                          {doc.schedules.map((s, i) => (
-                            <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
-                              {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
-                            </div>
-                          ))}
-                        </td>
-                        <td style={{ fontSize: "13px" }}>
-                          {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
-                        </td>
-                        <td>
-                          <div className={styles.actionCell}>
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleStartEditDoctor(doc)}
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="danger"
-                              onClick={() => handleDeleteDoctor(doc.doctor)}
-                            >
-                              Hapus
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                        ))}
+                      </td>
+                      <td style={{ fontSize: "13px" }}>
+                        {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
+                      </td>
+                      <td>
+                        <Table.ActionCell>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => handleStartEditDoctor(doc)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDeleteDoctor(doc.doctor)}
+                          >
+                            Hapus
+                          </Button>
+                        </Table.ActionCell>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
           </div>
         </>
       )}
@@ -1042,58 +1031,54 @@ export default function AdminDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <div className={styles.tableHeaderRow}>
-              <p className={styles.title}>Daftar Kategori Layanan ({categories.length})</p>
-              <Button
-                onClick={handleOpenAddCategoryModal}
-              >
-                + Tambah Kategori Layanan
-              </Button>
-            </div>
-
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>No.</th>
-                    <th>Nama Kategori</th>
-                    <th>Jumlah Layanan</th>
-                    <th>Daftar Layanan Spesifik</th>
-                    <th>Aksi</th>
+            <Table
+              title={`Daftar Kategori Layanan (${categories.length})`}
+              headerAction={
+                <Button onClick={handleOpenAddCategoryModal}>
+                  + Tambah Kategori Layanan
+                </Button>
+              }
+            >
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Kategori</th>
+                  <th>Jumlah Layanan</th>
+                  <th>Daftar Layanan Spesifik</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categories.map((cat, idx) => (
+                  <tr key={idx}>
+                    <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
+                    <td style={{ fontWeight: "600", color: "var(--primary)" }}>{cat.title}</td>
+                    <td>{cat.list.length} Layanan</td>
+                    <td style={{ fontSize: "13px" }}>
+                      {cat.list.length > 0 ? cat.list.join(", ") : "-"}
+                    </td>
+                    <td>
+                      <Table.ActionCell>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleStartEditCategory(cat)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDeleteCategory(cat.title)}
+                        >
+                          Hapus
+                        </Button>
+                      </Table.ActionCell>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {categories.map((cat, idx) => (
-                    <tr key={idx} className={styles.tableTr}>
-                      <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
-                      <td style={{ fontWeight: "600", color: "var(--primary)" }}>{cat.title}</td>
-                      <td>{cat.list.length} Layanan</td>
-                      <td style={{ fontSize: "13px" }}>
-                        {cat.list.length > 0 ? cat.list.join(", ") : "-"}
-                      </td>
-                      <td>
-                        <div className={styles.actionCell}>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => handleStartEditCategory(cat)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => handleDeleteCategory(cat.title)}
-                          >
-                            Hapus
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </Table>
           </div>
         </>
       )}
@@ -1107,71 +1092,65 @@ export default function AdminDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <div className={styles.tableHeaderRow}>
-              <p className={styles.title}>Daftar Artikel Terbit ({news.length})</p>
-              <Button
-                onClick={handleOpenAddNewsModal}
-              >
-                + Tambah Artikel Baru
-              </Button>
-            </div>
-
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>No.</th>
-                    <th>Judul Artikel</th>
-                    <th>Kategori</th>
-                    <th>Penulis</th>
-                    <th>Tanggal Terbit</th>
-                    <th>Ringkasan</th>
-                    <th>Aksi</th>
+            <Table
+              title={`Daftar Artikel Terbit (${news.length})`}
+              headerAction={
+                <Button onClick={handleOpenAddNewsModal}>
+                  + Tambah Artikel Baru
+                </Button>
+              }
+            >
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Judul Artikel</th>
+                  <th>Kategori</th>
+                  <th>Penulis</th>
+                  <th>Tanggal Terbit</th>
+                  <th>Ringkasan</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {news.map((n, idx) => (
+                  <tr key={n.id}>
+                    <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
+                    <td style={{ fontWeight: "600", color: "var(--primary)" }}>{n.title}</td>
+                    <td>
+                      <TableBadge status="Aktif">{n.category}</TableBadge>
+                    </td>
+                    <td style={{ fontSize: "13px", color: "#374151" }}>{n.author || "Tim Redaksi"}</td>
+                    <td style={{ fontSize: "13px" }}>{n.date}</td>
+                    <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "260px" }}>{n.summary}</td>
+                    <td>
+                      <Table.ActionCell>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => setSelectedArticleForPreview(n)}
+                        >
+                          Pratinjau
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleStartEditNews(n)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDeleteNews(n.id)}
+                        >
+                          Hapus
+                        </Button>
+                      </Table.ActionCell>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {news.map((n, idx) => (
-                    <tr key={n.id} className={styles.tableTr}>
-                      <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
-                      <td style={{ fontWeight: "600", color: "var(--primary)" }}>{n.title}</td>
-                      <td>
-                        <span className={styles.statusText} style={{ backgroundColor: "#FAF0FC", color: "var(--primary)" }}>
-                          {n.category}
-                        </span>
-                      </td>
-                      <td style={{ fontSize: "13px", color: "#374151" }}>{n.author || "Tim Redaksi"}</td>
-                      <td style={{ fontSize: "13px" }}>{n.date}</td>
-                      <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "260px" }}>{n.summary}</td>
-                      <td>
-                        <div className={styles.actionCell}>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => setSelectedArticleForPreview(n)}
-                          >
-                            Pratinjau
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => handleStartEditNews(n)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => handleDeleteNews(n.id)}
-                          >
-                            Hapus
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </Table>
           </div>
         </>
       )}
@@ -1185,54 +1164,50 @@ export default function AdminDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            <div className={styles.tableHeaderRow}>
-              <p className={styles.title}>Daftar Pertanyaan FAQ ({faqs.length})</p>
-              <Button
-                onClick={handleOpenAddFaqModal}
-              >
-                + Tambah FAQ Baru
-              </Button>
-            </div>
-
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>No.</th>
-                    <th>Pertanyaan</th>
-                    <th>Jawaban</th>
-                    <th>Aksi</th>
+            <Table
+              title={`Daftar Pertanyaan FAQ (${faqs.length})`}
+              headerAction={
+                <Button onClick={handleOpenAddFaqModal}>
+                  + Tambah FAQ Baru
+                </Button>
+              }
+            >
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Pertanyaan</th>
+                  <th>Jawaban</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {faqs.map((f, idx) => (
+                  <tr key={f.id}>
+                    <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
+                    <td style={{ fontWeight: "600", color: "var(--primary)", maxWidth: "260px" }}>{f.question}</td>
+                    <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "350px" }}>{f.answer}</td>
+                    <td>
+                      <Table.ActionCell>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleStartEditFaq(f)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDeleteFaq(f.id)}
+                        >
+                          Hapus
+                        </Button>
+                      </Table.ActionCell>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {faqs.map((f, idx) => (
-                    <tr key={f.id} className={styles.tableTr}>
-                      <td style={{ fontWeight: "600", color: "#6b7280" }}>{idx + 1}</td>
-                      <td style={{ fontWeight: "600", color: "var(--primary)", maxWidth: "260px" }}>{f.question}</td>
-                      <td style={{ fontSize: "13px", color: "#4b5563", maxWidth: "350px" }}>{f.answer}</td>
-                      <td>
-                        <div className={styles.actionCell}>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => handleStartEditFaq(f)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => handleDeleteFaq(f.id)}
-                          >
-                            Hapus
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </Table>
           </div>
         </>
       )}
