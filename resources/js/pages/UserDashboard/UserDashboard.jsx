@@ -18,6 +18,7 @@ export default function UserDashboard() {
   const [categoriesList, setCategoriesList] = useState([]);
   const [doctorsList, setDoctorsList] = useState([]);
   const [newsList, setNewsList] = useState([]);
+  const [newsPage, setNewsPage] = useState(1);
   const [faqList, setFaqList] = useState([]);
 
   const [newQueueData, setNewQueueData] = useState({
@@ -120,7 +121,7 @@ export default function UserDashboard() {
               setActiveQueue(match);
               localStorage.setItem("user_active_queue_" + loggedInUsername, JSON.stringify(match));
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       }
     }
@@ -361,7 +362,6 @@ export default function UserDashboard() {
           <div className={styles.inputContainer}>
             {activeQueue && activeQueue.status !== "Selesai" && activeQueue.status !== "Dibatalkan" ? (
               <>
-                <p className={styles.title}>Detail Antrean Aktif Anda</p>
                 <div className={styles.inputWrapper}>
                   <div className={styles.confirm}>
                     <p className={styles.label}>Nomor Antrean</p>
@@ -418,10 +418,12 @@ export default function UserDashboard() {
                     ✓ Pelayanan antrean Anda sebelumnya ({activeQueue.queueNumber}) telah <strong>Selesai</strong>. Anda dapat membuat janji antrean baru di bawah ini.
                   </div>
                 )}
-                <p className={styles.title}>Buat Janji Antrean Baru</p>
-                <p className={styles.desc} style={{ margin: 0, fontFamily: "var(--font-artico)" }}>
-                  Silakan pilih tanggal dan praktisi medis dari daftar jadwal di bawah untuk membuat antrean baru.
-                </p>
+                <div>
+                  <p className={styles.title}>Buat Antrean Baru</p>
+                  <p className={styles.desc} style={{ margin: 0, fontFamily: "var(--font-artico)" }}>
+                    Silakan pilih tanggal dan praktisi medis dari daftar jadwal di bawah untuk membuat antrean baru.
+                  </p>
+                </div>
 
                 <div className={styles.inputWrapper}>
                   <InputSelect
@@ -534,62 +536,97 @@ export default function UserDashboard() {
         </>
       )}
 
-      {activeMenu === "berita" && (
-        <>
-          <div className={styles.header}>
-            <Title
-              title="Berita & Edukasi Kesehatan"
-              desc="Informasi dan tips seputar pelayanan kesehatan ibu dan anak."
-            />
-          </div>
+      {activeMenu === "berita" && (() => {
+        const newsPerPage = 10;
+        const totalNewsPages = Math.ceil(newsList.length / newsPerPage) || 1;
+        const currentNewsList = newsList.slice((newsPage - 1) * newsPerPage, newsPage * newsPerPage);
 
-          <div className={styles.inputContainer}>
-            {newsList.map((item) => (
-              <div
-                key={item.id}
-                className={styles.inputWrapper}
-                style={{ cursor: "pointer", transition: "transform 0.2s ease" }}
-                onClick={() => setSelectedArticle(item)}
-              >
-                {item.image && (
-                  <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "12px" }}>
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
-                    />
+        return (
+          <>
+            <div className={styles.header}>
+              <Title
+                title="Berita & Edukasi Kesehatan"
+                desc="Informasi dan tips seputar pelayanan kesehatan ibu dan anak."
+              />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {currentNewsList.map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    backgroundColor: "white",
+                    padding: "24px",
+                    borderRadius: "16px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
+                    cursor: "pointer"
+                  }}
+                  onClick={() => setSelectedArticle(item)}
+                >
+                  {item.image && (
+                    <div style={{ width: "100%", height: "180px", borderRadius: "12px", overflow: "hidden", marginBottom: "16px" }}>
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div className={styles.confirm}>
+                    <p className={styles.label}>
+                      {item.category} • {item.readTime || item.read_time || "3 min read"} • {item.date}
+                    </p>
+                    <p className={styles.value} style={{ fontWeight: 700, fontSize: "18px", color: "var(--primary)", marginTop: "4px" }}>
+                      {item.title}
+                    </p>
                   </div>
-                )}
-                <div className={styles.confirm}>
-                  <p className={styles.label}>
-                    {item.category} • {item.readTime || item.read_time || "3 min read"} • {item.date}
-                  </p>
-                  <p className={styles.value} style={{ fontWeight: 700, fontSize: "17px", color: "var(--primary)" }}>
-                    {item.title}
-                  </p>
+                  <div className={styles.confirm} style={{ marginTop: "8px" }}>
+                    <p className={styles.value} style={{ color: "#4b5563", lineHeight: "1.6" }}>{item.summary}</p>
+                  </div>
+                  <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                    <Button
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedArticle(item);
+                      }}
+                    >
+                      Baca Selengkapnya
+                    </Button>
+                  </div>
                 </div>
-                <div className={styles.confirm}>
-                  <p className={styles.value} style={{ color: "#4b5563" }}>{item.summary}</p>
-                </div>
-                <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
+              ))}
+
+              {newsList.length > newsPerPage && (
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginTop: "12px", padding: "16px", backgroundColor: "white", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
                   <Button
                     size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedArticle(item);
-                    }}
+                    variant="secondary"
+                    disabled={newsPage === 1}
+                    onClick={() => setNewsPage((p) => Math.max(p - 1, 1))}
                   >
-                    Baca Selengkapnya →
+                    Sebelumnya
+                  </Button>
+                  <span style={{ fontSize: "14px", fontWeight: "600", color: "#374151" }}>
+                    Halaman {newsPage} dari {totalNewsPages}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    disabled={newsPage === totalNewsPages}
+                    onClick={() => setNewsPage((p) => Math.min(p + 1, totalNewsPages))}
+                  >
+                    Selanjutnya
                   </Button>
                 </div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+              )}
+            </div>
+          </>
+        );
+      })()}
 
       {activeMenu === "faq" && (
         <>
