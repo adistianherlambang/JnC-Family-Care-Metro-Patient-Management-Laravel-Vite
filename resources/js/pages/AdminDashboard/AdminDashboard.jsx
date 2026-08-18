@@ -155,7 +155,9 @@ export default function AdminDashboard() {
     noRM: "",
     phone: "",
     email: "",
+    hasBpjs: "Tidak",
     noBpjs: "",
+    bpjsImage: "",
     address: ""
   });
 
@@ -176,7 +178,9 @@ export default function AdminDashboard() {
       noRM: `RM-2026-${Math.floor(Math.random() * 800) + 100}`,
       phone: "",
       email: "",
+      hasBpjs: "Tidak",
       noBpjs: "",
+      bpjsImage: "",
       address: ""
     });
     setIsModalOpen(true);
@@ -228,7 +232,7 @@ export default function AdminDashboard() {
 
     setIsModalOpen(false);
     setEditingPatientId(null);
-    setNewPatient({ name: "", username: "", password: "", noRM: "", phone: "", email: "", noBpjs: "", address: "" });
+    setNewPatient({ name: "", username: "", password: "", noRM: "", phone: "", email: "", hasBpjs: "Tidak", noBpjs: "", bpjsImage: "", address: "" });
   };
 
   const handleDeletePatient = async (id) => {
@@ -1161,6 +1165,8 @@ export default function AdminDashboard() {
                           variant="secondary"
                           onClick={() => {
                             setEditingPatientId(item.id);
+                            const bpjsNum = item.noBpjs || item.no_bpjs || "";
+                            const hasBpjsVal = item.hasBpjs ? item.hasBpjs : (bpjsNum ? "Ya" : "Tidak");
                             setNewPatient({
                               name: item.name || item.patient_name || "",
                               username: item.username || "",
@@ -1168,7 +1174,9 @@ export default function AdminDashboard() {
                               noRM: item.noRM || item.no_rm || "",
                               phone: item.phone || "",
                               email: item.email || "",
-                              noBpjs: item.noBpjs || item.no_bpjs || "",
+                              hasBpjs: hasBpjsVal,
+                              noBpjs: bpjsNum,
+                              bpjsImage: item.bpjsImage || item.bpjs_image || "",
                               address: item.address || ""
                             });
                             setIsModalOpen(true);
@@ -1629,12 +1637,34 @@ export default function AdminDashboard() {
                   placeholder="Contoh: pasien@gmail.com"
                 />
               </div>
-              <InputText
-                label="Nomor BPJS Kesehatan (Opsional)"
-                value={newPatient.noBpjs}
-                onChange={(e) => setNewPatient({ ...newPatient, noBpjs: e.target.value })}
-                placeholder="Masukkan nomor BPJS jika ada"
+              {/* InputRadio Punya BPJS Kesehatan */}
+              <InputRadio
+                label="Punya BPJS Kesehatan?"
+                options={[
+                  { label: "Ya", value: "Ya" },
+                  { label: "Tidak", value: "Tidak" }
+                ]}
+                value={newPatient.hasBpjs || "Tidak"}
+                onChange={(val) => setNewPatient({ ...newPatient, hasBpjs: val })}
               />
+
+              {newPatient.hasBpjs === "Ya" && (
+                <>
+                  <InputText
+                    label="Nomor BPJS Kesehatan"
+                    value={newPatient.noBpjs}
+                    onChange={(e) => setNewPatient({ ...newPatient, noBpjs: e.target.value })}
+                    placeholder="Masukkan 13 digit nomor BPJS Kesehatan"
+                  />
+                  <InputImage
+                    label="Unggah Foto / Scan Kartu BPJS Kesehatan"
+                    value={newPatient.bpjsImage}
+                    onChange={(file, preview) => setNewPatient({ ...newPatient, bpjsImage: preview })}
+                    placeholder="Klik atau seret foto kartu BPJS Kesehatan ke sini (PNG, JPG, JPEG)"
+                  />
+                </>
+              )}
+
               <InputText
                 label="Alamat Lengkap"
                 value={newPatient.address}
