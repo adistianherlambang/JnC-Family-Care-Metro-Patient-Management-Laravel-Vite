@@ -52,7 +52,111 @@ const DEFAULT_QUEUES = [
   }
 ];
 
+const DEFAULT_PATIENTS = [
+  {
+    id: 1,
+    name: "Siti Nurhaliza",
+    username: "sitinurhaliza",
+    password: "user123",
+    noRM: "RM-2026-00101",
+    phone: "081234567890",
+    email: "siti.nurhaliza@gmail.com",
+    noBpjs: "000123456781",
+    address: "Jl. Pemuda No. 15, Metro"
+  },
+  {
+    id: 2,
+    name: "Budi Santoso",
+    username: "budisantoso",
+    password: "user123",
+    noRM: "RM-2026-00102",
+    phone: "081987654321",
+    email: "budi.santoso@yahoo.com",
+    noBpjs: "000123456782",
+    address: "Jl. Ahmad Yani No. 8, Metro"
+  },
+  {
+    id: 3,
+    name: "Dewi Lestari",
+    username: "dewilestari",
+    password: "user123",
+    noRM: "RM-2026-00103",
+    phone: "085211223344",
+    email: "dewi.lestari@gmail.com",
+    noBpjs: "000123456783",
+    address: "Jl. Raden Intan No. 42, Metro"
+  },
+  {
+    id: 4,
+    name: "Teddy Setiawan",
+    username: "teddy",
+    password: "user123",
+    noRM: "RM-2026-00123",
+    phone: "081299887766",
+    email: "teddy@gmail.com",
+    noBpjs: "000123456789",
+    address: "Jl. Flamboyan No. 5, Metro"
+  }
+];
+
 export const apiService = {
+  // Patients
+  async getPatients(fallback) {
+    try {
+      const res = await fetch(`${BASE_URL}/patients`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) return data;
+      }
+    } catch (e) {
+      console.warn("MySQL API fetch error:", e);
+    }
+    const local = localStorage.getItem("clinic_patients");
+    if (local) {
+      try {
+        return JSON.parse(local);
+      } catch (e) {}
+    }
+    localStorage.setItem("clinic_patients", JSON.stringify(DEFAULT_PATIENTS));
+    return DEFAULT_PATIENTS;
+  },
+  savePatientsLocal(data) {
+    localStorage.setItem("clinic_patients", JSON.stringify(data));
+  },
+  async createPatient(data) {
+    try {
+      const res = await fetch(`${BASE_URL}/patients`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.error("Error creating patient:", e);
+    }
+    return null;
+  },
+  async updatePatient(id, data) {
+    try {
+      const res = await fetch(`${BASE_URL}/patients/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.error("Error updating patient:", e);
+    }
+    return null;
+  },
+  async deletePatient(id) {
+    try {
+      await fetch(`${BASE_URL}/patients/${id}`, { method: "DELETE" });
+    } catch (e) {
+      console.error("Error deleting patient:", e);
+    }
+  },
+
   // Categories
   async getCategories(fallback) {
     try {

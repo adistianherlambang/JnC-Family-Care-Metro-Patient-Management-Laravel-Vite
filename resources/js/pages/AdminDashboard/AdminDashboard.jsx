@@ -38,6 +38,7 @@ export default function AdminDashboard() {
   const [categories, setCategories] = useState([]);
   const [news, setNews] = useState([]);
   const [faqs, setFaqs] = useState([]);
+  const [patients, setPatients] = useState([]);
 
   // Blog Editor & Reader States
   const [isBlogEditorOpen, setIsBlogEditorOpen] = useState(false);
@@ -69,10 +70,16 @@ export default function AdminDashboard() {
       setNews(nList);
       const fList = await apiService.getFaqs();
       setFaqs(fList);
+      const pList = await apiService.getPatients();
+      setPatients(pList);
       isDataLoaded.current = true;
     }
     loadData();
   }, [navigate]);
+
+  useEffect(() => {
+    if (isDataLoaded.current) apiService.savePatientsLocal(patients);
+  }, [patients]);
 
   useEffect(() => {
     if (isDataLoaded.current) apiService.saveNewsLocal(news);
@@ -141,12 +148,97 @@ export default function AdminDashboard() {
     answer: ""
   });
 
+  const [newPatient, setNewPatient] = useState({
+    name: "",
+    username: "",
+    password: "",
+    noRM: "",
+    phone: "",
+    email: "",
+    noBpjs: "",
+    address: ""
+  });
+
   // Edit States
   const [editingQueueId, setEditingQueueId] = useState(null);
   const [editingDoctorName, setEditingDoctorName] = useState(null);
   const [editingCategoryTitle, setEditingCategoryTitle] = useState(null);
   const [editingNewsId, setEditingNewsId] = useState(null);
   const [editingFaqId, setEditingFaqId] = useState(null);
+  const [editingPatientId, setEditingPatientId] = useState(null);
+
+  const handleOpenAddPatientModal = () => {
+    setEditingPatientId(null);
+    setNewPatient({
+      name: "",
+      username: "",
+      password: "user123",
+      noRM: `RM-2026-${Math.floor(Math.random() * 800) + 100}`,
+      phone: "",
+      email: "",
+      noBpjs: "",
+      address: ""
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleAddPatient = async () => {
+    if (!newPatient.name.trim()) {
+      alert("Nama pasien wajib diisi!");
+      return;
+    }
+    if (!newPatient.username.trim()) {
+      alert("Username pasien wajib diisi!");
+      return;
+    }
+
+    if (editingPatientId) {
+      const payload = { ...newPatient, id: editingPatientId };
+      await apiService.updatePatient(editingPatientId, payload);
+      const updated = patients.map((item) => (item.id === editingPatientId ? payload : item));
+      setPatients(updated);
+      apiService.savePatientsLocal(updated);
+
+      if (newPatient.username) {
+        const userObj = {
+          username: newPatient.username,
+          password: newPatient.password,
+          patient: {
+            name: newPatient.name,
+            noRM: newPatient.noRM,
+            noBpjs: newPatient.noBpjs,
+            phone: newPatient.phone,
+            email: newPatient.email,
+            address: newPatient.address
+          }
+        };
+        localStorage.setItem("user_profile_" + newPatient.username, JSON.stringify(userObj));
+        localStorage.setItem("registeredUser", JSON.stringify(userObj.patient));
+      }
+    } else {
+      const payload = {
+        id: Date.now(),
+        ...newPatient
+      };
+      const created = await apiService.createPatient(payload);
+      const updated = [created || payload, ...patients];
+      setPatients(updated);
+      apiService.savePatientsLocal(updated);
+    }
+
+    setIsModalOpen(false);
+    setEditingPatientId(null);
+    setNewPatient({ name: "", username: "", password: "", noRM: "", phone: "", email: "", noBpjs: "", address: "" });
+  };
+
+  const handleDeletePatient = async (id) => {
+    if (confirm("Apakah Anda yakin ingin menghapus akun pasien ini?")) {
+      await apiService.deletePatient(id);
+      const updated = patients.filter((item) => item.id !== id);
+      setPatients(updated);
+      apiService.savePatientsLocal(updated);
+    }
+  };
 
   // Handlers Open Add Modals
   const handleOpenAddQueueModal = () => {
@@ -646,6 +738,12 @@ export default function AdminDashboard() {
         </svg>
     },
     {
+      id: "pasien", label: "Kelola Akun Pasien", svg:
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor" />
+        </svg>
+    },
+    {
       id: "poli", label: "Poli & Layanan", svg:
         <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M11.01 0.00999999H1C0.733626 0.0118505 0.478833 0.119173 0.29141 0.30847C0.103987 0.497768 -0.00079548 0.753616 4.54779e-06 1.02V6.6C4.54779e-06 6.79 0.0500045 6.97 0.150005 7.13C0.250005 7.29 0.390004 7.42 0.550004 7.51L5.33 10.35C5.54 10.46 5.77 10.51 6 10.51C6.23 10.51 6.46 10.46 6.67 10.35L11.45 7.51C11.62 7.42 11.76 7.29 11.85 7.13C11.95 6.97 12 6.79 12 6.6V1.02C12 0.89 11.98 0.76 11.93 0.63C11.88 0.51 11.81 0.4 11.72 0.3C11.5354 0.111586 11.2838 0.00375705 11.02 0L11.01 0.00999999ZM9.01 5.51H7.01V7.51H5.01V5.51H3.01V3.51H5.01V1.51H7.01V3.51H9.01V5.51Z" fill="currentColor" />
@@ -1022,6 +1120,84 @@ export default function AdminDashboard() {
         </>
       )}
 
+      {/* 2.5. CRUD Kelola Akun Pasien */}
+      {activeMenu === "pasien" && (
+        <>
+          <div className={styles.header}>
+            <Title
+              title="Kelola Akun & Data Pasien"
+              desc="Tambah, edit, dan kelola data akun login pasien, username, kata sandi, serta informasi rekam medis."
+            />
+          </div>
+
+          <div className={styles.inputContainer}>
+            <Table
+              title={`Daftar Akun Pasien (${patients.length})`}
+              headerAction={
+                <Button onClick={handleOpenAddPatientModal}>
+                  + Tambah Pasien Baru
+                </Button>
+              }
+            >
+              <thead>
+                <tr>
+                  <th>No. RM</th>
+                  <th>Nama Lengkap</th>
+                  <th>Username</th>
+                  <th>Password</th>
+                  <th>No. Telepon / Email</th>
+                  <th>Alamat</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patients.map((item) => (
+                  <tr key={item.id}>
+                    <td><strong>{item.noRM || item.no_rm}</strong></td>
+                    <td>{item.name || item.patient_name}</td>
+                    <td><span className={styles.codeBadge}>{item.username}</span></td>
+                    <td><span className={styles.codeBadge}>•••••••• ({item.password || "user123"})</span></td>
+                    <td>{item.phone || "-"} <br/><small style={{ color: "#6b7280" }}>{item.email || "-"}</small></td>
+                    <td>{item.address || "-"}</td>
+                    <td>
+                      <Table.ActionCell>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => {
+                            setEditingPatientId(item.id);
+                            setNewPatient({
+                              name: item.name || item.patient_name || "",
+                              username: item.username || "",
+                              password: item.password || "",
+                              noRM: item.noRM || item.no_rm || "",
+                              phone: item.phone || "",
+                              email: item.email || "",
+                              noBpjs: item.noBpjs || item.no_bpjs || "",
+                              address: item.address || ""
+                            });
+                            setIsModalOpen(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDeletePatient(item.id)}
+                        >
+                          Hapus
+                        </Button>
+                      </Table.ActionCell>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </>
+      )}
+
       {/* 3. CRUD Poli & Kategori Layanan */}
       {activeMenu === "poli" && (
         <>
@@ -1225,6 +1401,7 @@ export default function AdminDashboard() {
         title={
           activeMenu === "antrean" ? (editingQueueId ? "Edit Antrean Walk-In" : "Tambah Antrean Walk-In Baru") :
           activeMenu === "dokter" ? (editingDoctorName ? "Edit Data & Jadwal Dokter" : "Tambah Dokter Baru") :
+          activeMenu === "pasien" ? (editingPatientId ? "Edit Akun & Data Pasien" : "Tambah Pasien Baru") :
           activeMenu === "poli" ? (editingCategoryTitle ? "Edit Layanan" : "Tambah Layanan Baru") :
           activeMenu === "artikel" ? (editingNewsId ? "Edit Artikel" : "Tambah Artikel Baru") :
           activeMenu === "faq" ? (editingFaqId ? "Edit FAQ" : "Tambah Pertanyaan FAQ Baru") : ""
@@ -1241,6 +1418,7 @@ export default function AdminDashboard() {
               onClick={() => {
                 if (activeMenu === "antrean") handleAddQueue();
                 if (activeMenu === "dokter") handleAddDoctor();
+                if (activeMenu === "pasien") handleAddPatient();
                 if (activeMenu === "poli") handleAddCategory();
                 if (activeMenu === "artikel") handleAddNews();
                 if (activeMenu === "faq") handleAddFaq();
@@ -1248,6 +1426,7 @@ export default function AdminDashboard() {
             >
               {activeMenu === "antrean" && (editingQueueId ? "Simpan Perubahan Antrean" : "Terbitkan Antrean")}
               {activeMenu === "dokter" && (editingDoctorName ? "Simpan Perubahan Dokter" : "Simpan Dokter Baru")}
+              {activeMenu === "pasien" && (editingPatientId ? "Simpan Perubahan Pasien" : "Simpan Pasien Baru")}
               {activeMenu === "poli" && (editingCategoryTitle ? "Simpan Perubahan Kategori" : "Simpan Layanan")}
               {activeMenu === "artikel" && (editingNewsId ? "Simpan Perubahan Artikel" : "Publikasikan Artikel")}
               {activeMenu === "faq" && (editingFaqId ? "Simpan Perubahan FAQ" : "Simpan Pertanyaan FAQ")}
@@ -1410,6 +1589,63 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               )}
+            </>
+          )}
+
+          {activeMenu === "pasien" && (
+            <>
+              <InputText
+                label="Nama Lengkap Pasien"
+                value={newPatient.name}
+                onChange={(e) => setNewPatient({ ...newPatient, name: e.target.value })}
+                placeholder="Masukkan nama lengkap pasien"
+              />
+              <InputText
+                label="Nomor Rekam Medis (No. RM)"
+                value={newPatient.noRM}
+                onChange={(e) => setNewPatient({ ...newPatient, noRM: e.target.value })}
+                placeholder="Contoh: RM-2026-00123"
+              />
+              <div className={styles.input}>
+                <InputText
+                  label="Username Login Pasien"
+                  value={newPatient.username}
+                  onChange={(e) => setNewPatient({ ...newPatient, username: e.target.value })}
+                  placeholder="Username untuk login pasien"
+                />
+                <InputText
+                  label="Kata Sandi / Password"
+                  value={newPatient.password}
+                  onChange={(e) => setNewPatient({ ...newPatient, password: e.target.value })}
+                  placeholder="Kata sandi akun pasien"
+                />
+              </div>
+              <div className={styles.input}>
+                <InputText
+                  label="Nomor Telepon / WhatsApp"
+                  value={newPatient.phone}
+                  onChange={(e) => setNewPatient({ ...newPatient, phone: e.target.value })}
+                  placeholder="Contoh: 081234567890"
+                />
+                <InputText
+                  label="Alamat Email"
+                  value={newPatient.email}
+                  onChange={(e) => setNewPatient({ ...newPatient, email: e.target.value })}
+                  placeholder="Contoh: pasien@gmail.com"
+                />
+              </div>
+              <InputText
+                label="Nomor BPJS Kesehatan (Opsional)"
+                value={newPatient.noBpjs}
+                onChange={(e) => setNewPatient({ ...newPatient, noBpjs: e.target.value })}
+                placeholder="Masukkan nomor BPJS jika ada"
+              />
+              <InputText
+                label="Alamat Lengkap"
+                value={newPatient.address}
+                onChange={(e) => setNewPatient({ ...newPatient, address: e.target.value })}
+                placeholder="Masukkan alamat domisili pasien"
+              />
             </>
           )}
 
