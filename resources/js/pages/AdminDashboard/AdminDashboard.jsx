@@ -611,35 +611,48 @@ export default function AdminDashboard() {
     const now = new Date();
     const payload = {
       title: formData.title.trim(),
-      category: formData.category,
+      category: formData.category || "Kesehatan Anak",
       summary: formData.summary.trim(),
-      content: formData.content,
-      author: formData.author,
-      image: formData.image,
-      readTime: formData.readTime,
-      read_time: formData.readTime,
+      content: formData.content || "",
+      author: formData.author || "dr. Aulia Rahma, Sp.A",
+      image: formData.image || "",
+      readTime: formData.readTime || formData.read_time || "3 min read",
+      read_time: formData.readTime || formData.read_time || "3 min read",
       date: (selectedArticleForEdit && selectedArticleForEdit.date) || `${now.getDate()} Agustus 2026`
     };
 
     let result = null;
     if (selectedArticleForEdit && selectedArticleForEdit.id) {
       result = await apiService.updateNews(selectedArticleForEdit.id, payload);
-      if (!result) {
-        result = await apiService.createNews(payload);
-      }
     } else {
       result = await apiService.createNews(payload);
     }
 
-    const latestNews = await apiService.getNews();
-    if (latestNews && latestNews.length > 0) {
-      setNews(latestNews);
-      apiService.saveNewsLocal(latestNews);
-    } else if (result) {
-      const updated = [result, ...news.filter((n) => n.id !== result.id)];
-      setNews(updated);
-      apiService.saveNewsLocal(updated);
+    if (!result) {
+      result = {
+        id: selectedArticleForEdit && selectedArticleForEdit.id ? selectedArticleForEdit.id : Date.now(),
+        ...payload
+      };
     }
+
+    setNews((prevNews) => {
+      const exists = prevNews.some((n) => n.id === result.id);
+      let updated;
+      if (exists) {
+        updated = prevNews.map((n) => (n.id === result.id ? { ...n, ...result } : n));
+      } else {
+        updated = [result, ...prevNews];
+      }
+      apiService.saveNewsLocal(updated);
+      return updated;
+    });
+
+    apiService.getNews().then((fresh) => {
+      if (Array.isArray(fresh) && fresh.length > 0) {
+        setNews(fresh);
+        apiService.saveNewsLocal(fresh);
+      }
+    });
 
     setIsBlogEditorOpen(false);
     setSelectedArticleForEdit(null);

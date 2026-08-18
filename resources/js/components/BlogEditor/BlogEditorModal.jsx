@@ -109,15 +109,18 @@ export default function BlogEditorModal({ isOpen, onClose, onSave, initialData }
   };
 
   const handleSave = () => {
-    if (!formData.title.trim()) {
+    const currentHtml = editorRef.current ? editorRef.current.innerHTML : formData.content;
+    const finalData = { ...formData, content: currentHtml };
+
+    if (!finalData.title.trim()) {
       alert("Judul artikel wajib diisi!");
       return;
     }
-    if (!formData.summary.trim()) {
+    if (!finalData.summary.trim()) {
       alert("Ringkasan singkat artikel wajib diisi!");
       return;
     }
-    onSave(formData);
+    onSave(finalData);
   };
 
   return (

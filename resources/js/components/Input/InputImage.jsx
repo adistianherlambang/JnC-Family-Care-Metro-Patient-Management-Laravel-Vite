@@ -27,12 +27,36 @@ export default function InputImage({
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const dataUrl = e.target.result;
-      setInternalPreview(dataUrl);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxDim = 800;
+        let width = img.width;
+        let height = img.height;
 
-      if (typeof onChange === "function") {
-        onChange(file, dataUrl);
-      }
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        setInternalPreview(compressedDataUrl);
+
+        if (typeof onChange === "function") {
+          onChange(file, compressedDataUrl);
+        }
+      };
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   };
