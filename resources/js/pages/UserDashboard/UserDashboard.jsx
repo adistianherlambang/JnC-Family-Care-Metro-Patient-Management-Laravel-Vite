@@ -229,6 +229,20 @@ export default function UserDashboard() {
   const handleCreateQueue = async () => {
     setQueueFormError("");
 
+    if (!newQueueData.peruntukan) {
+      setQueueFormError("Silakan pilih peruntukan layanan (Untuk Sendiri / Untuk Anak).");
+      return;
+    }
+    if (newQueueData.peruntukan === "Untuk Anak") {
+      if (!newQueueData.namaAnak || !newQueueData.namaAnak.trim()) {
+        setQueueFormError("Nama lengkap anak wajib diisi.");
+        return;
+      }
+      if (!newQueueData.usiaAnak || !newQueueData.usiaAnak.trim()) {
+        setQueueFormError("Usia anak wajib diisi.");
+        return;
+      }
+    }
     if (!newQueueData.tanggalLayanan) {
       setQueueFormError("Tanggal layanan wajib dipilih.");
       return;
@@ -242,11 +256,11 @@ export default function UserDashboard() {
       return;
     }
     if (!newQueueData.dokter) {
-      setQueueFormError("Dokter wajib dipilih.");
+      setQueueFormError("Dokter / Bidan wajib dipilih.");
       return;
     }
-    if (newQueueData.peruntukan === "Untuk Anak" && !newQueueData.namaAnak) {
-      setQueueFormError("Nama anak wajib diisi.");
+    if (!newQueueData.keluhan || !newQueueData.keluhan.trim()) {
+      setQueueFormError("Keterangan keluhan detail wajib diisi.");
       return;
     }
 
