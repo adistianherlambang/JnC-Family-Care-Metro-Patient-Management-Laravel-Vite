@@ -107,6 +107,22 @@ export default function UserDashboard() {
       setNewsList(newsData);
       const faqsData = await apiService.getFaqs();
       setFaqList(faqsData);
+
+      const loggedInUsername = localStorage.getItem("loggedInUser");
+      if (loggedInUsername) {
+        const savedUserQueue = localStorage.getItem("user_active_queue_" + loggedInUsername);
+        if (savedUserQueue) {
+          try {
+            const parsed = JSON.parse(savedUserQueue);
+            const allQueues = await apiService.getQueues();
+            const match = allQueues.find((q) => String(q.id) === String(parsed.id) || q.queueNumber === parsed.queueNumber);
+            if (match) {
+              setActiveQueue(match);
+              localStorage.setItem("user_active_queue_" + loggedInUsername, JSON.stringify(match));
+            }
+          } catch (e) {}
+        }
+      }
     }
     fetchDynamicData();
   }, [activeMenu]);
@@ -343,7 +359,7 @@ export default function UserDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            {activeQueue ? (
+            {activeQueue && activeQueue.status !== "Selesai" && activeQueue.status !== "Dibatalkan" ? (
               <>
                 <p className={styles.title}>Detail Antrean Aktif Anda</p>
                 <div className={styles.inputWrapper}>
@@ -397,7 +413,12 @@ export default function UserDashboard() {
               </>
             ) : (
               <>
-                <p className={styles.title}>Anda Belum Memiliki Antrean Aktif</p>
+                {activeQueue && activeQueue.status === "Selesai" && (
+                  <div style={{ padding: "16px", backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "12px", color: "#166534", fontSize: "14px", fontWeight: "500", marginBottom: "16px" }}>
+                    ✓ Pelayanan antrean Anda sebelumnya ({activeQueue.queueNumber}) telah <strong>Selesai</strong>. Anda dapat membuat janji antrean baru di bawah ini.
+                  </div>
+                )}
+                <p className={styles.title}>Buat Janji Antrean Baru</p>
                 <p className={styles.desc} style={{ margin: 0, fontFamily: "var(--font-artico)" }}>
                   Silakan pilih tanggal dan praktisi medis dari daftar jadwal di bawah untuk membuat antrean baru.
                 </p>
