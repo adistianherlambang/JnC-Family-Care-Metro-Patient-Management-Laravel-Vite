@@ -20,6 +20,7 @@ export default function UserDashboard() {
   const [newsList, setNewsList] = useState([]);
   const [newsPage, setNewsPage] = useState(1);
   const [faqList, setFaqList] = useState([]);
+  const [openFaqId, setOpenFaqId] = useState(null);
 
   const [newQueueData, setNewQueueData] = useState({
     tanggalLayanan: "",
@@ -607,7 +608,7 @@ export default function UserDashboard() {
                           </p>
                         </div>
                         <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
-                          <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
+                          <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
                             Baca Selengkapnya
                           </Button>
                         </div>
@@ -708,7 +709,7 @@ export default function UserDashboard() {
                             </p>
                           </div>
                           <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
-                            <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
+                            <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
                               Baca Selengkapnya
                             </Button>
                           </div>
@@ -759,7 +760,7 @@ export default function UserDashboard() {
                         </p>
                       </div>
                       <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
-                        <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
+                        <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
                           Baca Selengkapnya
                         </Button>
                       </div>
@@ -805,15 +806,82 @@ export default function UserDashboard() {
             />
           </div>
 
-          <div className={styles.inputContainer}>
-            {faqList.map((item) => (
-              <div key={item.id} className={styles.inputWrapper}>
-                <div className={styles.confirm}>
-                  <p className={styles.label}>{item.question}</p>
-                  <p className={styles.value}>{item.answer}</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            {faqList.map((item) => {
+              const isOpen = openFaqId === item.id;
+              return (
+                <div
+                  key={item.id}
+                  style={{
+                    backgroundColor: "white",
+                    borderRadius: "16px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
+                    border: "1px solid #f3f4f6",
+                    overflow: "hidden",
+                    transition: "all 0.25s ease"
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justify: "space-between",
+                      alignItems: "center",
+                      padding: "20px 24px",
+                      cursor: "pointer",
+                      userSelect: "none"
+                    }}
+                    onClick={() => setOpenFaqId(isOpen ? null : item.id)}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "var(--font-antonia)",
+                        fontSize: "16px",
+                        fontWeight: 700,
+                        color: isOpen ? "var(--primary)" : "#1f2937",
+                        transition: "color 0.2s ease"
+                      }}
+                    >
+                      {item.question}
+                    </span>
+                    <div
+                      style={{
+                        transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.25s ease",
+                        display: "flex",
+                        alignItems: "center",
+                        justify: "center",
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "50%",
+                        backgroundColor: isOpen ? "#f3e8ff" : "#f9fafb",
+                        color: isOpen ? "var(--primary)" : "#6b7280",
+                        flexShrink: 0,
+                        marginLeft: "16px"
+                      }}
+                    >
+                      <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L7 7L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {isOpen && (
+                    <div
+                      style={{
+                        padding: "0 24px 20px 24px",
+                        fontSize: "14px",
+                        color: "#4b5563",
+                        lineHeight: "1.6"
+                      }}
+                    >
+                      <div style={{ paddingTop: "14px", borderTop: "1px solid #f3f4f6" }}>
+                        {item.answer}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}
