@@ -27,6 +27,43 @@ const getDaysRange = (startDay, endDay) => {
   }
 };
 
+function PasswordCell({ password }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+      <span className={styles.codeBadge}>
+        {showPassword ? password : "••••••••"}
+      </span>
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        style={{
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: "4px",
+          display: "inline-flex",
+          alignItems: "center",
+          color: showPassword ? "var(--primary)" : "#9ca3af",
+          transition: "color 0.2s"
+        }}
+        title={showPassword ? "Sembunyikan Kata Sandi" : "Tampilkan Kata Sandi"}
+      >
+        {showPassword ? (
+          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" clipRule="evenodd" d="M1.38304 5.078C1.29434 5.2119 1.248 5.3694 1.25004 5.53C1.2478 5.69094 1.29415 5.84882 1.38304 5.983C1.88304 6.654 2.69004 7.626 3.68904 8.425C4.69704 9.232 5.83304 9.81 7.00104 9.81C8.16904 9.81 9.30504 9.232 10.313 8.425C11.312 7.625 12.119 6.654 12.62 5.983C12.7082 5.84859 12.7539 5.69073 12.751 5.53C12.7534 5.3695 12.7074 5.21201 12.619 5.078C12.119 4.406 11.311 3.435 10.312 2.635C9.30504 1.83 8.16904 1.25 7.00104 1.25C5.83304 1.25 4.69704 1.83 3.68904 2.635C2.69004 3.435 1.88304 4.406 1.38304 5.078ZM2.90804 1.66C4.01804 0.77 5.42704 0 7.00104 0C8.57604 0 9.98504 0.771 11.095 1.66C12.212 2.554 13.094 3.621 13.625 4.335L13.631 4.342C13.878 4.684 14.002 5.108 14.002 5.53C14.002 5.953 13.878 6.376 13.631 6.718L13.626 6.725C13.094 7.439 12.212 8.507 11.095 9.401C9.98504 10.289 8.57504 11.06 7.00104 11.06C5.42704 11.06 4.01804 10.29 2.90804 9.4C1.79004 8.507 0.908044 7.44 0.377044 6.725L0.372044 6.718C0.127295 6.37043 -0.00276208 5.95509 4.44849e-05 5.53C4.44849e-05 5.108 0.125044 4.684 0.372044 4.342L0.377044 4.335C0.909044 3.621 1.79004 2.554 2.90704 1.66M7.00104 3.03C6.338 3.03 5.70212 3.29339 5.23328 3.76223C4.76444 4.23107 4.50104 4.86696 4.50104 5.53C4.50104 6.19304 4.76444 6.82893 5.23328 7.29777C5.70212 7.76661 6.338 8.03 7.00104 8.03C7.66409 8.03 8.29997 7.76661 8.76881 7.29777C9.23765 6.82893 9.50104 6.19304 9.50104 5.53C9.50104 4.86696 9.23765 4.23107 8.76881 3.76223C8.29997 3.29339 7.66409 3.03 7.00104 3.03Z" fill="currentColor"/>
+          </svg>
+        ) : (
+          <svg width="16" height="9" viewBox="0 0 16 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" clipRule="evenodd" d="M0.890508 2.30782C0.599771 1.87137 0.305646 1.426 0 0.983378L1.38795 0C1.75255 0.528403 2.08056 1.02249 2.38621 1.48502C3.12491 2.60084 3.73891 3.52794 4.44779 4.27114C5.37558 5.24285 6.39688 5.81037 7.99966 5.81037C9.60244 5.81037 10.6251 5.24285 11.5522 4.27114C12.2604 3.52794 12.8744 2.60084 13.6131 1.48502C13.9194 1.02249 14.2468 0.527716 14.6121 0L16 0.984064C15.6989 1.42223 15.4023 1.8635 15.1102 2.30782C14.9484 2.55257 14.788 2.7939 14.629 3.0318L15.9031 3.84087L15.0038 5.29432L13.6416 4.42966C13.3702 4.79007 13.0795 5.13508 12.7707 5.46313C12.2882 5.9682 11.767 6.39985 11.1781 6.7361L11.7474 8.45444L10.1412 9L9.59566 7.35303C9.10839 7.46626 8.5791 7.52596 8.00034 7.52596C7.46315 7.52956 6.92728 7.47154 6.40298 7.35303L5.8581 9L4.25194 8.45444L4.82121 6.73542C4.23228 6.39916 3.71113 5.96752 3.22995 5.46313C2.92092 5.13488 2.62996 4.78963 2.35842 4.42897L0.994875 5.29432L0.0948791 3.84087L1.37168 3.03111C1.21264 2.79321 1.05225 2.55212 0.890508 2.30782Z" fill="currentColor"/>
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState("overview"); // 'overview', 'antrean', 'dokter', 'poli', 'artikel', 'faq'
@@ -1047,7 +1084,7 @@ export default function AdminDashboard() {
 
           <div className={styles.inputContainer}>
             <Table
-              title={`Daftar Dokter Terdaftar`}
+              title={`Daftar Dokter`}
               headerAction={
                 <Button onClick={handleOpenAddDoctorModal}>
                   + Tambah Dokter Baru
@@ -1082,7 +1119,7 @@ export default function AdminDashboard() {
                       <td style={{ fontWeight: "600", color: "#1F2937" }}>{doc.doctor}</td>
                       <td style={{ color: "#6b7280" }}>{doc.role || "Praktisi Medis"}</td>
                       <td><span className={styles.codeBadge}>{docUsername}</span></td>
-                      <td><span className={styles.codeBadge}>•••••••• ({docPassword})</span></td>
+                      <td><PasswordCell password={docPassword} /></td>
                       <td>
                         {doc.schedules.map((s, i) => (
                           <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
@@ -1178,7 +1215,7 @@ export default function AdminDashboard() {
                         <td><strong>{item.noRM || item.no_rm}</strong></td>
                         <td>{item.name || item.patient_name}</td>
                         <td><span className={styles.codeBadge}>{item.username}</span></td>
-                        <td><span className={styles.codeBadge}>•••••••• ({item.password || "user123"})</span></td>
+                        <td><PasswordCell password={item.password || "user123"} /></td>
                         <td>{item.phone || "-"} <br /><small style={{ color: "#6b7280" }}>{item.email || "-"}</small></td>
                         <td>{item.address || "-"}</td>
                         <td>
