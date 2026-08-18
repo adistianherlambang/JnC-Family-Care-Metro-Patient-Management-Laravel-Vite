@@ -799,15 +799,6 @@ export default function AdminDashboard() {
 
           {/* Recent Antrean Table Preview */}
           <div className={styles.inputContainer}>
-            <div className={styles.tableHeaderRow}>
-              <p className={styles.title}>Antrean Terbaru</p>
-              <Button
-                onClick={() => setActiveMenu("antrean")}
-              >
-                Lihat Semua Antrean →
-              </Button>
-            </div>
-
             <Table
               title="Antrean Terbaru Hari Ini"
               headerAction={
@@ -847,21 +838,23 @@ export default function AdminDashboard() {
       {activeMenu === "antrean" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Kelola Antrean Pasien Walk-In</p>
-            <p className={styles.desc}>Verifikasi dan buat antrean pasien langsung di lokasi klinik.</p>
+            <Title
+              title={"Kelola Antrean Pasien"}
+              desc={"Verifikasi dan buat antrean pasien langsung di lokasi klinik."}
+            />
           </div>
 
           <div className={styles.inputContainer}>
             <Table
-              title={`Daftar Antrean Aktif (${filteredQueues.length})`}
+              title={`Daftar Antrean Aktif`}
               headerAction={
                 <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                   <div style={{ width: "160px" }}>
                     <InputSelect
                       label=""
                       options={[
-                        { value: getTodayStr(), label: `Hari Ini (${getTodayStr()})` },
-                        { value: getTomorrowStr(), label: `Besok (${getTomorrowStr()})` },
+                        { value: getTodayStr(), label: `Hari Ini` },
+                        { value: getTomorrowStr(), label: `Besok` },
                         { value: "Semua", label: "Semua Tanggal" }
                       ]}
                       value={queueDateFilter}
@@ -941,8 +934,10 @@ export default function AdminDashboard() {
       {activeMenu === "dokter" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Kelola Data & Jadwal Praktik Dokter</p>
-            <p className={styles.desc}>Tambah, edit, dan kelola profil dokter, foto, serta jadwal jam kerja praktik.</p>
+            <Title
+              title={"Kelola Data & Jadwal Praktik Dokter"}
+              desc={"Tambah, edit, dan kelola profil dokter, foto, serta jadwal jam kerja praktik."}
+            />
           </div>
 
           <div className={styles.inputContainer}>
@@ -1029,8 +1024,10 @@ export default function AdminDashboard() {
       {activeMenu === "poli" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Kelola Poli & Kategori Layanan</p>
-            <p className={styles.desc}>Tambah dan kelola jenis kategori pelayanan resmi klinik.</p>
+            <Title
+              title={"Kelola Poli & Kategori Layanan"}
+              desc={"Tambah dan kelola jenis kategori pelayanan resmi klinik."}
+            />
           </div>
 
           <div className={styles.inputContainer}>
@@ -1090,8 +1087,10 @@ export default function AdminDashboard() {
       {activeMenu === "artikel" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Kelola Artikel & Berita Kesehatan</p>
-            <p className={styles.desc}>Publikasikan artikel edukasi kesehatan ibu dan anak.</p>
+            <Title
+              title={"Kelola Artikel & Berita Kesehatan"}
+              desc={"Publikasikan artikel edukasi kesehatan ibu dan anak."}
+            />
           </div>
 
           <div className={styles.inputContainer}>
@@ -1162,8 +1161,10 @@ export default function AdminDashboard() {
       {activeMenu === "faq" && (
         <>
           <div className={styles.header}>
-            <p className={styles.title}>Kelola FAQ (Pertanyaan Umum)</p>
-            <p className={styles.desc}>Atur pertanyaan dan jawaban pusat bantuan pasien.</p>
+            <Title
+              title={"Kelola FAQ (Pertanyaan Umum)"}
+              desc={"Atur pertanyaan dan jawaban pusat bantuan pasien."}
+            />
           </div>
 
           <div className={styles.inputContainer}>
