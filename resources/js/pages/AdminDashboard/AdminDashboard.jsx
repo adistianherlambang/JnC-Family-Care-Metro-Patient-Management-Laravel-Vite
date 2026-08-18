@@ -608,6 +608,7 @@ export default function AdminDashboard() {
   };
 
   const handleSaveBlogArticle = async (formData) => {
+    const now = new Date();
     const payload = {
       title: formData.title.trim(),
       category: formData.category,
@@ -617,30 +618,21 @@ export default function AdminDashboard() {
       image: formData.image,
       readTime: formData.readTime,
       read_time: formData.readTime,
+      date: (selectedArticleForEdit && selectedArticleForEdit.date) || `${now.getDate()} Agustus 2026`
     };
 
     if (selectedArticleForEdit && selectedArticleForEdit.id) {
-      await apiService.updateNews(selectedArticleForEdit.id, payload);
-      const updated = news.map((n) =>
-        n.id === selectedArticleForEdit.id ? { ...n, ...payload } : n
-      );
-      setNews(updated);
-      apiService.saveNewsLocal(updated);
+      let updatedRes = await apiService.updateNews(selectedArticleForEdit.id, payload);
+      if (!updatedRes) {
+        await apiService.createNews(payload);
+      }
     } else {
-      const now = new Date();
-      const created = await apiService.createNews({
-        ...payload,
-        date: `${now.getDate()} Agustus 2026`,
-      });
-      const item = created || {
-        id: Date.now(),
-        date: `${now.getDate()} Agustus 2026`,
-        ...payload,
-      };
-      const updated = [item, ...news];
-      setNews(updated);
-      apiService.saveNewsLocal(updated);
+      await apiService.createNews(payload);
     }
+
+    const latestNews = await apiService.getNews();
+    setNews(latestNews);
+    apiService.saveNewsLocal(latestNews);
 
     setIsBlogEditorOpen(false);
     setSelectedArticleForEdit(null);
@@ -648,9 +640,9 @@ export default function AdminDashboard() {
 
   const handleDeleteNews = async (id) => {
     await apiService.deleteNews(id);
-    const updated = news.filter((n) => n.id !== id);
-    setNews(updated);
-    apiService.saveNewsLocal(updated);
+    const latestNews = await apiService.getNews();
+    setNews(latestNews);
+    apiService.saveNewsLocal(latestNews);
   };
 
   // FAQ Handlers

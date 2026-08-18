@@ -328,13 +328,19 @@ export const apiService = {
       const res = await fetch(`${BASE_URL}/news`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (Array.isArray(data) && data.length > 0) return data;
       }
     } catch (e) {
       console.warn("MySQL API fetch error:", e);
     }
     const local = localStorage.getItem("clinic_news");
-    return local ? JSON.parse(local) : (fallback || []);
+    if (local) {
+      try {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {}
+    }
+    return fallback || [];
   },
   saveNewsLocal(data) {
     localStorage.setItem("clinic_news", JSON.stringify(data));
