@@ -205,7 +205,20 @@ export default function UserDashboard() {
     });
   });
 
-  const doctorOptions = availableDoctors.map((doc) => doc.doctor);
+  const getCategoryForQueue = (item) => {
+    if (item.category_name) return item.category_name;
+    if (item.category) return item.category;
+    if (item.kategoriLayanan) return item.kategoriLayanan;
+    if (item.specialty && item.specialty !== "Pelayanan Ibu & Anak") return item.specialty;
+
+    const sName = item.service || item.service_name || "";
+    const matchedCat = categoriesList.find((cat) =>
+      cat.servicesList && cat.servicesList.some((s) => (s.name || s) === sName)
+    );
+    if (matchedCat) return matchedCat.title;
+
+    return "Pelayanan Ibu & Anak";
+  };
 
   const handleCreateQueue = async () => {
     setQueueFormError("");
@@ -229,14 +242,9 @@ export default function UserDashboard() {
 
     const getRealDateTimestamp = (val) => {
       const today = new Date();
-      if (!val) {
-        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-      }
-      const lower = String(val).toLowerCase().trim();
-      if (lower === "hari ini" || lower === "today") {
-        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-      }
-      if (lower === "besok" || lower === "tomorrow") {
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+      if (!val || val === todayStr || val === "Hari Ini") return todayStr;
+      if (val === "Besok") {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         return `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
@@ -247,7 +255,10 @@ export default function UserDashboard() {
     const payload = {
       patientName: currentUser?.patient?.name || "Pasien",
       doctor: newQueueData.dokter,
-      specialty: "Pelayanan Ibu & Anak",
+      specialty: newQueueData.kategoriLayanan || "Pelayanan Ibu & Anak",
+      category_name: newQueueData.kategoriLayanan || "Pelayanan Ibu & Anak",
+      category: newQueueData.kategoriLayanan || "Pelayanan Ibu & Anak",
+      kategoriLayanan: newQueueData.kategoriLayanan || "Pelayanan Ibu & Anak",
       service: newQueueData.layanan,
       date: getRealDateTimestamp(newQueueData.tanggalLayanan),
       time: "10:00 WIB",
@@ -555,7 +566,7 @@ export default function UserDashboard() {
                       </div>
                       <div className={styles.confirm}>
                         <p className={styles.label}>Kategori Layanan</p>
-                        <p className={styles.value}>{item.category_name || "Pelayanan Medis"}</p>
+                        <p className={styles.value}>{getCategoryForQueue(item)}</p>
                       </div>
                     </div>
                   </div>
