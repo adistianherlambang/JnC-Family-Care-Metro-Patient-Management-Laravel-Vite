@@ -100,8 +100,8 @@
   height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #FAF0FC;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--primary);
+  box-sizing: border-box;
 }
 
 .avatarInitials {
@@ -117,7 +117,8 @@
   align-items: center;
   justify-content: center;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(216, 150, 237, 0.4);
+  border: 1px solid var(--primary);
+  box-sizing: border-box;
 }
 
 .userTextWrapper {
