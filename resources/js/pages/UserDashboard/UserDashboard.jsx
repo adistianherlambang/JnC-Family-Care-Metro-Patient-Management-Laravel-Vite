@@ -395,19 +395,19 @@ export default function UserDashboard() {
                     <p className={styles.label}>Status Antrean</p>
                     <p className={styles.value}>{activeQueue.status}</p>
                   </div>
-                  <div className={styles.input}>
-                    <div
-                      className={styles.button}
+                  <div className={styles.input} style={{ marginTop: "8px", gap: "12px" }}>
+                    <Button
+                      variant="secondary"
                       onClick={() => alert(`Lokasi Ruangan: ${activeQueue.location}`)}
                     >
                       Detail Lokasi
-                    </div>
-                    <div
-                      className={`${styles.button} ${styles.buttonDanger}`}
+                    </Button>
+                    <Button
+                      variant="danger"
                       onClick={handleCancelQueue}
                     >
                       Batalkan Antrean
-                    </div>
+                    </Button>
                   </div>
                 </div>
               </>
@@ -489,8 +489,10 @@ export default function UserDashboard() {
                   )}
                 </div>
 
-                <div className={styles.button} onClick={handleCreateQueue}>
-                  Buat Antrean Baru
+                <div style={{ marginTop: "8px" }}>
+                  <Button onClick={handleCreateQueue}>
+                    Buat Antrean Baru
+                  </Button>
                 </div>
               </>
             )}
