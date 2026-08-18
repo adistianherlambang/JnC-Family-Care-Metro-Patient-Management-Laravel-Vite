@@ -17,22 +17,24 @@ export default function InputImage({
   const fileInputRef = useRef(null);
 
   const currentPreview =
-    typeof value === "string"
+    typeof value === "string" && value.length > 0
       ? value
-      : value instanceof File
-        ? URL.createObjectURL(value)
-        : internalPreview;
+      : internalPreview;
 
   const handleFileChange = (file) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) return;
 
-    const objectUrl = URL.createObjectURL(file);
-    setInternalPreview(objectUrl);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      setInternalPreview(dataUrl);
 
-    if (typeof onChange === "function") {
-      onChange(file, objectUrl);
-    }
+      if (typeof onChange === "function") {
+        onChange(file, dataUrl);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleInputChange = (e) => {

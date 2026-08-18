@@ -65,13 +65,15 @@ export default function BlogReaderModal({ isOpen, onClose, article }) {
           <img
             src={
               article.image ||
-              "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&q=80"
+              article.coverImage ||
+              article.cover_image ||
+              article.img ||
+              "/img/landingPage/artikel1.png"
             }
             alt={article.title}
             className={styles.headerImage}
             onError={(e) => {
-              e.target.src =
-                "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&q=80";
+              e.target.src = "/img/landingPage/artikel1.png";
             }}
           />
           <button className={styles.closeFloatingBtn} onClick={onClose} title="Tutup">
