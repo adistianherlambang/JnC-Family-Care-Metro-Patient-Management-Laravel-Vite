@@ -297,7 +297,7 @@ export default function BidanDashboard() {
       onLogout={handleLogout}
     >
       {successMsg && (
-        <div style={{ padding: "12px 20px", background: "#d1fae5", color: "#047857", borderRadius: "12px", fontFamily: "var(--artico)", fontWeight: "600", marginBottom: "24px" }}>
+        <div className={styles.alertSuccess}>
           {successMsg}
         </div>
       )}
@@ -318,15 +318,15 @@ export default function BidanDashboard() {
             </div>
             <div className={styles.statCard}>
               <span className={styles.statTitle}>Menunggu Pelayanan</span>
-              <span className={styles.statValue} style={{ color: "#d97706" }}>{pendingQueues.length}</span>
+              <span className={`${styles.statValue} ${styles.statValuePending}`}>{pendingQueues.length}</span>
             </div>
             <div className={styles.statCard}>
               <span className={styles.statTitle}>Sedang Dilayani</span>
-              <span className={styles.statValue} style={{ color: "#2563eb" }}>{servingQueues.length}</span>
+              <span className={`${styles.statValue} ${styles.statValueServing}`}>{servingQueues.length}</span>
             </div>
             <div className={styles.statCard}>
               <span className={styles.statTitle}>Selesai Dilayani</span>
-              <span className={styles.statValue} style={{ color: "#059669" }}>{finishedQueues.length}</span>
+              <span className={`${styles.statValue} ${styles.statValueFinished}`}>{finishedQueues.length}</span>
             </div>
           </div>
 
@@ -373,7 +373,7 @@ export default function BidanDashboard() {
         <>
           <div className={styles.header}>
             <Title
-              title="Manajemen Antrean & Catatan Pelayanan Pasien"
+              title="Manajemen Antrean"
               desc="Kelola status kehadiran pasien dan berikan catatan rekam pelayanan medis."
             />
           </div>
@@ -381,7 +381,7 @@ export default function BidanDashboard() {
           <Table
             title="Daftar Antrean Pasien"
             headerAction={
-              <div style={{ width: "160px" }}>
+              <div className={styles.filterWrapper}>
                 <InputSelect
                   label=""
                   options={[
@@ -408,7 +408,7 @@ export default function BidanDashboard() {
               </tr>
             </thead>
             <tbody>
-              {filteredQueues.map((item) => (
+              {filteredQueues.length > 0 ? filteredQueues.map((item) => (
                 <tr key={item.id}>
                   <td><strong>{item.queueNumber || item.queue_number}</strong></td>
                   <td>{item.patientName || item.patient_name}</td>
@@ -419,21 +419,21 @@ export default function BidanDashboard() {
                   </td>
                   <td>
                     {notes[item.id] ? (
-                      <span style={{ fontSize: "13px", color: "#374151" }}>{notes[item.id]}</span>
+                      <span className={styles.noteText}>{notes[item.id]}</span>
                     ) : editingNoteId === item.id ? (
-                      <div style={{ display: "flex", gap: "4px" }}>
+                      <div className={styles.noteInputGroup}>
                         <input
                           type="text"
                           placeholder="Tulis catatan..."
                           value={tempNoteText}
                           onChange={(e) => setTempNoteText(e.target.value)}
-                          style={{ padding: "4px 8px", borderRadius: "6px", border: "1px solid #ccc" }}
+                          className={styles.noteInput}
                         />
                         <Button size="sm" onClick={() => handleSaveNote(item.id)}>Simpan</Button>
                       </div>
                     ) : (
                       <button
-                        style={{ background: "none", border: "none", color: "#db2777", cursor: "pointer", textDecoration: "underline", fontSize: "13px" }}
+                        className={styles.addNoteBtn}
                         onClick={() => { setEditingNoteId(item.id); setTempNoteText(""); }}
                       >
                         + Catatan
@@ -448,7 +448,15 @@ export default function BidanDashboard() {
                     </Table.ActionCell>
                   </td>
                 </tr>
-              ))}
+              )) : <tr>
+                <td>Belum ada data</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>}
             </tbody>
           </Table>
         </>
@@ -458,31 +466,29 @@ export default function BidanDashboard() {
         <>
           <div className={styles.header}>
             <Title
-              title="Jadwal Praktik & Jenis Layanan Medis"
+              title="Jadwal Praktik"
               desc="Kelola dan perbarui jadwal kerja harian serta daftar jenis layanan medis yang aktif ditangani."
             />
           </div>
 
           <div className={styles.formCard}>
             <h3>Pengaturan Hari & Jam Kerja Bidan</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className={styles.gridTwo}>
               <InputText label="Hari Mulai Praktik" value={mySchedule.startDay} onChange={(e) => setMySchedule({ ...mySchedule, startDay: e.target.value })} />
               <InputText label="Hari Selesai Praktik" value={mySchedule.endDay} onChange={(e) => setMySchedule({ ...mySchedule, endDay: e.target.value })} />
               <InputText label="Jam Mulai Praktik" value={mySchedule.startTime} onChange={(e) => setMySchedule({ ...mySchedule, startTime: e.target.value })} />
               <InputText label="Jam Selesai Praktik" value={mySchedule.endTime} onChange={(e) => setMySchedule({ ...mySchedule, endTime: e.target.value })} />
             </div>
 
-            <div style={{ marginTop: "20px" }}>
-              <h4 style={{ margin: "0 0 12px 0", color: "#1f2937" }}>Layanan Kebidanan & Care yang Ditangani:</h4>
-
-              <div style={{ display: "flex", gap: "8px", alignItems: "flex-end", marginBottom: "12px" }}>
-                <div style={{ flex: 1 }}>
+            <div className={styles.sectionMargin}>
+              <div className={styles.selectAddRow}>
+                <div className={styles.flexOne}>
                   <InputSelect
-                    label="Pilih Jenis Layanan Resmi Klinik (Terdaftar di DB)"
+                    label="Pilih Jenis Layanan"
                     options={availableClinicServices.filter((svc) => !mySchedule.services.includes(svc))}
                     value={selectedServiceToSelect}
                     onChange={(val) => setSelectedServiceToSelect(val)}
-                    placeholder="-- Pilih Layanan Terdaftar di Database --"
+                    placeholder="Pilih Layanan"
                   />
                 </div>
                 <Button
@@ -498,25 +504,15 @@ export default function BidanDashboard() {
                 </Button>
               </div>
 
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
+              <div className={styles.serviceTagContainer}>
                 {mySchedule.services.map((s, idx) => (
                   <span
                     key={idx}
-                    style={{
-                      background: "#fbcfe8",
-                      color: "#831843",
-                      padding: "6px 14px",
-                      borderRadius: "9999px",
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px"
-                    }}
+                    className={styles.serviceTag}
                   >
                     {s}
                     <span
-                      style={{ cursor: "pointer", fontWeight: "bold", marginLeft: "4px" }}
+                      className={styles.removeTagBtn}
                       onClick={() => {
                         setMySchedule({
                           ...mySchedule,

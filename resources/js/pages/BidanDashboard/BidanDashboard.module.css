@@ -253,6 +253,108 @@
   gap: 8px;
 }
 
+.alertSuccess {
+  padding: 12px 20px;
+  background-color: #d1fae5;
+  color: #047857;
+  border-radius: 12px;
+  font-family: var(--artico);
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.statValuePending {
+  color: #d97706;
+}
+
+.statValueServing {
+  color: #2563eb;
+}
+
+.statValueFinished {
+  color: #059669;
+}
+
+.filterWrapper {
+  width: 160px;
+}
+
+.noteText {
+  font-size: 13px;
+  color: #374151;
+}
+
+.noteInputGroup {
+  display: flex;
+  gap: 4px;
+}
+
+.noteInput {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-family: var(--artico);
+  font-size: 13px;
+}
+
+.addNoteBtn {
+  background: none;
+  border: none;
+  color: #db2777;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 13px;
+  font-family: var(--artico);
+  padding: 0;
+}
+
+.gridTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.sectionMargin {
+  margin-top: 20px;
+}
+
+.selectAddRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.flexOne {
+  flex: 1;
+}
+
+.serviceTagContainer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.serviceTag {
+  background-color: #fbcfe8;
+  color: #831843;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--artico);
+}
+
+.removeTagBtn {
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
 @media (max-width: 768px) {
   .thirdContainer {
     flex-direction: column;
