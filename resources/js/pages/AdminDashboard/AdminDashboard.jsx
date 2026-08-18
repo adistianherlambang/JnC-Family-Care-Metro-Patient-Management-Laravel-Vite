@@ -774,6 +774,20 @@ export default function AdminDashboard() {
         avatar: "A"
       }}
     >
+      {/* Navigation Tab Bar */}
+      <div className={styles.topTabBar}>
+        {adminMenuItems.map((item) => (
+          <button
+            key={item.id}
+            className={`${styles.topTabBtn} ${activeMenu === item.id ? styles.topTabActive : ""}`}
+            onClick={() => setActiveMenu(item.id)}
+          >
+            {item.svg}
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </div>
+
       {/* 0. Ringkasan Eksekutif & Operasional Overview */}
       {activeMenu === "overview" && (
         <>
