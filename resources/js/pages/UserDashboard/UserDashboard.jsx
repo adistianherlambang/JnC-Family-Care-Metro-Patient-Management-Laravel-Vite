@@ -427,10 +427,6 @@ export default function UserDashboard() {
                       <p className={styles.label}>Dokter / Bidan</p>
                       <p className={styles.value}>{activeQueue.doctor}</p>
                     </div>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>Spesialisasi / Peran</p>
-                      <p className={styles.value}>{activeQueue.specialty}</p>
-                    </div>
                   </div>
                   <div className={styles.confirm}>
                     <p className={styles.label}>Layanan</p>
@@ -440,10 +436,6 @@ export default function UserDashboard() {
                     <div className={styles.confirm}>
                       <p className={styles.label}>Tanggal & Jam Kunjungan</p>
                       <p className={styles.value}>{activeQueue.date} ({activeQueue.time})</p>
-                    </div>
-                    <div className={styles.confirm}>
-                      <p className={styles.label}>Estimasi Pelayanan</p>
-                      <p className={styles.value}>{activeQueue.estimatedTime}</p>
                     </div>
                   </div>
                   <div className={styles.confirm}>
@@ -457,12 +449,6 @@ export default function UserDashboard() {
                     </div>
                   )}
                   <div className={styles.input} style={{ marginTop: "8px", gap: "12px" }}>
-                    <Button
-                      variant="secondary"
-                      onClick={() => alert(`Lokasi Ruangan: ${activeQueue.location}`)}
-                    >
-                      Detail Lokasi
-                    </Button>
                     <Button
                       variant="danger"
                       onClick={handleCancelQueue}
@@ -639,7 +625,7 @@ export default function UserDashboard() {
                     <div className={styles.input}>
                       <div className={styles.confirm}>
                         <p className={styles.label}>Tanggal & Jam Kunjungan</p>
-                        <p className={styles.value}>{item.date} ({item.time || "09:00 WIB"})</p>
+                        <p className={styles.value}>{item.date}</p>
                       </div>
                       <div className={styles.confirm}>
                         <p className={styles.label}>Kategori Layanan</p>
