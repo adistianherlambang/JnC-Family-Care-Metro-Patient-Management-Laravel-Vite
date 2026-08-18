@@ -328,7 +328,7 @@ export const apiService = {
       const res = await fetch(`${BASE_URL}/news`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) return data;
+        if (Array.isArray(data)) return data;
       }
     } catch (e) {
       console.warn("MySQL API fetch error:", e);
@@ -337,7 +337,7 @@ export const apiService = {
     if (local) {
       try {
         const parsed = JSON.parse(local);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) return parsed;
       } catch (e) {}
     }
     return fallback || [];

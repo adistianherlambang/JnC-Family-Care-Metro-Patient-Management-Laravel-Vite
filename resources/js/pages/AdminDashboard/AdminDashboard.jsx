@@ -621,18 +621,25 @@ export default function AdminDashboard() {
       date: (selectedArticleForEdit && selectedArticleForEdit.date) || `${now.getDate()} Agustus 2026`
     };
 
+    let result = null;
     if (selectedArticleForEdit && selectedArticleForEdit.id) {
-      let updatedRes = await apiService.updateNews(selectedArticleForEdit.id, payload);
-      if (!updatedRes) {
-        await apiService.createNews(payload);
+      result = await apiService.updateNews(selectedArticleForEdit.id, payload);
+      if (!result) {
+        result = await apiService.createNews(payload);
       }
     } else {
-      await apiService.createNews(payload);
+      result = await apiService.createNews(payload);
     }
 
     const latestNews = await apiService.getNews();
-    setNews(latestNews);
-    apiService.saveNewsLocal(latestNews);
+    if (latestNews && latestNews.length > 0) {
+      setNews(latestNews);
+      apiService.saveNewsLocal(latestNews);
+    } else if (result) {
+      const updated = [result, ...news.filter((n) => n.id !== result.id)];
+      setNews(updated);
+      apiService.saveNewsLocal(updated);
+    }
 
     setIsBlogEditorOpen(false);
     setSelectedArticleForEdit(null);
