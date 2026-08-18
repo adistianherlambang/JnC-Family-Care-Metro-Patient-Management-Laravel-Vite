@@ -382,6 +382,7 @@ export default function LandingPage() {
 
       {selectedArticle && (
         <BlogReaderModal
+          isOpen={true}
           article={selectedArticle}
           onClose={() => setSelectedArticle(null)}
         />
