@@ -74,11 +74,6 @@ export default function NewsSection({
                   {featuredMain.summary}
                 </p>
               </div>
-              <div className={styles.btnRight} style={{ marginTop: "16px" }}>
-                <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
-                  Baca Selengkapnya
-                </Button>
-              </div>
             </div>
           )}
 
@@ -112,11 +107,6 @@ export default function NewsSection({
                       <p className={styles.gridSummarySingle}>
                         {item.summary}
                       </p>
-                    </div>
-                    <div className={styles.btnRight} style={{ marginTop: "16px" }}>
-                      <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
-                        Baca Selengkapnya
-                      </Button>
                     </div>
                   </div>
                 </div>
@@ -156,11 +146,6 @@ export default function NewsSection({
                   {item.summary}
                 </p>
               </div>
-              <div className={styles.btnRight} style={{ marginTop: "16px" }}>
-                <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
-                  Baca Selengkapnya
-                </Button>
-              </div>
             </div>
           ))}
         </div>
@@ -168,23 +153,25 @@ export default function NewsSection({
 
       {newsList.length > newsPerPage && (
         <div className={styles.paginationContainer}>
-          <Button
-            variant="secondary"
+          <button
+            type="button"
+            className={styles.paginationBtn}
             disabled={newsPage === 1}
             onClick={() => setNewsPage((p) => Math.max(p - 1, 1))}
           >
             Sebelumnya
-          </Button>
+          </button>
           <span className={styles.paginationText}>
             Halaman {newsPage} dari {totalNewsPages}
           </span>
-          <Button
-            variant="secondary"
+          <button
+            type="button"
+            className={styles.paginationBtn}
             disabled={newsPage === totalNewsPages}
             onClick={() => setNewsPage((p) => Math.min(p + 1, totalNewsPages))}
           >
             Selanjutnya
-          </Button>
+          </button>
         </div>
       )}
 
