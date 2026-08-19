@@ -6,9 +6,32 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
+  const handleNavClick = (sectionId) => {
+    setIsOpen(false);
+    if (window.location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <div className={styles.container}>
-      <img src="./logo.png" alt="logo" />
+      <img
+        src="./logo.png"
+        alt="logo"
+        style={{ cursor: "pointer" }}
+        onClick={() => handleNavClick("beranda")}
+      />
 
       <div className={`${styles.hamburger} ${isOpen ? styles.hamburgerOpen : ""}`} onClick={() => setIsOpen(!isOpen)}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round">
@@ -20,12 +43,11 @@ export default function Navbar() {
 
       <div className={`${styles.menu} ${isOpen ? styles.open : ""}`}>
         <div className={styles.link}>
-          <div className={styles.linkList}>Link</div>
-          <div className={styles.linkList} onClick={() => { navigate("/"); setIsOpen(false); }}>Beranda</div>
-          <div className={styles.linkList} onClick={() => { navigate("/tentang-kami"); setIsOpen(false); }}>Tentang Kami</div>
-          <div className={styles.linkList} onClick={() => { navigate("/cari-dokter"); setIsOpen(false); }}>Cari Dokter</div>
-          <div className={styles.linkList} onClick={() => { navigate("/fasilitas"); setIsOpen(false); }}>Fasilitas</div>
-          <div className={styles.linkList} onClick={() => { navigate("/artikel"); setIsOpen(false); }}>Artikel</div>
+          <div className={styles.linkList} onClick={() => handleNavClick("beranda")}>Beranda</div>
+          <div className={styles.linkList} onClick={() => handleNavClick("tentang-kami")}>Tentang Kami</div>
+          <div className={styles.linkList} onClick={() => handleNavClick("cari-dokter")}>Cari Dokter</div>
+          <div className={styles.linkList} onClick={() => handleNavClick("fasilitas")}>Fasilitas</div>
+          <div className={styles.linkList} onClick={() => handleNavClick("artikel")}>Artikel</div>
         </div>
         <div className={styles.link}>
           <div className={styles.button} onClick={() => { navigate("/appointment"); setIsOpen(false); }}>Buat Appointment</div>

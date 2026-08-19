@@ -33,7 +33,7 @@ export default function LandingPage() {
   return (
     <PageWrapper>
       <div className={styles.container}>
-        <div className={styles.banner}>
+        <div className={styles.banner} id="beranda">
           <div className={styles.titleWrapper}>
             <p className={styles.title}>Perawatan Terbaik untuk Ibu, Bayi,<br />dan Tumbuh Kembang Anak</p>
             <p className={styles.subtitle}>Menemani setiap langkah kesehatan ibu dan tumbuh kembang anak</p>
@@ -48,7 +48,7 @@ export default function LandingPage() {
         </div>
 
         <div>
-          <div className={styles.whyContainer}>
+          <div className={styles.whyContainer} id="tentang-kami">
             <div className={styles.whyWrapper}>
               <p className={styles.title}>Mengapa memilih kami?</p>
               <div className={styles.why}>
@@ -84,7 +84,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className={styles.teamWrapper}>
+          <div className={styles.teamWrapper} id="cari-dokter">
             <div className={styles.teamTitle}>
               <p className={styles.title}>Tim Profesional Kami</p>
               <p className={styles.desc}>Didukung oleh dokter spesialis kandungan, dokter spesialis anak, bidan, dan tenaga kesehatan profesional yang siap memberikan pelayanan terbaik sesuai kebutuhan Anda.</p>
@@ -104,7 +104,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className={styles.layananContainer}>
+          <div className={styles.layananContainer} id="fasilitas">
             <p className={styles.title}>Pusat Layanan Ibu & Anak</p>
             <div className={styles.layananWrapper}>
               {categoriesList.map((item, index) => (
@@ -146,7 +146,7 @@ export default function LandingPage() {
           </div>
 
           {/* Section Berita & Edukasi Kesehatan */}
-          <div className={styles.newsSectionWrapper}>
+          <div className={styles.newsSectionWrapper} id="artikel">
             <NewsSection newsList={newsList} />
           </div>
 
