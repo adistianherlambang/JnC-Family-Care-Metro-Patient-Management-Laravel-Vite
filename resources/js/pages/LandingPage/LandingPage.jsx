@@ -173,44 +173,44 @@ export default function LandingPage() {
           </div>
 
           {/* Section Berita & Edukasi Kesehatan */}
-          <div style={{ backgroundColor: "var(--background)", padding: "64px", display: "flex", flexDirection: "column", gap: "32px" }}>
-            <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
-              <h2 style={{ fontFamily: "var(--antonia)", fontSize: "48px", fontWeight: 600, color: "#1F2937", margin: 0 }}>
+          <div className={styles.newsSection}>
+            <div className={styles.newsHeader}>
+              <h2 className={styles.newsTitle}>
                 Berita & Edukasi Kesehatan
               </h2>
-              <p style={{ fontFamily: "var(--artico)", fontSize: "16px", color: "#6b7280", margin: 0, maxWidth: "680px" }}>
+              <p className={styles.newsSubtitle}>
                 Dapatkan informasi, artikel medis, dan edukasi seputar kehamilan, kesehatan anak, dan pola asuh keluarga langsung dari para praktisi ahli kami.
               </p>
             </div>
 
             {isFirstPage && (
-              <div style={{ display: "flex", gap: "24px", flexDirection: "row", flexWrap: "wrap" }}>
+              <div className={styles.featuredWrapper}>
                 {featuredMain && (
                   <div
-                    style={{ flex: "1 1 500px", display: "flex", flexDirection: "column", backgroundColor: "white", padding: "20px", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.04)", cursor: "pointer" }}
+                    className={styles.featuredMainCard}
                     onClick={() => setSelectedArticle(featuredMain)}
                   >
-                    <div style={{ width: "100%", height: "260px", borderRadius: "12px", overflow: "hidden", marginBottom: "16px" }}>
+                    <div className={styles.featuredMainImgWrapper}>
                       <img
                         src={getImgSrc(featuredMain, 0)}
                         alt={featuredMain.title}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        className={styles.featuredMainImg}
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = defaultFallbacks[0];
                         }}
                       />
                     </div>
-                    <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
+                    <p className={styles.metaText}>
                       {featuredMain.category} • {featuredMain.date}
                     </p>
-                    <h3 style={{ fontFamily: "var(--antonia)", fontSize: "22px", fontWeight: 700, color: "var(--primary)", margin: "0 0 10px 0" }}>
+                    <h3 className={styles.featuredMainTitle}>
                       {featuredMain.title}
                     </h3>
-                    <p style={{ fontSize: "14px", color: "#4b5563", margin: "0 0 16px 0", lineHeight: "1.5", flex: 1 }}>
+                    <p className={styles.featuredMainSummary}>
                       {featuredMain.summary}
                     </p>
-                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <div className={styles.btnRight}>
                       <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
                         Baca Selengkapnya
                       </Button>
@@ -219,34 +219,34 @@ export default function LandingPage() {
                 )}
 
                 {featuredSide.length > 0 && (
-                  <div style={{ flex: "1 1 400px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div className={styles.featuredSideColumn}>
                     {featuredSide.map((item, idx) => (
                       <div
                         key={item.id || idx}
-                        style={{ backgroundColor: "white", padding: "16px", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.04)", display: "flex", gap: "16px", alignItems: "center", cursor: "pointer" }}
+                        className={styles.featuredSideCard}
                         onClick={() => setSelectedArticle(item)}
                       >
-                        <div style={{ width: "90px", height: "90px", borderRadius: "12px", overflow: "hidden", flexShrink: 0, aspectRatio: "1 / 1" }}>
+                        <div className={styles.featuredSideImgWrapper}>
                           <img
                             src={getImgSrc(item, idx + 1)}
                             alt={item.title}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            className={styles.featuredSideImg}
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = defaultFallbacks[(idx + 1) % defaultFallbacks.length];
                             }}
                           />
                         </div>
-                        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                        <div className={styles.featuredSideContent}>
                           <div>
-                            <p style={{ fontSize: "11px", color: "#6b7280", margin: "0 0 2px 0" }}>
+                            <p className={styles.featuredSideMeta}>
                               {item.category} • {item.date}
                             </p>
-                            <h4 style={{ fontFamily: "var(--antonia)", fontSize: "15px", fontWeight: 700, color: "var(--primary)", margin: "0 0 4px 0", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                            <h4 className={styles.featuredSideTitle}>
                               {item.title}
                             </h4>
                           </div>
-                          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "8px" }}>
+                          <div className={styles.btnRight} style={{ marginTop: "8px" }}>
                             <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
                               Baca Selengkapnya
                             </Button>
@@ -260,36 +260,36 @@ export default function LandingPage() {
             )}
 
             {gridList.length > 0 && (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
+              <div className={styles.gridContainer}>
                 {gridList.map((item, idx) => (
                   <div
                     key={item.id || idx}
-                    style={{ backgroundColor: "white", padding: "20px", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.04)", display: "flex", flexDirection: "column", justifyContent: "space-between", cursor: "pointer" }}
+                    className={styles.gridCard}
                     onClick={() => setSelectedArticle(item)}
                   >
                     <div>
-                      <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "12px" }}>
+                      <div className={styles.gridImgWrapper}>
                         <img
                           src={getImgSrc(item, idx + 5)}
                           alt={item.title}
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          className={styles.gridImg}
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = defaultFallbacks[idx % defaultFallbacks.length];
                           }}
                         />
                       </div>
-                      <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
+                      <p className={styles.metaText}>
                         {item.category} • {item.date}
                       </p>
-                      <h4 style={{ fontFamily: "var(--antonia)", fontSize: "16px", fontWeight: 700, color: "var(--primary)", margin: "0 0 8px 0" }}>
+                      <h4 className={styles.gridTitle}>
                         {item.title}
                       </h4>
-                      <p style={{ fontSize: "13px", color: "#4b5563", margin: 0, lineHeight: "1.5" }}>
+                      <p className={styles.gridSummary}>
                         {item.summary}
                       </p>
                     </div>
-                    <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                    <div className={styles.btnRight} style={{ marginTop: "16px" }}>
                       <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
                         Baca Selengkapnya
                       </Button>
@@ -300,7 +300,7 @@ export default function LandingPage() {
             )}
 
             {newsList.length > newsPerPage && (
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginTop: "12px" }}>
+              <div className={styles.paginationContainer}>
                 <Button
                   variant="secondary"
                   disabled={newsPage === 1}
@@ -308,7 +308,7 @@ export default function LandingPage() {
                 >
                   Sebelumnya
                 </Button>
-                <span style={{ fontSize: "14px", fontWeight: "600", color: "#374151" }}>
+                <span className={styles.paginationText}>
                   Halaman {newsPage} dari {totalNewsPages}
                 </span>
                 <Button
@@ -323,51 +323,34 @@ export default function LandingPage() {
           </div>
 
           {/* Section Tanya Jawab FAQ */}
-          <div style={{ padding: "64px", display: "flex", flexDirection: "column", gap: "32px" }}>
-            <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
-              <h2 style={{ fontFamily: "var(--antonia)", fontSize: "48px", fontWeight: 600, color: "#1F2937", margin: 0 }}>
+          <div className={styles.faqSection}>
+            <div className={styles.faqHeader}>
+              <h2 className={styles.faqTitle}>
                 Pertanyaan Umum (FAQ)
               </h2>
-              <p style={{ fontFamily: "var(--artico)", fontSize: "16px", color: "#6b7280", margin: 0, maxWidth: "680px" }}>
+              <p className={styles.faqSubtitle}>
                 Temukan jawaban lengkap atas berbagai pertanyaan yang sering diajukan mengenai pendaftaran antrean, jam operasional, dan layanan kesehatan kami.
               </p>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "900px", margin: "0 auto", width: "100%" }}>
+            <div className={styles.faqListWrapper}>
               {faqList.map((item) => {
                 const isOpen = openFaqId === item.id;
                 return (
-                  <div
-                    key={item.id}
-                    style={{
-                      backgroundColor: "white",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "16px",
-                      overflow: "hidden",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
-                      transition: "all 0.25s ease"
-                    }}
-                  >
+                  <div key={item.id} className={styles.faqCard}>
                     <div
-                      style={{
-                        padding: "20px 24px",
-                        display: "flex",
-                        justify: "space-between",
-                        alignItems: "center",
-                        cursor: "pointer",
-                        backgroundColor: isOpen ? "#FAF5FF" : "white"
-                      }}
+                      className={`${styles.faqCardHeader} ${isOpen ? styles.faqCardHeaderActive : ""}`}
                       onClick={() => setOpenFaqId(isOpen ? null : item.id)}
                     >
-                      <h4 style={{ fontFamily: "var(--artico)", fontSize: "17px", fontWeight: 600, color: "var(--primary)", margin: 0 }}>
+                      <h4 className={styles.faqQuestion}>
                         {item.question}
                       </h4>
-                      <span style={{ fontSize: "20px", fontWeight: 700, color: "var(--primary)", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s ease" }}>
+                      <span className={`${styles.faqArrow} ${isOpen ? styles.faqArrowRotate : ""}`}>
                         ▼
                       </span>
                     </div>
                     {isOpen && (
-                      <div style={{ padding: "0 24px 20px 24px", backgroundColor: "#FAF5FF", color: "#4b5563", fontSize: "15px", lineHeight: "1.6" }}>
+                      <div className={styles.faqBody}>
                         {item.answer}
                       </div>
                     )}

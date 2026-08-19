@@ -448,7 +448,7 @@ export default function UserDashboard() {
                       <p className={styles.value}>{activeQueue.keluhan}</p>
                     </div>
                   )}
-                  <div className={styles.input} style={{ marginTop: "8px", gap: "12px" }}>
+                  <div className={styles.btnGroup}>
                     <Button
                       variant="danger"
                       onClick={handleCancelQueue}
@@ -461,13 +461,13 @@ export default function UserDashboard() {
             ) : (
               <>
                 {activeQueue && activeQueue.status === "Selesai" && (
-                  <div style={{ padding: "16px", backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "12px", color: "#166534", fontSize: "14px", fontWeight: "500", marginBottom: "16px" }}>
+                  <div className={styles.completedAlert}>
                     ✓ Pelayanan antrean Anda sebelumnya ({activeQueue.queueNumber}) telah <strong>Selesai</strong>. Anda dapat membuat janji antrean baru di bawah ini.
                   </div>
                 )}
                 <div>
                   <p className={styles.title}>Buat Antrean Baru</p>
-                  <p className={styles.desc} style={{ margin: 0, fontFamily: "var(--font-artico)" }}>
+                  <p className={styles.formDesc}>
                     Silakan pilih tanggal dan praktisi medis dari daftar jadwal di bawah untuk membuat antrean baru.
                   </p>
                 </div>
@@ -569,13 +569,13 @@ export default function UserDashboard() {
                   />
 
                   {queueFormError && (
-                    <p style={{ color: "#ef4444", fontSize: "14px", margin: "4px 0 0 0", fontFamily: "var(--font-artico)" }}>
+                    <p className={styles.formError}>
                       {queueFormError}
                     </p>
                   )}
                 </div>
 
-                <div style={{ marginTop: "8px" }}>
+                <div className={styles.btnGroup}>
                   <Button onClick={handleCreateQueue}>
                     Buat Antrean Baru
                   </Button>
@@ -596,7 +596,7 @@ export default function UserDashboard() {
           </div>
 
           {patientQueuesList.length > 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div className={styles.riwayatList}>
               {patientQueuesList.map((item) => (
                 <div key={item.id} className={styles.inputContainer}>
                   <div className={styles.inputWrapper}>
@@ -684,44 +684,35 @@ export default function UserDashboard() {
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
               {isFirstPage && (
                 <>
-                  <div style={{ display: "grid", gridTemplateColumns: currentNewsList.length > 1 ? "1.2fr 1fr" : "1fr", gap: "24px", alignItems: "stretch" }}>
+                  <div className={styles.newsHeroWrapper}>
                     {featuredMain && (
                       <div
-                        style={{
-                          backgroundColor: "white",
-                          borderRadius: "20px",
-                          padding: "24px",
-                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
-                          display: "flex",
-                          flexDirection: "column",
-                          justify: "space-between",
-                          cursor: "pointer"
-                        }}
+                        className={styles.featuredMainCard}
                         onClick={() => setSelectedArticle(featuredMain)}
                       >
                         <div>
-                          <div style={{ width: "100%", height: "240px", borderRadius: "14px", overflow: "hidden", marginBottom: "16px" }}>
+                          <div className={styles.featuredMainImgWrapper}>
                             <img
                               src={getImgSrc(featuredMain, 0)}
                               alt={featuredMain.title}
-                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              className={styles.featuredMainImg}
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = defaultFallbacks[0];
                               }}
                             />
                           </div>
-                          <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 6px 0" }}>
+                          <p className={styles.metaText}>
                             {featuredMain.category} • {featuredMain.readTime || featuredMain.read_time || "3 min read"} • {featuredMain.date}
                           </p>
-                          <h3 style={{ fontFamily: "var(--font-antonia)", fontSize: "20px", fontWeight: 700, color: "var(--primary)", margin: "0 0 10px 0", lineHeight: "1.3" }}>
+                          <h3 className={styles.featuredMainTitle}>
                             {featuredMain.title}
                           </h3>
-                          <p style={{ fontFamily: "var(--font-artico)", fontSize: "14px", color: "#4b5563", margin: 0, lineHeight: "1.5" }}>
+                          <p className={styles.featuredMainSummary}>
                             {featuredMain.summary}
                           </p>
                         </div>
-                        <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
+                        <div className={styles.btnRight} style={{ marginTop: "20px" }}>
                           <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
                             Baca Selengkapnya
                           </Button>
@@ -730,50 +721,32 @@ export default function UserDashboard() {
                     )}
 
                     {featuredSide.length > 0 && (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "12px",
-                          maxHeight: "520px",
-                          overflowY: "auto"
-                        }}
-                      >
+                      <div className={styles.featuredSideColumn}>
                         {featuredSide.map((item, idx) => (
                           <div
                             key={item.id}
-                            style={{
-                              backgroundColor: "white",
-                              borderRadius: "16px",
-                              padding: "16px",
-                              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
-                              display: "flex",
-                              gap: "14px",
-                              alignItems: "center",
-                              cursor: "pointer",
-                              flex: 1
-                            }}
+                            className={styles.featuredSideCard}
                             onClick={() => setSelectedArticle(item)}
                           >
-                            <div style={{ width: "80px", height: "80px", aspectRatio: "1 / 1", borderRadius: "10px", overflow: "hidden", flexShrink: 0 }}>
+                            <div className={styles.featuredSideImgWrapper}>
                               <img
                                 src={getImgSrc(item, idx + 1)}
                                 alt={item.title}
-                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                className={styles.featuredSideImg}
                                 onError={(e) => {
                                   e.target.onerror = null;
                                   e.target.src = defaultFallbacks[1];
                                 }}
                               />
                             </div>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
+                            <div className={styles.featuredSideContent}>
+                              <p className={styles.featuredSideMeta}>
                                 {item.category} • {item.date}
                               </p>
-                              <h4 style={{ fontFamily: "var(--font-antonia)", fontSize: "15px", fontWeight: 700, color: "#1F2937", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                              <h4 className={styles.featuredSideTitle}>
                                 {item.title}
                               </h4>
-                              <p style={{ fontSize: "13px", color: "#6b7280", margin: "4px 0 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                              <p className={styles.gridSummary} style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                 {item.summary}
                               </p>
                             </div>
@@ -784,45 +757,36 @@ export default function UserDashboard() {
                   </div>
 
                   {gridList.length > 0 && (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
+                    <div className={styles.gridContainer}>
                       {gridList.map((item, idx) => (
                         <div
                           key={item.id}
-                          style={{
-                            backgroundColor: "white",
-                            borderRadius: "16px",
-                            padding: "20px",
-                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
-                            display: "flex",
-                            flexDirection: "column",
-                            justify: "space-between",
-                            cursor: "pointer"
-                          }}
+                          className={styles.gridCard}
                           onClick={() => setSelectedArticle(item)}
                         >
                           <div>
-                            <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "14px" }}>
+                            <div className={styles.gridImgWrapper}>
                               <img
                                 src={getImgSrc(item, idx + 5)}
                                 alt={item.title}
-                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                className={styles.gridImg}
                                 onError={(e) => {
                                   e.target.onerror = null;
                                   e.target.src = defaultFallbacks[2];
                                 }}
                               />
                             </div>
-                            <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
+                            <p className={styles.metaText}>
                               {item.category} • {item.date}
                             </p>
-                            <h4 style={{ fontFamily: "var(--font-antonia)", fontSize: "16px", fontWeight: 700, color: "var(--primary)", margin: "0 0 8px 0" }}>
+                            <h4 className={styles.gridTitle}>
                               {item.title}
                             </h4>
-                            <p style={{ fontSize: "13px", color: "#4b5563", margin: 0, lineHeight: "1.5" }}>
+                            <p className={styles.gridSummary}>
                               {item.summary}
                             </p>
                           </div>
-                          <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                          <div className={styles.btnRight} style={{ marginTop: "16px" }}>
                             <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
                               Baca Selengkapnya
                             </Button>
@@ -835,45 +799,36 @@ export default function UserDashboard() {
               )}
 
               {!isFirstPage && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
+                <div className={styles.gridContainer}>
                   {gridList.map((item, idx) => (
                     <div
                       key={item.id}
-                      style={{
-                        backgroundColor: "white",
-                        borderRadius: "16px",
-                        padding: "20px",
-                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
-                        display: "flex",
-                        flexDirection: "column",
-                        justify: "space-between",
-                        cursor: "pointer"
-                      }}
+                      className={styles.gridCard}
                       onClick={() => setSelectedArticle(item)}
                     >
                       <div>
-                        <div style={{ width: "100%", height: "160px", borderRadius: "12px", overflow: "hidden", marginBottom: "14px" }}>
+                        <div className={styles.gridImgWrapper}>
                           <img
                             src={getImgSrc(item, idx)}
                             alt={item.title}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            className={styles.gridImg}
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = defaultFallbacks[0];
                             }}
                           />
                         </div>
-                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 4px 0" }}>
+                        <p className={styles.metaText}>
                           {item.category} • {item.date}
                         </p>
-                        <h4 style={{ fontFamily: "var(--font-antonia)", fontSize: "16px", fontWeight: 700, color: "var(--primary)", margin: "0 0 8px 0" }}>
+                        <h4 className={styles.gridTitle}>
                           {item.title}
                         </h4>
-                        <p style={{ fontSize: "13px", color: "#4b5563", margin: 0, lineHeight: "1.5" }}>
+                        <p className={styles.gridSummary}>
                           {item.summary}
                         </p>
                       </div>
-                      <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                      <div className={styles.btnRight} style={{ marginTop: "16px" }}>
                         <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
                           Baca Selengkapnya
                         </Button>
@@ -884,7 +839,7 @@ export default function UserDashboard() {
               )}
 
               {newsList.length > newsPerPage && (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginTop: "12px" }}>
+                <div className={styles.paginationContainer}>
                   <Button
                     variant="secondary"
                     disabled={newsPage === 1}
@@ -892,7 +847,7 @@ export default function UserDashboard() {
                   >
                     Sebelumnya
                   </Button>
-                  <span style={{ fontSize: "14px", fontWeight: "600", color: "#374151" }}>
+                  <span className={styles.paginationText}>
                     Halaman {newsPage} dari {totalNewsPages}
                   </span>
                   <Button
