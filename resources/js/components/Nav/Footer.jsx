@@ -27,17 +27,7 @@ export default function Footer() {
         <div className={styles.linkContainer}>
           <div className={styles.linkTitle}>Link</div>
           {link.map((item, index) => (
-            <div
-              key={index}
-              className={styles.linkList}
-              onClick={() => {
-                navigate(item.path);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              {item.name}
-            </div>
+            <div key={index} className={styles.linkList} onClick={() => navigate(item.path)}>{item.name}</div>
           ))}
         </div>
         <div className={styles.linkContainer}>

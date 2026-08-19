@@ -3,9 +3,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  position: relative;
-  z-index: 100;
-  width: 100%;
 }
 
 .container img {
@@ -39,7 +36,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
 }
 
 .link div:hover {
@@ -49,16 +45,6 @@
 .link svg {
   height: 22px;
   width: auto;
-}
-
-.linkList {
-  cursor: pointer;
-  user-select: none;
-}
-
-.activeLink {
-  color: var(--primary) !important;
-  font-weight: 600;
 }
 
 .linkList:first-child {
