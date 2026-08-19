@@ -146,7 +146,7 @@ export default function LandingPage() {
           </div>
 
           {/* Section Berita & Edukasi Kesehatan */}
-          <div style={{ backgroundColor: "var(--background)", padding: "64px" }}>
+          <div className={styles.newsSectionWrapper}>
             <NewsSection newsList={newsList} />
           </div>
 

@@ -488,6 +488,11 @@
   color: #374151;
 }
 
+.newsSectionWrapper {
+  background-color: var(--background);
+  padding: 64px;
+}
+
 /* FAQ Section */
 .faqSection {
   padding: 64px;
