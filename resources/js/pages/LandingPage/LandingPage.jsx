@@ -4,35 +4,17 @@ import styles from "./LandingPage.module.css";
 //components
 import PageWrapper from "../../components/PageWrapper/PageWrapper";
 import BuatAppointment from "../../components/Button/BuatAppointment/BuatAppointment";
-import Button from "../../components/Button/Button";
-import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
+import NewsSection from "../../components/NewsSection/NewsSection";
 
 import { apiService } from "../../services/apiService";
-
-const defaultFallbacks = [
-  "/img/landingPage/articleDummy.png",
-  "/img/landingPage/dummyDr.png",
-  "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80"
-];
-
-const getImgSrc = (item, idx) => {
-  if (item.image && typeof item.image === "string" && item.image.trim().length > 0) return item.image;
-  if (item.coverImage) return item.coverImage;
-  if (item.cover_image) return item.cover_image;
-  if (item.img) return item.img;
-  return defaultFallbacks[idx % defaultFallbacks.length];
-};
 
 export default function LandingPage() {
   const [isTab, setIsTab] = useState("");
   const [doctorsList, setDoctorsList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [newsList, setNewsList] = useState([]);
-  const [newsPage, setNewsPage] = useState(1);
   const [faqList, setFaqList] = useState([]);
   const [openFaqId, setOpenFaqId] = useState(null);
-  const [selectedArticle, setSelectedArticle] = useState(null);
 
   useEffect(() => {
     async function loadData() {
@@ -47,15 +29,6 @@ export default function LandingPage() {
     }
     loadData();
   }, []);
-
-  const newsPerPage = 10;
-  const totalNewsPages = Math.ceil(newsList.length / newsPerPage) || 1;
-  const currentNewsList = newsList.slice((newsPage - 1) * newsPerPage, newsPage * newsPerPage);
-
-  const isFirstPage = newsPage === 1;
-  const featuredMain = isFirstPage && currentNewsList.length > 0 ? currentNewsList[0] : null;
-  const featuredSide = isFirstPage && currentNewsList.length > 1 ? currentNewsList.slice(1, 5) : [];
-  const gridList = isFirstPage ? currentNewsList.slice(5, 10) : currentNewsList;
 
   return (
     <PageWrapper>
@@ -173,153 +146,8 @@ export default function LandingPage() {
           </div>
 
           {/* Section Berita & Edukasi Kesehatan */}
-          <div className={styles.newsSection}>
-            <div className={styles.newsHeader}>
-              <h2 className={styles.newsTitle}>
-                Berita & Edukasi Kesehatan
-              </h2>
-              <p className={styles.newsSubtitle}>
-                Dapatkan informasi, artikel medis, dan edukasi seputar kehamilan, kesehatan anak, dan pola asuh keluarga langsung dari para praktisi ahli kami.
-              </p>
-            </div>
-
-            {isFirstPage && (
-              <div className={styles.featuredWrapper}>
-                {featuredMain && (
-                  <div
-                    className={styles.featuredMainCard}
-                    onClick={() => setSelectedArticle(featuredMain)}
-                  >
-                    <div className={styles.featuredMainImgWrapper}>
-                      <img
-                        src={getImgSrc(featuredMain, 0)}
-                        alt={featuredMain.title}
-                        className={styles.featuredMainImg}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = defaultFallbacks[0];
-                        }}
-                      />
-                    </div>
-                    <p className={styles.metaText}>
-                      {featuredMain.category} • {featuredMain.date}
-                    </p>
-                    <h3 className={styles.featuredMainTitle}>
-                      {featuredMain.title}
-                    </h3>
-                    <p className={styles.featuredMainSummary}>
-                      {featuredMain.summary}
-                    </p>
-                    <div className={styles.btnRight}>
-                      <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
-                        Baca Selengkapnya
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {featuredSide.length > 0 && (
-                  <div className={styles.featuredSideColumn}>
-                    {featuredSide.map((item, idx) => (
-                      <div
-                        key={item.id || idx}
-                        className={styles.featuredSideCard}
-                        onClick={() => setSelectedArticle(item)}
-                      >
-                        <div className={styles.featuredSideImgWrapper}>
-                          <img
-                            src={getImgSrc(item, idx + 1)}
-                            alt={item.title}
-                            className={styles.featuredSideImg}
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = defaultFallbacks[(idx + 1) % defaultFallbacks.length];
-                            }}
-                          />
-                        </div>
-                        <div className={styles.featuredSideContent}>
-                          <div>
-                            <p className={styles.featuredSideMeta}>
-                              {item.category} • {item.date}
-                            </p>
-                            <h4 className={styles.featuredSideTitle}>
-                              {item.title}
-                            </h4>
-                          </div>
-                          <div className={styles.btnRight} style={{ marginTop: "8px" }}>
-                            <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
-                              Baca Selengkapnya
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {gridList.length > 0 && (
-              <div className={styles.gridContainer}>
-                {gridList.map((item, idx) => (
-                  <div
-                    key={item.id || idx}
-                    className={styles.gridCard}
-                    onClick={() => setSelectedArticle(item)}
-                  >
-                    <div>
-                      <div className={styles.gridImgWrapper}>
-                        <img
-                          src={getImgSrc(item, idx + 5)}
-                          alt={item.title}
-                          className={styles.gridImg}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = defaultFallbacks[idx % defaultFallbacks.length];
-                          }}
-                        />
-                      </div>
-                      <p className={styles.metaText}>
-                        {item.category} • {item.date}
-                      </p>
-                      <h4 className={styles.gridTitle}>
-                        {item.title}
-                      </h4>
-                      <p className={styles.gridSummary}>
-                        {item.summary}
-                      </p>
-                    </div>
-                    <div className={styles.btnRight} style={{ marginTop: "16px" }}>
-                      <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
-                        Baca Selengkapnya
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {newsList.length > newsPerPage && (
-              <div className={styles.paginationContainer}>
-                <Button
-                  variant="secondary"
-                  disabled={newsPage === 1}
-                  onClick={() => setNewsPage((p) => Math.max(p - 1, 1))}
-                >
-                  Sebelumnya
-                </Button>
-                <span className={styles.paginationText}>
-                  Halaman {newsPage} dari {totalNewsPages}
-                </span>
-                <Button
-                  variant="secondary"
-                  disabled={newsPage === totalNewsPages}
-                  onClick={() => setNewsPage((p) => Math.min(p + 1, totalNewsPages))}
-                >
-                  Selanjutnya
-                </Button>
-              </div>
-            )}
+          <div style={{ backgroundColor: "var(--background)", padding: "64px" }}>
+            <NewsSection newsList={newsList} />
           </div>
 
           {/* Section Tanya Jawab FAQ */}
@@ -362,14 +190,6 @@ export default function LandingPage() {
 
         </div>
       </div>
-
-      {selectedArticle && (
-        <BlogReaderModal
-          isOpen={true}
-          article={selectedArticle}
-          onClose={() => setSelectedArticle(null)}
-        />
-      )}
     </PageWrapper>
   );
 }

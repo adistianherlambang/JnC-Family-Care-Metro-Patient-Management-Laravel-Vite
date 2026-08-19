@@ -7,6 +7,7 @@ import BlogReaderModal from "../../components/BlogEditor/BlogReaderModal";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
 import Title from "../../components/Title/Title";
+import NewsSection from "../../components/NewsSection/NewsSection";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -649,220 +650,18 @@ export default function UserDashboard() {
             </div>
           )}
         </>
-      )}      {activeMenu === "berita" && (() => {
-        const newsPerPage = 10;
-        const totalNewsPages = Math.ceil(newsList.length / newsPerPage) || 1;
-        const currentNewsList = newsList.slice((newsPage - 1) * newsPerPage, newsPage * newsPerPage);
+      )}      {activeMenu === "berita" && (
+        <>
+          <div className={styles.header}>
+            <Title
+              title="Berita & Edukasi Kesehatan"
+              desc="Informasi dan tips seputar pelayanan kesehatan ibu dan anak."
+            />
+          </div>
 
-        const isFirstPage = newsPage === 1;
-        const featuredMain = isFirstPage && currentNewsList.length > 0 ? currentNewsList[0] : null;
-        const featuredSide = isFirstPage && currentNewsList.length > 1 ? currentNewsList.slice(1, 5) : [];
-        const gridList = isFirstPage ? currentNewsList.slice(5, 10) : currentNewsList;
-
-        const defaultFallbacks = [
-          "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&q=80",
-          "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80",
-          "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=800&q=80"
-        ];
-
-        const getImgSrc = (item, idx) => {
-          if (item && item.image && String(item.image).trim() !== "") {
-            return item.image;
-          }
-          return defaultFallbacks[idx % defaultFallbacks.length];
-        };
-
-        return (
-          <>
-            <div className={styles.header}>
-              <Title
-                title="Berita & Edukasi Kesehatan"
-                desc="Informasi dan tips seputar pelayanan kesehatan ibu dan anak."
-              />
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-              {isFirstPage && (
-                <>
-                  <div className={styles.newsHeroWrapper}>
-                    {featuredMain && (
-                      <div
-                        className={styles.featuredMainCard}
-                        onClick={() => setSelectedArticle(featuredMain)}
-                      >
-                        <div>
-                          <div className={styles.featuredMainImgWrapper}>
-                            <img
-                              src={getImgSrc(featuredMain, 0)}
-                              alt={featuredMain.title}
-                              className={styles.featuredMainImg}
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = defaultFallbacks[0];
-                              }}
-                            />
-                          </div>
-                          <p className={styles.metaText}>
-                            {featuredMain.category} • {featuredMain.readTime || featuredMain.read_time || "3 min read"} • {featuredMain.date}
-                          </p>
-                          <h3 className={styles.featuredMainTitle}>
-                            {featuredMain.title}
-                          </h3>
-                          <p className={styles.featuredMainSummary}>
-                            {featuredMain.summary}
-                          </p>
-                        </div>
-                        <div className={styles.btnRight} style={{ marginTop: "20px" }}>
-                          <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(featuredMain); }}>
-                            Baca Selengkapnya
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {featuredSide.length > 0 && (
-                      <div className={styles.featuredSideColumn}>
-                        {featuredSide.map((item, idx) => (
-                          <div
-                            key={item.id}
-                            className={styles.featuredSideCard}
-                            onClick={() => setSelectedArticle(item)}
-                          >
-                            <div className={styles.featuredSideImgWrapper}>
-                              <img
-                                src={getImgSrc(item, idx + 1)}
-                                alt={item.title}
-                                className={styles.featuredSideImg}
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src = defaultFallbacks[1];
-                                }}
-                              />
-                            </div>
-                            <div className={styles.featuredSideContent}>
-                              <p className={styles.featuredSideMeta}>
-                                {item.category} • {item.date}
-                              </p>
-                              <h4 className={styles.featuredSideTitle}>
-                                {item.title}
-                              </h4>
-                              <p className={styles.gridSummary} style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                {item.summary}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {gridList.length > 0 && (
-                    <div className={styles.gridContainer}>
-                      {gridList.map((item, idx) => (
-                        <div
-                          key={item.id}
-                          className={styles.gridCard}
-                          onClick={() => setSelectedArticle(item)}
-                        >
-                          <div>
-                            <div className={styles.gridImgWrapper}>
-                              <img
-                                src={getImgSrc(item, idx + 5)}
-                                alt={item.title}
-                                className={styles.gridImg}
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src = defaultFallbacks[2];
-                                }}
-                              />
-                            </div>
-                            <p className={styles.metaText}>
-                              {item.category} • {item.date}
-                            </p>
-                            <h4 className={styles.gridTitle}>
-                              {item.title}
-                            </h4>
-                            <p className={styles.gridSummary}>
-                              {item.summary}
-                            </p>
-                          </div>
-                          <div className={styles.btnRight} style={{ marginTop: "16px" }}>
-                            <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
-                              Baca Selengkapnya
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-
-              {!isFirstPage && (
-                <div className={styles.gridContainer}>
-                  {gridList.map((item, idx) => (
-                    <div
-                      key={item.id}
-                      className={styles.gridCard}
-                      onClick={() => setSelectedArticle(item)}
-                    >
-                      <div>
-                        <div className={styles.gridImgWrapper}>
-                          <img
-                            src={getImgSrc(item, idx)}
-                            alt={item.title}
-                            className={styles.gridImg}
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = defaultFallbacks[0];
-                            }}
-                          />
-                        </div>
-                        <p className={styles.metaText}>
-                          {item.category} • {item.date}
-                        </p>
-                        <h4 className={styles.gridTitle}>
-                          {item.title}
-                        </h4>
-                        <p className={styles.gridSummary}>
-                          {item.summary}
-                        </p>
-                      </div>
-                      <div className={styles.btnRight} style={{ marginTop: "16px" }}>
-                        <Button fullWidth onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
-                          Baca Selengkapnya
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {newsList.length > newsPerPage && (
-                <div className={styles.paginationContainer}>
-                  <Button
-                    variant="secondary"
-                    disabled={newsPage === 1}
-                    onClick={() => setNewsPage((p) => Math.max(p - 1, 1))}
-                  >
-                    Sebelumnya
-                  </Button>
-                  <span className={styles.paginationText}>
-                    Halaman {newsPage} dari {totalNewsPages}
-                  </span>
-                  <Button
-                    variant="secondary"
-                    disabled={newsPage === totalNewsPages}
-                    onClick={() => setNewsPage((p) => Math.min(p + 1, totalNewsPages))}
-                  >
-                    Selanjutnya
-                  </Button>
-                </div>
-              )}
-            </div>
-          </>
-        );
-      })()}
+          <NewsSection newsList={newsList} showHeader={false} />
+        </>
+      )}
 
       {activeMenu === "faq" && (
         <>
