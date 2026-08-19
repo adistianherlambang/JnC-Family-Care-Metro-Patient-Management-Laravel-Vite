@@ -113,6 +113,11 @@ export default function NewsSection({
                         {item.summary}
                       </p>
                     </div>
+                    <div className={styles.btnRight} style={{ marginTop: "16px" }}>
+                      <Button onClick={(e) => { e.stopPropagation(); setSelectedArticle(item); }}>
+                        Baca Selengkapnya
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
