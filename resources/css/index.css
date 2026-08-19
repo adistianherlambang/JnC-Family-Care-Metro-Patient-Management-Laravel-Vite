@@ -23,7 +23,7 @@
 /* Font Family: Antonia */
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/light.ttf') format('truetype');
+  src: url('../font/antonia/light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -31,7 +31,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/lightItalic.ttf') format('truetype');
+  src: url('../font/antonia/lightItalic.ttf') format('truetype');
   font-weight: 300;
   font-style: italic;
   font-display: swap;
@@ -39,7 +39,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/regular.ttf') format('truetype');
+  src: url('../font/antonia/regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -47,7 +47,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/regularItalic.ttf') format('truetype');
+  src: url('../font/antonia/regularItalic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -55,7 +55,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/medium.ttf') format('truetype');
+  src: url('../font/antonia/medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -63,7 +63,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/mediumItalic.ttf') format('truetype');
+  src: url('../font/antonia/mediumItalic.ttf') format('truetype');
   font-weight: 500;
   font-style: italic;
   font-display: swap;
@@ -71,7 +71,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/semibold.ttf') format('truetype');
+  src: url('../font/antonia/semibold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -79,7 +79,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/semiboldItalic.ttf') format('truetype');
+  src: url('../font/antonia/semiboldItalic.ttf') format('truetype');
   font-weight: 600;
   font-style: italic;
   font-display: swap;
@@ -87,7 +87,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/bold.ttf') format('truetype');
+  src: url('../font/antonia/bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -95,7 +95,7 @@
 
 @font-face {
   font-family: 'Antonia';
-  src: url('/font/antonia/boldItalic.ttf') format('truetype');
+  src: url('../font/antonia/boldItalic.ttf') format('truetype');
   font-weight: 700;
   font-style: italic;
   font-display: swap;
@@ -104,7 +104,7 @@
 /* Font Family: Artico */
 @font-face {
   font-family: 'Artico';
-  src: url('/font/artico/light.otf') format('opentype');
+  src: url('../font/artico/light.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -112,7 +112,7 @@
 
 @font-face {
   font-family: 'Artico';
-  src: url('/font/artico/lightItalic.otf') format('opentype');
+  src: url('../font/artico/lightItalic.otf') format('opentype');
   font-weight: 300;
   font-style: italic;
   font-display: swap;
@@ -120,7 +120,7 @@
 
 @font-face {
   font-family: 'Artico';
-  src: url('/font/artico/regular.otf') format('opentype');
+  src: url('../font/artico/regular.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -128,7 +128,7 @@
 
 @font-face {
   font-family: 'Artico';
-  src: url('/font/artico/regularItalic.otf') format('opentype');
+  src: url('../font/artico/regularItalic.otf') format('opentype');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -136,7 +136,7 @@
 
 @font-face {
   font-family: 'Artico';
-  src: url('/font/artico/medium.otf') format('opentype');
+  src: url('../font/artico/medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -144,7 +144,7 @@
 
 @font-face {
   font-family: 'Artico';
-  src: url('/font/artico/mediumItalic.otf') format('opentype');
+  src: url('../font/artico/mediumItalic.otf') format('opentype');
   font-weight: 500;
   font-style: italic;
   font-display: swap;
@@ -152,7 +152,7 @@
 
 @font-face {
   font-family: 'Artico';
-  src: url('/font/artico/bold.otf') format('opentype');
+  src: url('../font/artico/bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -160,7 +160,7 @@
 
 @font-face {
   font-family: 'Artico';
-  src: url('/font/artico/boldItalic.otf') format('opentype');
+  src: url('../font/artico/boldItalic.otf') format('opentype');
   font-weight: 700;
   font-style: italic;
   font-display: swap;
