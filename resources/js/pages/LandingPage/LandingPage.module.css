@@ -523,58 +523,73 @@
 .faqListWrapper {
   display: flex;
   flex-direction: column;
-  gap: 16px;
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
 }
 
-.faqCard {
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  transition: all 0.25s ease;
-}
-
-.faqCardHeader {
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  background-color: white;
-}
-
-.faqCardHeaderActive {
-  background-color: #FAF5FF;
-}
-
-.faqQuestion {
-  font-family: var(--artico);
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--primary);
+.faqItem p {
   margin: 0;
 }
 
-.faqArrow {
+.faqTitleWrapper {
+  cursor: pointer;
+  padding: 20px 0;
+  border-bottom: solid black 1px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  transition: 300ms ease;
+}
+
+.faqItem:first-child .faqTitleWrapper {
+  border-top: solid black 1px;
+}
+
+.faqTitleWrapper:hover {
+  padding: 20px 0 20px 24px;
+}
+
+.faqItemTitle {
+  font-family: var(--artico);
+  font-weight: 600;
   font-size: 20px;
-  font-weight: 700;
-  color: var(--primary);
-  transition: transform 0.2s ease;
+  color: #1F2937;
 }
 
-.faqArrowRotate {
-  transform: rotate(180deg);
+.faqTitleWrapper svg {
+  transition: 300ms ease-in-out;
 }
 
-.faqBody {
-  padding: 0 24px 20px 24px;
-  background-color: #FAF5FF;
+.faqTitleWrapper svg.rotate {
+  transform: rotate(90deg);
+}
+
+.faqDescWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.5s ease,
+    opacity 0.3s ease;
+}
+
+.faqDescWrapper > div {
+  overflow: hidden;
+}
+
+.faqDescWrapperOpen {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.faqDesc {
+  padding: 20px 0;
+  border-bottom: solid black 1px;
+  font-family: var(--artico);
+  font-size: 16px;
   color: #4b5563;
-  font-size: 15px;
   line-height: 1.6;
 }
 

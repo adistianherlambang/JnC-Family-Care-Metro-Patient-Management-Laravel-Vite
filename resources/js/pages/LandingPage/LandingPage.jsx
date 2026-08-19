@@ -162,26 +162,36 @@ export default function LandingPage() {
             </div>
 
             <div className={styles.faqListWrapper}>
-              {faqList.map((item) => {
+              {faqList.map((item, index) => {
                 const isOpen = openFaqId === item.id;
                 return (
-                  <div key={item.id} className={styles.faqCard}>
+                  <div className={styles.faqItem} key={item.id || index}>
                     <div
-                      className={`${styles.faqCardHeader} ${isOpen ? styles.faqCardHeaderActive : ""}`}
+                      className={styles.faqTitleWrapper}
                       onClick={() => setOpenFaqId(isOpen ? null : item.id)}
                     >
-                      <h4 className={styles.faqQuestion}>
-                        {item.question}
-                      </h4>
-                      <span className={`${styles.faqArrow} ${isOpen ? styles.faqArrowRotate : ""}`}>
-                        ▼
-                      </span>
+                      <p className={styles.faqItemTitle}>{item.question}</p>
+                      <svg
+                        className={`${isOpen ? styles.rotate : ""}`}
+                        width="7"
+                        height="13"
+                        viewBox="0 0 7 13"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M-5.66777e-07 1.06245L1.04108 3.42132e-07L6.71157 5.79036C6.80297 5.88314 6.87551 5.99347 6.92502 6.11501C6.97452 6.23654 7 6.36687 7 6.4985C7 6.63013 6.97452 6.76046 6.92502 6.88199C6.87551 7.00352 6.80297 7.11385 6.71157 7.20663L1.04108 13L0.000981715 11.9375L5.32314 6.5L-5.66777e-07 1.06245Z"
+                          fill="black"
+                        />
+                      </svg>
                     </div>
-                    {isOpen && (
-                      <div className={styles.faqBody}>
-                        {item.answer}
+                    <div className={`${styles.faqDescWrapper} ${isOpen ? styles.faqDescWrapperOpen : ""}`}>
+                      <div>
+                        <div className={styles.faqDesc}>
+                          <p>{item.answer}</p>
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}

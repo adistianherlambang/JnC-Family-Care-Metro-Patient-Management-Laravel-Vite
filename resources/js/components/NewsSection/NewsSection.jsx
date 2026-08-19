@@ -162,7 +162,7 @@ export default function NewsSection({
             Sebelumnya
           </button>
           <span className={styles.paginationText}>
-            Halaman {newsPage} dari {totalNewsPages}
+            Hal {newsPage}
           </span>
           <button
             type="button"
