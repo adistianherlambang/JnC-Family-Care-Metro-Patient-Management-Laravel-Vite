@@ -480,6 +480,28 @@
   }
 }
 
+@media (max-width: 768px) {
+  .input {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .tableHeaderRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .addInputRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actionCell {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
 
 
 
