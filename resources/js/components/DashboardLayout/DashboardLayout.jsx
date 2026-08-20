@@ -132,9 +132,9 @@ export default function DashboardLayout({
                 type="button"
                 className={`${styles.mobileNavItem} ${isActive ? styles.mobileNavItemActive : ""}`}
                 onClick={() => onMenuChange && onMenuChange(item.id)}
+                title={item.label}
               >
                 <div className={styles.mobileNavIcon}>{item.svg}</div>
-                <span className={styles.mobileNavLabel}>{item.label}</span>
               </button>
             );
           })}
