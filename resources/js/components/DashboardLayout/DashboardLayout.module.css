@@ -290,6 +290,7 @@
 }
 
 @media (max-width: 768px) {
+
   .thirdContainer {
     flex-direction: column;
   }
@@ -342,7 +343,6 @@
 
   .content {
     padding: 20px 16px 130px 16px;
-    margin-bottom: 30px;
     border-radius: 0;
     gap: 24px;
   }
