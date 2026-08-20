@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./NewAppointment.module.css";
 import { InputText, InputSelect, InputRadio, InputPassword, InputDate, InputImage } from "../../components/Input";
+import Title from "../../components/Title/Title";
 import { apiService } from "../../services/apiService";
 
 const step = [
@@ -241,10 +242,10 @@ function First({ setPage }) {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.header}>
-        <p className={styles.title}>Mulai permintaan appointment anda disini.</p>
-        <p>Ini adalah cara termudah untuk menghubungi kami.</p>
-      </div>
+      <Title
+        title="Mulai permintaan appointment anda disini."
+        desc="Ini adalah cara termudah untuk menghubungi kami."
+      />
       <div className={styles.itemWrapper}>
         <div className={styles.item} onClick={() => setPage(2)}>
           <div className={styles.itemIn}>
@@ -278,10 +279,10 @@ function Second({ setPage }) {
         </svg>
         Kembali
       </p>
-      <div className={styles.header}>
-        <p className={styles.title}>Mari kita mulai</p>
-        <p className={styles.desc}>Kami akan mengajukan beberapa pertanyaan singkat mengenai kebutuhan kesehatan Anda. Jawaban Anda akan membantu kami menentukan layanan dan tenaga kesehatan yang paling sesuai untuk kebutuhan Anda dan keluarga.</p>
-      </div>
+      <Title
+        title="Mari kita mulai"
+        desc="Kami akan mengajukan beberapa pertanyaan singkat mengenai kebutuhan kesehatan Anda. Jawaban Anda akan membantu kami menentukan layanan dan tenaga kesehatan yang paling sesuai untuk kebutuhan Anda dan keluarga."
+      />
       <div className={styles.button} onClick={() => setPage(3)}>Lanjutkan</div>
       <div className={styles.itemWrapper}>
         <p>Catatan:</p>
@@ -317,10 +318,10 @@ function Third({ page, setPage, formData, updateFormData, errors = {}, onNext })
           </svg>
           Kembali
         </p>
-        <div className={styles.header}>
-          <p className={styles.title}>Informasi Identitas dan Kontak Pasien</p>
-          <p className={styles.desc}>Lengkapi data diri pasien, mulai dari nama lengkap, jenis kelamin, tanggal lahir, nomor kontak, hingga alamat tempat tinggal untuk keperluan pendaftaran dan informasi terkait kunjungan.</p>
-        </div>
+        <Title
+          title="Informasi Identitas dan Kontak Pasien"
+          desc="Lengkapi data diri pasien, mulai dari nama lengkap, jenis kelamin, tanggal lahir, nomor kontak, hingga alamat tempat tinggal untuk keperluan pendaftaran dan informasi terkait kunjungan."
+        />
         <div className={styles.inputContainer}>
           <div className={styles.inputWrapper}>
             <InputRadio
@@ -471,10 +472,10 @@ function Fourth({ page, setPage, formData, updateFormData, errors = {}, onNext, 
           </svg>
           Kembali
         </p>
-        <div className={styles.header}>
-          <p className={styles.title}>Layanan apa yang Anda butuhkan?</p>
-          <p className={styles.desc}>Pilih layanan yang ingin Anda dapatkan.</p>
-        </div>
+        <Title
+          title="Layanan apa yang Anda butuhkan?"
+          desc="Pilih layanan yang ingin Anda dapatkan."
+        />
         <div className={styles.inputContainer}>
           <div className={styles.inputWrapper}>
             <InputRadio
@@ -583,10 +584,10 @@ function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext, d
           </svg>
           Kembali
         </p>
-        <div className={styles.header}>
-          <p className={styles.title}>Cari Dokter</p>
-          <p className={styles.desc}>Pilih dokter sesuai ketersediaan jadwal</p>
-        </div>
+        <Title
+          title="Cari Dokter"
+          desc="Pilih dokter sesuai ketersediaan jadwal"
+        />
         <div className={styles.inputContainer}>
           <div className={styles.inputWrapper}>
             <InputSelect
@@ -642,10 +643,10 @@ function Sixth({ page, setPage, formData, updateFormData, errors = {}, onNext })
           </svg>
           Kembali
         </p>
-        <div className={styles.header}>
-          <p className={styles.title}>Pembayaran</p>
-          <p className={styles.desc}>Bagaimana Anda akan membayar layanan ini?</p>
-        </div>
+        <Title
+          title="Pembayaran"
+          desc="Bagaimana Anda akan membayar layanan ini?"
+        />
         <div className={styles.inputContainer}>
           <div className={styles.inputWrapper}>
             <InputRadio
@@ -709,10 +710,10 @@ function Seventh({ page, setPage, formData, updateFormData, errors = {}, onNext 
           </svg>
           Kembali
         </p>
-        <div className={styles.header}>
-          <p className={styles.title}>Buat Akun Baru</p>
-          <p className={styles.desc}>Daftarkan diri Anda untuk melanjutkan proses pendaftaran dan mendapatkan layanan kesehatan.</p>
-        </div>
+        <Title
+          title="Buat Akun Baru"
+          desc="Daftarkan diri Anda untuk melanjutkan proses pendaftaran dan mendapatkan layanan kesehatan."
+        />
         <div className={styles.inputContainer}>
           <div className={styles.inputWrapper}>
             <InputText
@@ -824,10 +825,10 @@ function Eighth({ page, setPage, formData, updateFormData }) {
           </svg>
           Kembali
         </p>
-        <div className={styles.header}>
-          <p className={styles.title}>Konfirmasi Pendaftaran</p>
-          <p className={styles.desc}>Silahkan periksa kembali data anda sebelum melakukan pendaftaran</p>
-        </div>
+        <Title
+          title="Konfirmasi Pendaftaran"
+          desc="Silahkan periksa kembali data anda sebelum melakukan pendaftaran"
+        />
         <div className={styles.inputContainer}>
           <div className={styles.inputWrapper}>
             {formData.punyaNoRM === "Ya" && formData.noRM && (

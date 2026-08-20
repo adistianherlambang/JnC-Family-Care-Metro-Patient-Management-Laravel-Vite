@@ -2,4 +2,25 @@
   font-size: 32px;
   font-weight: 600;
   font-family: var(--antonia);
+  color: #111827;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.desc {
+  font-family: var(--artico);
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 24px;
+  }
+
+  .desc {
+    font-size: 14px;
+  }
 }
