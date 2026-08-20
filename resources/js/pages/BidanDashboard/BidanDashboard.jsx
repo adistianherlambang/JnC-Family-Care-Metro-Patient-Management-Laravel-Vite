@@ -544,7 +544,7 @@ export default function BidanDashboard() {
           </div>
 
           <div className={styles.formProfilCard}>
-            <div className={styles.formProfilContent}>
+            <div className={`${styles.formProfilContent} ${styles.formProfilImageSection}`}>
               <InputImage
                 label="Perbarui Foto Profil"
                 value={mySchedule.image}
@@ -554,7 +554,7 @@ export default function BidanDashboard() {
                 placeholder="Klik atau seret foto baru ke sini untuk mengganti foto profil dokter/bidan"
               />
             </div>
-            <div className={styles.formProfilContent}>
+            <div className={`${styles.formProfilContent} ${styles.formProfilInputsSection}`}>
               <InputText label="Nama Lengkap & Gelar Bidan" value={mySchedule.doctor} onChange={(e) => setMySchedule({ ...mySchedule, doctor: e.target.value })} />
               <InputText label="Peran / Spesialisasi Medis" value={mySchedule.role} onChange={(e) => setMySchedule({ ...mySchedule, role: e.target.value })} />
               <InputText label="Nomor Surat Tanda Registrasi (STR/SIP)" value={mySchedule.strNumber} onChange={(e) => setMySchedule({ ...mySchedule, strNumber: e.target.value })} />
