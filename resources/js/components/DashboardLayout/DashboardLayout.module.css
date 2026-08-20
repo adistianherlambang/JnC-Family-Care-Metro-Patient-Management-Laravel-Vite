@@ -341,7 +341,8 @@
   }
 
   .content {
-    padding: 20px 16px 90px 16px;
+    padding: 20px 16px 130px 16px;
+    margin-bottom: 30px;
     border-radius: 0;
     gap: 24px;
   }
