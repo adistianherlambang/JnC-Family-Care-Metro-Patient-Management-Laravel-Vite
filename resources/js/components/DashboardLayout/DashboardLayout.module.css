@@ -209,6 +209,26 @@
   display: none;
 }
 
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popoverSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Mobile Profile Popover */
 .profilePopoverOverlay {
   position: fixed;
@@ -218,6 +238,7 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.2);
   z-index: 1001;
+  animation: overlayFadeIn 0.25s ease-out forwards;
 }
 
 .profilePopover {
@@ -226,7 +247,7 @@
   right: 0;
   background-color: white;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16);
   border: 1px solid rgba(216, 150, 237, 0.35);
   padding: 16px;
   width: 250px;
@@ -235,6 +256,8 @@
   flex-direction: column;
   gap: 16px;
   box-sizing: border-box;
+  transform-origin: top right;
+  animation: popoverSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .popoverHeader {
