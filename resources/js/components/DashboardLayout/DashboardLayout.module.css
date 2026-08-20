@@ -209,6 +209,77 @@
   display: none;
 }
 
+/* Mobile Profile Popover */
+.profilePopoverOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+.profilePopover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(216, 150, 237, 0.35);
+  padding: 16px;
+  width: 250px;
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.popoverHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.popoverAvatar {
+  flex-shrink: 0;
+}
+
+.popoverUserText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.popoverTitle {
+  font-family: var(--artico);
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.popoverSubtitle {
+  font-family: var(--artico);
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.popoverAction {
+  width: 100%;
+}
+
+.avatarContainer {
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .thirdContainer {
     flex-direction: column;
@@ -227,17 +298,11 @@
   }
 
   .mobileLogoutBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #fee2e2;
-    color: #dc2626;
-    cursor: pointer;
-    margin-left: 8px;
-    flex-shrink: 0;
+    display: none !important;
+  }
+
+  .userTextWrapper {
+    display: none !important;
   }
 
   .nav {
@@ -252,21 +317,14 @@
 
   .userInfoWrapper {
     gap: 8px;
-  }
-
-  .userTitle {
-    font-size: 13px;
-  }
-
-  .userSubtitle {
-    font-size: 11px;
+    position: relative;
   }
 
   .avatarImage,
   .avatarInitials {
-    width: 36px;
-    height: 36px;
-    font-size: 14px;
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
   }
 
   .content {
@@ -285,11 +343,8 @@
     max-width: 440px;
     height: 64px;
     background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     border-radius: 9999px;
-    border: 1px solid rgba(216, 150, 237, 0.35);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(186, 104, 200, 0.08);
+    border: 2px solid var(--primary);
     z-index: 1000;
     box-sizing: border-box;
     padding: 0 8px;
@@ -329,8 +384,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -344,8 +399,7 @@
   .mobileNavItemActive .mobileNavIcon {
     background-color: var(--primary);
     color: #ffffff !important;
-    box-shadow: 0 6px 16px rgba(186, 104, 200, 0.45);
-    transform: translateY(-4px) scale(1.08);
+    scale: 1.1;
   }
 
   .mobileNavItemActive .mobileNavIcon svg {

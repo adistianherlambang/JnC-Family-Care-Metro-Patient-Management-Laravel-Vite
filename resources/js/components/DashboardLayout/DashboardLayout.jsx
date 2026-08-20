@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./DashboardLayout.module.css";
+import Button from "../Button/Button";
 
 export default function DashboardLayout({
   menuItems = [],
@@ -11,6 +12,7 @@ export default function DashboardLayout({
   children
 }) {
   const navigate = useNavigate();
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     if (onLogout) {
@@ -96,9 +98,14 @@ export default function DashboardLayout({
               <img src="/logo.png" alt="Logo" />
             </div>
             <div className={styles.userInfoWrapper}>
-              <div className={styles.avatarContainer}>
+              <div
+                className={styles.avatarContainer}
+                onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+              >
                 {renderAvatar()}
               </div>
+
+              {/* User info text (Desktop) */}
               <div className={styles.userTextWrapper}>
                 <p className={styles.userTitle}>
                   {userInfo.title}
@@ -106,11 +113,36 @@ export default function DashboardLayout({
                 </p>
                 {userInfo.subtitle && <p className={styles.userSubtitle}>{userInfo.subtitle}</p>}
               </div>
-              <div className={styles.mobileLogoutBtn} onClick={handleLogout} title="Keluar">
-                <svg width="14" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11.1429 0H0.857143C0.629814 0 0.411797 0.0842854 0.251051 0.234315C0.090306 0.384344 0 0.587827 0 0.8V8L4.28571 4.8V7.2H9.42857V8.8H4.28571V11.2L0 8V15.2C0 15.4122 0.090306 15.6157 0.251051 15.7657C0.411797 15.9157 0.629814 16 0.857143 16H11.1429C11.3702 16 11.5882 15.9157 11.7489 15.7657C11.9097 15.6157 12 15.4122 12 15.2V0.8C12 0.587827 11.9097 0.384344 11.7489 0.234315C11.5882 0.0842854 11.3702 0 11.1429 0Z" fill="currentColor" />
-                </svg>
-              </div>
+
+              {/* Mobile Profile Dropdown Popover */}
+              {isProfileMenuOpen && (
+                <>
+                  <div
+                    className={styles.profilePopoverOverlay}
+                    onClick={() => setIsProfileMenuOpen(false)}
+                  />
+                  <div className={styles.profilePopover}>
+                    <div className={styles.popoverHeader}>
+                      <div className={styles.popoverAvatar}>
+                        {renderAvatar()}
+                      </div>
+                      <div className={styles.popoverUserText}>
+                        <p className={styles.popoverTitle}>
+                          {userInfo.title}
+                        </p>
+                        <p className={styles.popoverSubtitle}>
+                          {userInfo.badge || userInfo.subtitle || "Pengguna Klinik"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={styles.popoverAction}>
+                      <Button variant="danger" fullWidth onClick={handleLogout}>
+                        Keluar
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </header>
 
