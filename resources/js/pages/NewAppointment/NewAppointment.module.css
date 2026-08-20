@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: 64px;
+  box-sizing: border-box;
 }
 
 .pageContainer {
@@ -238,4 +239,141 @@
   height: 240px;
   width: fit-content;
   margin-top: 16px;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    padding: 48px 64px;
+    gap: 48px;
+  }
+
+  .pageContainer {
+    gap: 32px;
+  }
+
+  .thirdContainer {
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 24px 16px;
+    gap: 32px;
+  }
+
+  .pageContainer {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .pageContainer .header {
+    width: 100%;
+    gap: 12px;
+  }
+
+  .pageContainer .header .title {
+    font-size: 24px;
+  }
+
+  .pageContainer .itemWrapper {
+    width: 100%;
+  }
+
+  .pageContainer .item {
+    padding: 16px 0;
+  }
+
+  .pageContainer a {
+    font-size: 18px;
+  }
+
+  .secondContainer {
+    gap: 24px;
+  }
+
+  .secondContainer .header .title {
+    font-size: 24px;
+  }
+
+  .button {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .thirdContainer {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .stepperWrapper {
+    width: 100%;
+    min-width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 12px;
+    scrollbar-width: none;
+  }
+
+  .stepperWrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stepper {
+    padding-bottom: 0;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stepper .stepLine {
+    display: none;
+  }
+
+  .stepText p {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .rightWrapper {
+    gap: 24px;
+  }
+
+  .rightWrapper .header .title {
+    font-size: 24px;
+  }
+
+  .inputContainer {
+    gap: 24px;
+  }
+
+  .inputContainer .title {
+    font-size: 18px;
+  }
+
+  .input {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .confirm img {
+    width: 100%;
+    height: auto;
+    max-height: 240px;
+    object-fit: contain;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 16px 12px;
+  }
+
+  .pageContainer .header .title,
+  .secondContainer .header .title,
+  .rightWrapper .header .title {
+    font-size: 20px;
+  }
 }
