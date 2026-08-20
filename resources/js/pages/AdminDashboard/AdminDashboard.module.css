@@ -360,6 +360,50 @@
   color: var(--primary);
 }
 
+.headerActionWrapper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.headerFilterGroup {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.headerFilterGroup > div {
+  min-width: 180px;
+  flex: 1;
+}
+
+.tableHeaderActionGroup {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.tableFilterGroup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.tableCtaGroup {
+  display: flex;
+  align-items: center;
+}
+
 .tableHeaderRow {
   display: flex;
   justify-content: space-between;
@@ -484,6 +528,36 @@
   .input {
     flex-direction: column;
     gap: 16px;
+  }
+
+  .tableHeaderActionGroup {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .tableFilterGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .tableFilterGroup > div {
+    flex: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .tableCtaGroup {
+    width: 100%;
+  }
+
+  .tableCtaGroup button,
+  .tableCtaGroup [class*="button"] {
+    width: 100% !important;
   }
 
   .tableHeaderRow {

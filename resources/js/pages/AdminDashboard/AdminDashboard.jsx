@@ -1021,30 +1021,34 @@ export default function AdminDashboard() {
             <Table
               title={`Daftar Antrean Aktif`}
               headerAction={
-                <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-                  <div style={{ minWidth: "200px", flex: 1 }}>
-                    <InputText
-                      placeholder="Cari pasien, no. antrean, dokter..."
-                      value={queueSearchQuery}
-                      onChange={(e) => setQueueSearchQuery(e.target.value)}
-                    />
+                <div className={styles.tableHeaderActionGroup}>
+                  <div className={styles.tableFilterGroup}>
+                    <div style={{ minWidth: "160px", flex: 1 }}>
+                      <InputText
+                        placeholder="Cari pasien, no. antrean, dokter..."
+                        value={queueSearchQuery}
+                        onChange={(e) => setQueueSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <div style={{ width: "140px" }}>
+                      <InputSelect
+                        label=""
+                        options={[
+                          { value: getTodayStr(), label: `Hari Ini` },
+                          { value: getTomorrowStr(), label: `Besok` },
+                          { value: "Semua", label: "Semua Tanggal" }
+                        ]}
+                        value={queueDateFilter}
+                        onChange={(val) => setQueueDateFilter(val)}
+                        placeholder="Filter Tanggal"
+                      />
+                    </div>
                   </div>
-                  <div style={{ width: "150px" }}>
-                    <InputSelect
-                      label=""
-                      options={[
-                        { value: getTodayStr(), label: `Hari Ini` },
-                        { value: getTomorrowStr(), label: `Besok` },
-                        { value: "Semua", label: "Semua Tanggal" }
-                      ]}
-                      value={queueDateFilter}
-                      onChange={(val) => setQueueDateFilter(val)}
-                      placeholder="Filter Tanggal"
-                    />
+                  <div className={styles.tableCtaGroup}>
+                    <Button onClick={handleOpenAddQueueModal}>
+                      + Tambah Antrean Walk-In
+                    </Button>
                   </div>
-                  <Button onClick={handleOpenAddQueueModal}>
-                    + Tambah Antrean Walk-In
-                  </Button>
                 </div>
               }
               emptyMessage={`Tidak ada antrean aktif pada tanggal terpilih (${queueDateFilter}).`}
@@ -1145,17 +1149,21 @@ export default function AdminDashboard() {
               <Table
                 title="Daftar Dokter"
                 headerAction={
-                  <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-                    <div style={{ minWidth: "220px", flex: 1 }}>
-                      <InputText
-                        placeholder="Cari dokter, spesialisasi, username..."
-                        value={doctorSearchQuery}
-                        onChange={(e) => setDoctorSearchQuery(e.target.value)}
-                      />
+                  <div className={styles.tableHeaderActionGroup}>
+                    <div className={styles.tableFilterGroup}>
+                      <div style={{ minWidth: "180px", flex: 1 }}>
+                        <InputText
+                          placeholder="Cari dokter, spesialisasi, username..."
+                          value={doctorSearchQuery}
+                          onChange={(e) => setDoctorSearchQuery(e.target.value)}
+                        />
+                      </div>
                     </div>
-                    <Button onClick={handleOpenAddDoctorModal}>
-                      + Tambah Dokter Baru
-                    </Button>
+                    <div className={styles.tableCtaGroup}>
+                      <Button onClick={handleOpenAddDoctorModal}>
+                        + Tambah Dokter Baru
+                      </Button>
+                    </div>
                   </div>
                 }
               >
@@ -1260,17 +1268,21 @@ export default function AdminDashboard() {
               <Table
                 title="Daftar Akun Pasien"
                 headerAction={
-                  <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-                    <div style={{ minWidth: "220px", flex: 1 }}>
-                      <InputText
-                        placeholder="Cari nama pasien, No. RM, username..."
-                        value={patientSearchQuery}
-                        onChange={(e) => setPatientSearchQuery(e.target.value)}
-                      />
+                  <div className={styles.tableHeaderActionGroup}>
+                    <div className={styles.tableFilterGroup}>
+                      <div style={{ minWidth: "180px", flex: 1 }}>
+                        <InputText
+                          placeholder="Cari nama pasien, No. RM, username..."
+                          value={patientSearchQuery}
+                          onChange={(e) => setPatientSearchQuery(e.target.value)}
+                        />
+                      </div>
                     </div>
-                    <Button onClick={handleOpenAddPatientModal}>
-                      + Tambah Pasien Baru
-                    </Button>
+                    <div className={styles.tableCtaGroup}>
+                      <Button onClick={handleOpenAddPatientModal}>
+                        + Tambah Pasien Baru
+                      </Button>
+                    </div>
                   </div>
                 }
               >
@@ -1360,9 +1372,13 @@ export default function AdminDashboard() {
             <Table
               title={`Daftar Kategori Layanan`}
               headerAction={
-                <Button onClick={handleOpenAddCategoryModal}>
-                  + Tambah Kategori Layanan
-                </Button>
+                <div className={styles.tableHeaderActionGroup}>
+                  <div className={styles.tableCtaGroup}>
+                    <Button onClick={handleOpenAddCategoryModal}>
+                      + Tambah Kategori Layanan
+                    </Button>
+                  </div>
+                </div>
               }
             >
               <thead>
@@ -1423,9 +1439,13 @@ export default function AdminDashboard() {
             <Table
               title={`Daftar Artikel Terbit`}
               headerAction={
-                <Button onClick={handleOpenAddNewsModal}>
-                  + Tambah Artikel Baru
-                </Button>
+                <div className={styles.tableHeaderActionGroup}>
+                  <div className={styles.tableCtaGroup}>
+                    <Button onClick={handleOpenAddNewsModal}>
+                      + Tambah Artikel Baru
+                    </Button>
+                  </div>
+                </div>
               }
             >
               <thead>
@@ -1497,9 +1517,13 @@ export default function AdminDashboard() {
             <Table
               title={`Daftar Pertanyaan FAQ`}
               headerAction={
-                <Button onClick={handleOpenAddFaqModal}>
-                  + Tambah FAQ Baru
-                </Button>
+                <div className={styles.tableHeaderActionGroup}>
+                  <div className={styles.tableCtaGroup}>
+                    <Button onClick={handleOpenAddFaqModal}>
+                      + Tambah FAQ Baru
+                    </Button>
+                  </div>
+                </div>
               }
             >
               <thead>
