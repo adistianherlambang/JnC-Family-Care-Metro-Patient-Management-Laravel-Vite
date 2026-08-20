@@ -538,7 +538,7 @@ export default function BidanDashboard() {
         <>
           <div className={styles.header}>
             <Title
-              title="Profil Identitas Bidan / Praktisi Medis"
+              title="Profil Identitas Anda"
               desc="Kelola foto profil, data kredensial praktisi, dan Surat Izin Praktik (STR/SIP)."
             />
           </div>

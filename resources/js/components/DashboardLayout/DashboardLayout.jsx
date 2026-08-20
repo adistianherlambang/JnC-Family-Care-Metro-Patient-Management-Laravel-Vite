@@ -60,6 +60,9 @@ export default function DashboardLayout({
     return <div className={styles.avatarInitials}>{initials}</div>;
   };
 
+  const activeIndex = Math.max(0, menuItems.findIndex((item) => item.id === activeMenu));
+  const totalItems = menuItems.length || 1;
+
   return (
     <div className={styles.container}>
       <div className={styles.thirdContainer}>
@@ -124,6 +127,15 @@ export default function DashboardLayout({
       {/* Mobile Bottom App Navigation Bar */}
       <nav className={styles.mobileBottomNav}>
         <div className={styles.mobileBottomNavInner}>
+          <div
+            className={styles.activeIndicator}
+            style={{
+              width: `${100 / totalItems}%`,
+              transform: `translateX(${activeIndex * 100}%)`
+            }}
+          >
+            <div className={styles.activeIndicatorCircle} />
+          </div>
           {menuItems.map((item) => {
             const isActive = activeMenu === item.id;
             return (
