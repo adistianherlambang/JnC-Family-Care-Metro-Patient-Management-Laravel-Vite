@@ -123,9 +123,6 @@ export default function DashboardLayout({
                   />
                   <div className={styles.profilePopover}>
                     <div className={styles.popoverHeader}>
-                      <div className={styles.popoverAvatar}>
-                        {renderAvatar()}
-                      </div>
                       <div className={styles.popoverUserText}>
                         <p className={styles.popoverTitle}>
                           {userInfo.title}
