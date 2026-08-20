@@ -122,12 +122,14 @@ export default function DashboardLayout({
                     onClick={() => setIsProfileMenuOpen(false)}
                   />
                   <div className={styles.profilePopover}>
-                    <div className={styles.popoverUserText}>
-                      <p className={styles.popoverTitle}>
-                        {userInfo.title}
-                      </p>
-                      <div className={styles.popoverRoleBadge}>
-                        {userInfo.badge || userInfo.subtitle || "Pengguna Klinik"}
+                    <div className={styles.popoverHeader}>
+                      <div className={styles.popoverUserText}>
+                        <p className={styles.popoverTitle}>
+                          {userInfo.title}
+                        </p>
+                        <p className={styles.popoverSubtitle}>
+                          {userInfo.badge || userInfo.subtitle || "Pengguna Klinik"}
+                        </p>
                       </div>
                     </div>
                     <div className={styles.popoverAction}>

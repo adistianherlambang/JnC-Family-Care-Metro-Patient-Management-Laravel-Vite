@@ -224,51 +224,59 @@
   position: absolute;
   top: calc(100% + 12px);
   right: 0;
-  background-color: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(186, 104, 200, 0.12);
-  border: 1.5px solid rgba(216, 150, 237, 0.4);
-  padding: 20px;
-  width: 260px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(216, 150, 237, 0.35);
+  padding: 16px;
+  width: 250px;
   z-index: 1002;
   display: flex;
   flex-direction: column;
   gap: 16px;
   box-sizing: border-box;
-  transform-origin: top right;
-  animation: popoverSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.popoverHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .popoverUserText {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f3f4f6;
+  text-align: left;
+  gap: 4px;
   width: 100%;
+  overflow: hidden;
 }
 
 .popoverTitle {
-  font-family: var(--antonia);
-  font-size: 16px;
+  font-family: var(--artico);
+  font-size: 15px;
   font-weight: 700;
-  color: #1F2937;
+  color: #111827;
   margin: 0;
+  padding: 0;
+  text-align: left;
   line-height: 1.3;
+  width: 100%;
   word-break: break-word;
 }
 
-.popoverRoleBadge {
-  display: inline-block;
-  background-color: var(--secondary, #FAF0FC);
-  color: var(--primary);
-  border: 1px solid rgba(216, 150, 237, 0.4);
-  padding: 4px 12px;
-  border-radius: 9999px;
+.popoverSubtitle {
   font-family: var(--artico);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  line-height: 1.3;
+  width: 100%;
 }
 
 .popoverAction {
