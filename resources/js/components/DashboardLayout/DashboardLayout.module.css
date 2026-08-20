@@ -30,6 +30,8 @@
 
 .logo img {
   height: 48px;
+  width: auto;
+  object-fit: contain;
 }
 
 .menuListScroll {
@@ -297,11 +299,15 @@
   }
 
   .mobileHeaderLogo {
-    display: block;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
   }
 
   .mobileHeaderLogo img {
     height: 36px;
+    width: auto;
+    object-fit: contain;
   }
 
   .mobileLogoutBtn {
@@ -406,7 +412,7 @@
   .mobileNavItemActive .mobileNavIcon {
     background-color: var(--primary);
     color: #ffffff !important;
-    scale: 1.4;
+    scale: 1.1;
   }
 
   .mobileNavItemActive .mobileNavIcon svg {
