@@ -150,10 +150,9 @@
   font-weight: 500;
   color: #4b5563;
   line-height: 1.6;
-  padding: 14px 18px;
-  background-color: #faf0fc;
-  border-left: 4px solid #d896ed;
-  border-radius: 0 14px 14px 0;
+  padding: 0;
+  background-color: transparent;
+  border: none;
   margin-bottom: 24px;
 }
 
