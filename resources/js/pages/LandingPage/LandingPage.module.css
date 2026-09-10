@@ -46,10 +46,11 @@
 }
 
 .imgSlider {
-  background-color: black;
   border-radius: 32px;
   aspect-ratio: 2/1;
   height: 360px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .imgSlider:first-child {

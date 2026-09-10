@@ -42,9 +42,21 @@ export default function LandingPage() {
         </div>
 
         <div className={styles.imgSliderWrapper}>
-          <div className={styles.imgSlider}></div>
-          <div className={styles.imgSlider}></div>
-          <div className={styles.imgSlider}></div>
+          <img
+            src="/img/landingPage/WhatsApp Image 2026-09-08 at 19.30.03.jpeg"
+            alt="Suasana Klinik 1"
+            className={styles.imgSlider}
+          />
+          <img
+            src="/img/landingPage/WhatsApp Image 2026-09-08 at 19.30.04 (1).jpeg"
+            alt="Suasana Klinik 2"
+            className={styles.imgSlider}
+          />
+          <img
+            src="/img/landingPage/WhatsApp Image 2026-09-08 at 19.30.04.jpeg"
+            alt="Suasana Klinik 3"
+            className={styles.imgSlider}
+          />
         </div>
 
         <div>

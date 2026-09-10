@@ -43,7 +43,7 @@ export default function Login() {
             password: parsed.password || ""
           });
         }
-      } catch (err) {}
+      } catch (err) { }
     }
   }, [location.state, navigate]);
 
@@ -170,7 +170,7 @@ export default function Login() {
         <div className={styles.bottom}>
           <p>PEMBATASAN HUKUM DAN KETENTUAN PENGGUNAAN YANG BERLAKU UNTUK SITUS INI</p>
           <p>Dengan menggunakan situs ini, Anda dianggap menyetujui ketentuan penggunaan yang berlaku.</p>
-          <p>© {year} Meika Healthcare</p>
+          <p>© {year} JnC Family Care</p>
         </div>
       </div>
     </div>
