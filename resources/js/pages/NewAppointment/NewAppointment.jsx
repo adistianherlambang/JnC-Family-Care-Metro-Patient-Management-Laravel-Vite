@@ -4,7 +4,6 @@ import styles from "./NewAppointment.module.css";
 import { InputText, InputSelect, InputRadio, InputPassword, InputDate, InputImage } from "../../components/Input";
 import Title from "../../components/Title/Title";
 import { apiService } from "../../services/apiService";
-import Loading from "../../components/Loading";
 
 const step = [
   "Data Pasien",
@@ -157,7 +156,6 @@ export default function NewAppointment() {
 
   return (
     <div className={styles.container}>
-      {isLoadingData && <Loading fullPage text="Menyiapkan data pendaftaran & jadwal..." />}
       <Navbar />
       {page === 1 ? (
         <First setPage={setPage} />

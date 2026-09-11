@@ -29,6 +29,15 @@
   margin: 0;
 }
 
+.tableLoadingText {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  color: #6b7280;
+  font-style: italic;
+  margin-left: 8px;
+}
+
 .tableHeaderAction {
   display: flex;
   align-items: center;

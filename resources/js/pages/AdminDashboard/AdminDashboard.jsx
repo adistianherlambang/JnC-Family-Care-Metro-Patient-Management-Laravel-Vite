@@ -13,7 +13,6 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import Table, { TableBadge } from "../../components/Table/Table";
 import Title from "../../components/Title/Title";
 import Modal from "../../components/Modal/Modal";
-import Loading from "../../components/Loading";
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -887,11 +886,6 @@ export default function AdminDashboard() {
         avatar: "A"
       }}
     >
-      {tabLoading && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000 }}>
-          <Loading text="Menyinkronkan data..." size="sm" />
-        </div>
-      )}
       {/* 0. Ringkasan Eksekutif & Operasional Overview */}
       {activeMenu === "overview" && (
         <>
@@ -1025,6 +1019,7 @@ export default function AdminDashboard() {
           <div className={styles.inputContainer}>
             <Table
               title="Antrean Terbaru Hari Ini"
+              isLoading={tabLoading}
               headerAction={
                 <Button onClick={() => setActiveMenu("antrean")}>
                   Lihat Semua Antrean →
@@ -1083,6 +1078,7 @@ export default function AdminDashboard() {
           <div className={styles.inputContainer}>
             <Table
               title={`Daftar Antrean Aktif`}
+              isLoading={tabLoading}
               headerAction={
                 <div className={styles.tableHeaderActionGroup}>
                   <div className={styles.tableFilterGroup}>
@@ -1211,6 +1207,7 @@ export default function AdminDashboard() {
             <div className={styles.inputContainer}>
               <Table
                 title="Daftar Dokter"
+                isLoading={tabLoading}
                 headerAction={
                   <div className={styles.tableHeaderActionGroup}>
                     <div className={styles.tableFilterGroup}>
@@ -1330,6 +1327,7 @@ export default function AdminDashboard() {
             <div className={styles.inputContainer}>
               <Table
                 title="Daftar Akun Pasien"
+                isLoading={tabLoading}
                 headerAction={
                   <div className={styles.tableHeaderActionGroup}>
                     <div className={styles.tableFilterGroup}>
@@ -1434,6 +1432,7 @@ export default function AdminDashboard() {
           <div className={styles.inputContainer}>
             <Table
               title={`Daftar Kategori Layanan`}
+              isLoading={tabLoading}
               headerAction={
                 <div className={styles.tableHeaderActionGroup}>
                   <div className={styles.tableCtaGroup}>
@@ -1501,6 +1500,7 @@ export default function AdminDashboard() {
           <div className={styles.inputContainer}>
             <Table
               title={`Daftar Artikel Terbit`}
+              isLoading={tabLoading}
               headerAction={
                 <div className={styles.tableHeaderActionGroup}>
                   <div className={styles.tableCtaGroup}>
@@ -1579,6 +1579,7 @@ export default function AdminDashboard() {
           <div className={styles.inputContainer}>
             <Table
               title={`Daftar Pertanyaan FAQ`}
+              isLoading={tabLoading}
               headerAction={
                 <div className={styles.tableHeaderActionGroup}>
                   <div className={styles.tableCtaGroup}>

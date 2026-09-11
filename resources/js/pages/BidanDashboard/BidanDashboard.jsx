@@ -9,7 +9,6 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
 import Table, { TableBadge } from "../../components/Table/Table";
 import Title from "../../components/Title/Title";
-import Loading from "../../components/Loading";
 
 export default function BidanDashboard() {
   const navigate = useNavigate();
@@ -335,11 +334,6 @@ export default function BidanDashboard() {
       }}
       onLogout={handleLogout}
     >
-      {isLoading && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000 }}>
-          <Loading text="Menyinkronkan data..." size="sm" />
-        </div>
-      )}
       {successMsg && (
         <div className={styles.alertSuccess}>
           {successMsg}
@@ -376,6 +370,7 @@ export default function BidanDashboard() {
 
           <Table
             title="Pratinjau Antrean Pasien Hari Ini"
+            isLoading={isLoading}
             headerAction={
               <Button size="sm" onClick={() => setActiveMenu("antrean")}>Lihat Semua Antrean →</Button>
             }
@@ -425,6 +420,7 @@ export default function BidanDashboard() {
 
           <Table
             title="Daftar Antrean Pasien"
+            isLoading={isLoading}
             headerAction={
               <div className={styles.filterWrapper}>
                 <InputSelect

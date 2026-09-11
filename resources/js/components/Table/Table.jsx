@@ -28,6 +28,7 @@ export function Table({
   headerAction,
   columns,
   data,
+  isLoading = false,
   keyExtractor = (item, idx) => item.id || idx,
   emptyMessage = "Belum ada data tersedia.",
   className = '',
@@ -38,9 +39,14 @@ export function Table({
 
   return (
     <div className={`${styles.tableContainer} ${className}`} {...props}>
-      {(title || headerAction) && (
+      {(title || headerAction || isLoading) && (
         <div className={styles.tableHeaderBar}>
-          {title && <h3 className={styles.tableTitle}>{title}</h3>}
+          {title && (
+            <h3 className={styles.tableTitle}>
+              {title}
+              {isLoading && <span className={styles.tableLoadingText}> (Memuat data...)</span>}
+            </h3>
+          )}
           {headerAction && <div className={styles.tableHeaderAction}>{headerAction}</div>}
         </div>
       )}
@@ -59,7 +65,13 @@ export function Table({
                 </tr>
               </thead>
               <tbody>
-                {data.length > 0 ? (
+                {isLoading && (!data || data.length === 0) ? (
+                  <tr>
+                    <td colSpan={columns.length} className={styles.emptyState}>
+                      Memuat data...
+                    </td>
+                  </tr>
+                ) : data && data.length > 0 ? (
                   data.map((row, rowIdx) => (
                     <tr key={keyExtractor(row, rowIdx)} className={styles.tableTr}>
                       {columns.map((col, colIdx) => (

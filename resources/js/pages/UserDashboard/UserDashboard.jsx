@@ -8,7 +8,6 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
 import Title from "../../components/Title/Title";
 import NewsSection from "../../components/NewsSection/NewsSection";
-import Loading from "../../components/Loading";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -440,11 +439,6 @@ export default function UserDashboard() {
         subtitle: "Pasien"
       }}
     >
-      {isLoading && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000 }}>
-          <Loading text="Menyinkronkan data..." size="sm" />
-        </div>
-      )}
       {activeMenu === "antrean" && (
         <>
           <div className={styles.header}>
@@ -685,7 +679,9 @@ export default function UserDashboard() {
             </div>
           ) : (
             <div className={styles.inputContainer}>
-              <p className={styles.desc}>Belum ada riwayat kunjungan antrean medis tercatat.</p>
+              <p className={styles.desc} style={isLoading ? { fontStyle: "italic", color: "#6b7280" } : {}}>
+                {isLoading ? "Memuat data riwayat..." : "Belum ada riwayat kunjungan antrean medis tercatat."}
+              </p>
             </div>
           )}
         </>
@@ -712,14 +708,20 @@ export default function UserDashboard() {
           </div>
 
           <div className={styles.inputContainer}>
-            {faqList.map((item) => (
-              <div key={item.id} className={styles.inputWrapper}>
-                <div className={styles.confirm}>
-                  <p className={styles.label}>{item.question}</p>
-                  <p className={styles.value}>{item.answer}</p>
+            {isLoading && faqList.length === 0 ? (
+              <p className={styles.desc} style={{ fontStyle: "italic", color: "#6b7280" }}>Memuat FAQ...</p>
+            ) : faqList.length > 0 ? (
+              faqList.map((item) => (
+                <div key={item.id} className={styles.inputWrapper}>
+                  <div className={styles.confirm}>
+                    <p className={styles.label}>{item.question}</p>
+                    <p className={styles.value}>{item.answer}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className={styles.desc}>Belum ada data FAQ tersedia.</p>
+            )}
           </div>
         </>
       )}

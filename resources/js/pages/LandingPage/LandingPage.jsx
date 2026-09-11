@@ -7,7 +7,6 @@ import BuatAppointment from "../../components/Button/BuatAppointment/BuatAppoint
 import NewsSection from "../../components/NewsSection/NewsSection";
 
 import { apiService } from "../../services/apiService";
-import Loading from "../../components/Loading";
 
   const getInitial = (key, fallback = []) => {
     try {
@@ -19,7 +18,6 @@ import Loading from "../../components/Loading";
   };
 
 export default function LandingPage() {
-  const [isLoading, setIsLoading] = useState(() => !localStorage.getItem("clinic_doctors"));
   const [isTab, setIsTab] = useState("");
   const [doctorsList, setDoctorsList] = useState(() => getInitial("clinic_doctors"));
   const [categoriesList, setCategoriesList] = useState(() => getInitial("clinic_categories"));
@@ -40,8 +38,8 @@ export default function LandingPage() {
         if (Array.isArray(cats) && cats.length) setCategoriesList(cats);
         if (Array.isArray(news) && news.length) setNewsList(news);
         if (Array.isArray(faqs) && faqs.length) setFaqList(faqs);
-      } finally {
-        setIsLoading(false);
+      } catch (e) {
+        // fallback or ignore
       }
     }
     loadData();
@@ -49,7 +47,6 @@ export default function LandingPage() {
 
   return (
     <PageWrapper>
-      {isLoading && <Loading fullPage text="Memuat informasi pelayanan klinik..." />}
       <div className={styles.container}>
         <div className={styles.banner} id="beranda">
           <div className={styles.titleWrapper}>
