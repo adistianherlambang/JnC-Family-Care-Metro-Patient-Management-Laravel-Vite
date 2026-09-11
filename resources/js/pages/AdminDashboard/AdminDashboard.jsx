@@ -13,6 +13,7 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import Table, { TableBadge } from "../../components/Table/Table";
 import Title from "../../components/Title/Title";
 import Modal from "../../components/Modal/Modal";
+import Loading from "../../components/Loading";
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -85,6 +86,7 @@ export default function AdminDashboard() {
   const [selectedArticleForEdit, setSelectedArticleForEdit] = useState(null);
   const [selectedArticleForPreview, setSelectedArticleForPreview] = useState(null);
 
+  const [isLoading, setIsLoading] = useState(true);
   const isDataLoaded = useRef(false);
 
   useEffect(() => {
@@ -100,21 +102,25 @@ export default function AdminDashboard() {
     }
 
     async function loadData() {
-      const [cats, docs, qList, nList, fList, pList] = await Promise.all([
-        apiService.getCategories(),
-        apiService.getDoctors(),
-        apiService.getQueues(),
-        apiService.getNews(),
-        apiService.getFaqs(),
-        apiService.getPatients(),
-      ]);
-      setCategories(cats);
-      setDoctors(docs);
-      setQueues(qList);
-      setNews(nList);
-      setFaqs(fList);
-      setPatients(pList);
-      isDataLoaded.current = true;
+      try {
+        const [cats, docs, qList, nList, fList, pList] = await Promise.all([
+          apiService.getCategories(),
+          apiService.getDoctors(),
+          apiService.getQueues(),
+          apiService.getNews(),
+          apiService.getFaqs(),
+          apiService.getPatients(),
+        ]);
+        setCategories(cats);
+        setDoctors(docs);
+        setQueues(qList);
+        setNews(nList);
+        setFaqs(fList);
+        setPatients(pList);
+        isDataLoaded.current = true;
+      } finally {
+        setIsLoading(false);
+      }
     }
     loadData();
   }, [navigate]);
@@ -845,6 +851,7 @@ export default function AdminDashboard() {
         avatar: "A"
       }}
     >
+      {isLoading && <Loading fullPage text="Memuat seluruh data operasional klinik..." />}
       {/* 0. Ringkasan Eksekutif & Operasional Overview */}
       {activeMenu === "overview" && (
         <>

@@ -7,8 +7,10 @@ import BuatAppointment from "../../components/Button/BuatAppointment/BuatAppoint
 import NewsSection from "../../components/NewsSection/NewsSection";
 
 import { apiService } from "../../services/apiService";
+import Loading from "../../components/Loading";
 
 export default function LandingPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [isTab, setIsTab] = useState("");
   const [doctorsList, setDoctorsList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
@@ -18,22 +20,27 @@ export default function LandingPage() {
 
   useEffect(() => {
     async function loadData() {
-      const [docs, cats, news, faqs] = await Promise.all([
-        apiService.getDoctors(),
-        apiService.getCategories(),
-        apiService.getNews(),
-        apiService.getFaqs(),
-      ]);
-      setDoctorsList(docs);
-      setCategoriesList(cats);
-      setNewsList(news);
-      setFaqList(faqs);
+      try {
+        const [docs, cats, news, faqs] = await Promise.all([
+          apiService.getDoctors(),
+          apiService.getCategories(),
+          apiService.getNews(),
+          apiService.getFaqs(),
+        ]);
+        setDoctorsList(docs);
+        setCategoriesList(cats);
+        setNewsList(news);
+        setFaqList(faqs);
+      } finally {
+        setIsLoading(false);
+      }
     }
     loadData();
   }, []);
 
   return (
     <PageWrapper>
+      {isLoading && <Loading fullPage text="Memuat informasi pelayanan klinik..." />}
       <div className={styles.container}>
         <div className={styles.banner} id="beranda">
           <div className={styles.titleWrapper}>

@@ -4,6 +4,7 @@ import styles from "./NewAppointment.module.css";
 import { InputText, InputSelect, InputRadio, InputPassword, InputDate, InputImage } from "../../components/Input";
 import Title from "../../components/Title/Title";
 import { apiService } from "../../services/apiService";
+import Loading from "../../components/Loading";
 
 const step = [
   "Data Pasien",
@@ -14,18 +15,23 @@ const step = [
 ];
 
 export default function NewAppointment() {
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [page, setPage] = useState(1);
   const [categoriesList, setCategoriesList] = useState([]);
   const [doctorsList, setDoctorsList] = useState([]);
 
   useEffect(() => {
     async function loadDynamicData() {
-      const [cats, docs] = await Promise.all([
-        apiService.getCategories(),
-        apiService.getDoctors(),
-      ]);
-      setCategoriesList(cats);
-      setDoctorsList(docs);
+      try {
+        const [cats, docs] = await Promise.all([
+          apiService.getCategories(),
+          apiService.getDoctors(),
+        ]);
+        setCategoriesList(cats);
+        setDoctorsList(docs);
+      } finally {
+        setIsLoadingData(false);
+      }
     }
     loadDynamicData();
   }, []);
@@ -151,6 +157,7 @@ export default function NewAppointment() {
 
   return (
     <div className={styles.container}>
+      {isLoadingData && <Loading fullPage text="Menyiapkan data pendaftaran & jadwal..." />}
       <Navbar />
       {page === 1 ? (
         <First setPage={setPage} />

@@ -9,9 +9,11 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
 import Table, { TableBadge } from "../../components/Table/Table";
 import Title from "../../components/Title/Title";
+import Loading from "../../components/Loading";
 
 export default function BidanDashboard() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [activeMenu, setActiveMenu] = useState("overview"); // 'overview', 'antrean', 'jadwal', 'profil'
   const [queues, setQueues] = useState([]);
   const [mySchedule, setMySchedule] = useState({
@@ -53,42 +55,46 @@ export default function BidanDashboard() {
     }
 
     async function loadData() {
-      const [queueData, categoriesData, doctorsData] = await Promise.all([
-        apiService.getQueues(),
-        apiService.getCategories(),
-        apiService.getDoctors(),
-      ]);
-      setQueues(queueData);
+      try {
+        const [queueData, categoriesData, doctorsData] = await Promise.all([
+          apiService.getQueues(),
+          apiService.getCategories(),
+          apiService.getDoctors(),
+        ]);
+        setQueues(queueData);
 
-      const allClinicServices = Array.from(
-        new Set((categoriesData || []).flatMap((cat) => cat.services || []))
-      );
-      setAvailableClinicServices(allClinicServices);
+        const allClinicServices = Array.from(
+          new Set((categoriesData || []).flatMap((cat) => cat.services || []))
+        );
+        setAvailableClinicServices(allClinicServices);
 
-      if (Array.isArray(doctorsData) && doctorsData.length > 0) {
-        const matchedDoc = doctorsData.find((doc) => {
-          const docName = (doc.doctor || "").toLowerCase();
-          const docUser = (doc.username || "").toLowerCase();
-          const logged = loggedInUser.toLowerCase();
-          return logged.includes(docUser) || docName.includes(logged) || logged.includes(docName.split(" ")[0]);
-        }) || doctorsData[0];
+        if (Array.isArray(doctorsData) && doctorsData.length > 0) {
+          const matchedDoc = doctorsData.find((doc) => {
+            const docName = (doc.doctor || "").toLowerCase();
+            const docUser = (doc.username || "").toLowerCase();
+            const logged = loggedInUser.toLowerCase();
+            return logged.includes(docUser) || docName.includes(logged) || logged.includes(docName.split(" ")[0]);
+          }) || doctorsData[0];
 
-        if (matchedDoc) {
-          const firstSchedule = matchedDoc.schedules?.[0] || {};
-          const days = firstSchedule.days || [];
-          setMySchedule({
-            id: matchedDoc.id || null,
-            doctor: matchedDoc.doctor || "Bidan Siti Rahmawati, S.Tr.Keb",
-            role: matchedDoc.role || "Bidan Senior & Treatment Specialist",
-            image: matchedDoc.image || "/img/landingPage/dummyDr.png",
-            startDay: matchedDoc.startDay || days[0] || "Senin",
-            endDay: matchedDoc.endDay || days[days.length - 1] || "Sabtu",
-            startTime: matchedDoc.startTime || firstSchedule.startTime || "08:00",
-            endTime: matchedDoc.endTime || firstSchedule.endTime || "16:00",
-            strNumber: matchedDoc.strNumber || "STR-BIDAN-2026-88912",
-            services: matchedDoc.services || firstSchedule.services || ["Pemeriksaan Kehamilan", "Treatment Laktasi", "Baby Spa", "Pelayanan Persalinan"]
-          });
+          if (matchedDoc) {
+            const firstSchedule = matchedDoc.schedules?.[0] || {};
+            const days = firstSchedule.days || [];
+            setMySchedule({
+              id: matchedDoc.id || null,
+              doctor: matchedDoc.doctor || "Bidan Siti Rahmawati, S.Tr.Keb",
+              role: matchedDoc.role || "Bidan Senior & Treatment Specialist",
+              image: matchedDoc.image || "/img/landingPage/dummyDr.png",
+              startDay: matchedDoc.startDay || days[0] || "Senin",
+              endDay: matchedDoc.endDay || days[days.length - 1] || "Sabtu",
+              startTime: matchedDoc.startTime || firstSchedule.startTime || "08:00",
+              endTime: matchedDoc.endTime || firstSchedule.endTime || "16:00",
+              strNumber: matchedDoc.strNumber || "STR-BIDAN-2026-88912",
+              services: matchedDoc.services || firstSchedule.services || ["Pemeriksaan Kehamilan", "Treatment Laktasi", "Baby Spa", "Pelayanan Persalinan"]
+            });
+          }
         }
+      } finally {
+        setIsLoading(false);
       }
     }
     loadData();
@@ -309,6 +315,7 @@ export default function BidanDashboard() {
       }}
       onLogout={handleLogout}
     >
+      {isLoading && <Loading fullPage text="Memuat antrean & jadwal praktisi..." />}
       {successMsg && (
         <div className={styles.alertSuccess}>
           {successMsg}

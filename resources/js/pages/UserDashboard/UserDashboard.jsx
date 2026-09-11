@@ -8,9 +8,11 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { apiService } from "../../services/apiService";
 import Title from "../../components/Title/Title";
 import NewsSection from "../../components/NewsSection/NewsSection";
+import Loading from "../../components/Loading";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [activeMenu, setActiveMenu] = useState("antrean");
 
   const [currentUser, setCurrentUser] = useState(null);
@@ -106,39 +108,43 @@ export default function UserDashboard() {
 
   useEffect(() => {
     async function fetchDynamicData() {
-      const [catsData, docsData, newsData, faqsData, allQueues] = await Promise.all([
-        apiService.getCategories(),
-        apiService.getDoctors(),
-        apiService.getNews(),
-        apiService.getFaqs(),
-        apiService.getQueues(),
-      ]);
-      setCategoriesList(catsData);
-      setDoctorsList(docsData);
-      setNewsList(newsData);
-      setFaqList(faqsData);
+      try {
+        const [catsData, docsData, newsData, faqsData, allQueues] = await Promise.all([
+          apiService.getCategories(),
+          apiService.getDoctors(),
+          apiService.getNews(),
+          apiService.getFaqs(),
+          apiService.getQueues(),
+        ]);
+        setCategoriesList(catsData);
+        setDoctorsList(docsData);
+        setNewsList(newsData);
+        setFaqList(faqsData);
 
-      const loggedInUsername = localStorage.getItem("loggedInUser");
-      if (loggedInUsername) {
-        const patientNameLower = (currentUser?.patient?.name || loggedInUsername || "").toLowerCase().trim();
+        const loggedInUsername = localStorage.getItem("loggedInUser");
+        if (loggedInUsername) {
+          const patientNameLower = (currentUser?.patient?.name || loggedInUsername || "").toLowerCase().trim();
 
-        const userQueues = allQueues.filter((q) => {
-          const qName = (q.patientName || q.patient_name || "").toLowerCase().trim();
-          return qName.includes(patientNameLower) || patientNameLower.includes(qName) || qName === patientNameLower;
-        });
-        setPatientQueuesList(userQueues);
+          const userQueues = allQueues.filter((q) => {
+            const qName = (q.patientName || q.patient_name || "").toLowerCase().trim();
+            return qName.includes(patientNameLower) || patientNameLower.includes(qName) || qName === patientNameLower;
+          });
+          setPatientQueuesList(userQueues);
 
-        const savedUserQueue = localStorage.getItem("user_active_queue_" + loggedInUsername);
-        if (savedUserQueue) {
-          try {
-            const parsed = JSON.parse(savedUserQueue);
-            const match = allQueues.find((q) => String(q.id) === String(parsed.id) || q.queueNumber === parsed.queueNumber);
-            if (match) {
-              setActiveQueue(match);
-              localStorage.setItem("user_active_queue_" + loggedInUsername, JSON.stringify(match));
-            }
-          } catch (e) { }
+          const savedUserQueue = localStorage.getItem("user_active_queue_" + loggedInUsername);
+          if (savedUserQueue) {
+            try {
+              const parsed = JSON.parse(savedUserQueue);
+              const match = allQueues.find((q) => String(q.id) === String(parsed.id) || q.queueNumber === parsed.queueNumber);
+              if (match) {
+                setActiveQueue(match);
+                localStorage.setItem("user_active_queue_" + loggedInUsername, JSON.stringify(match));
+              }
+            } catch (e) { }
+          }
         }
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchDynamicData();
@@ -407,6 +413,7 @@ export default function UserDashboard() {
         subtitle: "Pasien"
       }}
     >
+      {isLoading && <Loading fullPage text="Memuat antrean & layanan klinik..." />}
       {activeMenu === "antrean" && (
         <>
           <div className={styles.header}>
