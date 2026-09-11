@@ -100,17 +100,8 @@ const DEFAULT_PATIENTS = [
 ];
 
 export const apiService = {
-  // Patients
+  // Patients (Managed via Local Storage)
   async getPatients(fallback) {
-    try {
-      const res = await fetch(`${BASE_URL}/patients`);
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) return data;
-      }
-    } catch (e) {
-      console.warn("MySQL API fetch error:", e);
-    }
     const local = localStorage.getItem("clinic_patients");
     if (local) {
       try {
@@ -124,37 +115,22 @@ export const apiService = {
     localStorage.setItem("clinic_patients", JSON.stringify(data));
   },
   async createPatient(data) {
-    try {
-      const res = await fetch(`${BASE_URL}/patients`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(data)
-      });
-      if (res.ok) return await res.json();
-    } catch (e) {
-      console.error("Error creating patient:", e);
-    }
-    return null;
+    const list = await this.getPatients();
+    const newPatient = { id: Date.now(), ...data };
+    const updated = [newPatient, ...list];
+    this.savePatientsLocal(updated);
+    return newPatient;
   },
   async updatePatient(id, data) {
-    try {
-      const res = await fetch(`${BASE_URL}/patients/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(data)
-      });
-      if (res.ok) return await res.json();
-    } catch (e) {
-      console.error("Error updating patient:", e);
-    }
-    return null;
+    const list = await this.getPatients();
+    const updated = list.map((p) => (p.id === id ? { ...p, ...data } : p));
+    this.savePatientsLocal(updated);
+    return { id, ...data };
   },
   async deletePatient(id) {
-    try {
-      await fetch(`${BASE_URL}/patients/${id}`, { method: "DELETE" });
-    } catch (e) {
-      console.error("Error deleting patient:", e);
-    }
+    const list = await this.getPatients();
+    const updated = list.filter((p) => p.id !== id);
+    this.savePatientsLocal(updated);
   },
 
   // Categories

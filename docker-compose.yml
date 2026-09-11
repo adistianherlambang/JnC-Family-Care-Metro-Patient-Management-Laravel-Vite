@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile
     container_name: laravel_app
     restart: unless-stopped
+    environment:
+      DB_HOST: mariadb
     ports:
       - "8000:80"
     volumes:

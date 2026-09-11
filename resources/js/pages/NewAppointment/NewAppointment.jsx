@@ -20,9 +20,11 @@ export default function NewAppointment() {
 
   useEffect(() => {
     async function loadDynamicData() {
-      const cats = await apiService.getCategories();
+      const [cats, docs] = await Promise.all([
+        apiService.getCategories(),
+        apiService.getDoctors(),
+      ]);
       setCategoriesList(cats);
-      const docs = await apiService.getDoctors();
       setDoctorsList(docs);
     }
     loadDynamicData();

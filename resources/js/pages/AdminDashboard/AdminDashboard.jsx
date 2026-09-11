@@ -100,17 +100,19 @@ export default function AdminDashboard() {
     }
 
     async function loadData() {
-      const cats = await apiService.getCategories();
+      const [cats, docs, qList, nList, fList, pList] = await Promise.all([
+        apiService.getCategories(),
+        apiService.getDoctors(),
+        apiService.getQueues(),
+        apiService.getNews(),
+        apiService.getFaqs(),
+        apiService.getPatients(),
+      ]);
       setCategories(cats);
-      const docs = await apiService.getDoctors();
       setDoctors(docs);
-      const qList = await apiService.getQueues();
       setQueues(qList);
-      const nList = await apiService.getNews();
       setNews(nList);
-      const fList = await apiService.getFaqs();
       setFaqs(fList);
-      const pList = await apiService.getPatients();
       setPatients(pList);
       isDataLoaded.current = true;
     }

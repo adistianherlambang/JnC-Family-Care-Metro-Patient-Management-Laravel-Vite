@@ -18,13 +18,15 @@ export default function LandingPage() {
 
   useEffect(() => {
     async function loadData() {
-      const docs = await apiService.getDoctors();
+      const [docs, cats, news, faqs] = await Promise.all([
+        apiService.getDoctors(),
+        apiService.getCategories(),
+        apiService.getNews(),
+        apiService.getFaqs(),
+      ]);
       setDoctorsList(docs);
-      const cats = await apiService.getCategories();
       setCategoriesList(cats);
-      const news = await apiService.getNews();
       setNewsList(news);
-      const faqs = await apiService.getFaqs();
       setFaqList(faqs);
     }
     loadData();

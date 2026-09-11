@@ -53,16 +53,18 @@ export default function BidanDashboard() {
     }
 
     async function loadData() {
-      const queueData = await apiService.getQueues();
+      const [queueData, categoriesData, doctorsData] = await Promise.all([
+        apiService.getQueues(),
+        apiService.getCategories(),
+        apiService.getDoctors(),
+      ]);
       setQueues(queueData);
 
-      const categoriesData = await apiService.getCategories();
       const allClinicServices = Array.from(
         new Set((categoriesData || []).flatMap((cat) => cat.services || []))
       );
       setAvailableClinicServices(allClinicServices);
 
-      const doctorsData = await apiService.getDoctors();
       if (Array.isArray(doctorsData) && doctorsData.length > 0) {
         const matchedDoc = doctorsData.find((doc) => {
           const docName = (doc.doctor || "").toLowerCase();

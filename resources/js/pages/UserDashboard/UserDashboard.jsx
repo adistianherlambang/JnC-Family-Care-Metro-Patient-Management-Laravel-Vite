@@ -106,16 +106,17 @@ export default function UserDashboard() {
 
   useEffect(() => {
     async function fetchDynamicData() {
-      const catsData = await apiService.getCategories();
+      const [catsData, docsData, newsData, faqsData, allQueues] = await Promise.all([
+        apiService.getCategories(),
+        apiService.getDoctors(),
+        apiService.getNews(),
+        apiService.getFaqs(),
+        apiService.getQueues(),
+      ]);
       setCategoriesList(catsData);
-      const docsData = await apiService.getDoctors();
       setDoctorsList(docsData);
-      const newsData = await apiService.getNews();
       setNewsList(newsData);
-      const faqsData = await apiService.getFaqs();
       setFaqList(faqsData);
-
-      const allQueues = await apiService.getQueues();
 
       const loggedInUsername = localStorage.getItem("loggedInUser");
       if (loggedInUsername) {
