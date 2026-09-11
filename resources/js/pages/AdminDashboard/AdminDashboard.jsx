@@ -405,10 +405,12 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteQueue = async (id) => {
-    await apiService.deleteQueue(id);
-    const updated = queues.filter((q) => q.id !== id);
-    setQueues(updated);
-    apiService.saveQueuesLocal(updated);
+    if (window.confirm("Apakah Anda yakin ingin menghapus riwayat kunjungan antrean pasien ini?")) {
+      await apiService.deleteQueue(id);
+      const updated = queues.filter((q) => q.id !== id);
+      setQueues(updated);
+      apiService.saveQueuesLocal(updated);
+    }
   };
 
   // Doctor Handlers
@@ -987,6 +989,7 @@ export default function AdminDashboard() {
                   <th>Dokter / Bidan</th>
                   <th>Layanan</th>
                   <th>Status</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -998,6 +1001,17 @@ export default function AdminDashboard() {
                     <td>{q.service}</td>
                     <td>
                       <TableBadge status={q.status} />
+                    </td>
+                    <td>
+                      <Table.ActionCell>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDeleteQueue(q.id)}
+                        >
+                          Hapus Riwayat
+                        </Button>
+                      </Table.ActionCell>
                     </td>
                   </tr>
                 ))}
@@ -1103,7 +1117,7 @@ export default function AdminDashboard() {
                             variant="danger"
                             onClick={() => handleDeleteQueue(q.id)}
                           >
-                            Hapus
+                            Hapus Riwayat
                           </Button>
                         </Table.ActionCell>
                       </td>

@@ -101,6 +101,17 @@ export default function BidanDashboard() {
     setTimeout(() => setSuccessMsg(""), 3000);
   };
 
+  const handleDeleteQueue = async (id) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus riwayat kunjungan antrean pasien ini?")) {
+      const updated = queues.filter((q) => q.id !== id);
+      setQueues(updated);
+      apiService.saveQueuesLocal(updated);
+      await apiService.deleteQueue(id);
+      setSuccessMsg("Riwayat kunjungan pasien berhasil dihapus!");
+      setTimeout(() => setSuccessMsg(""), 3000);
+    }
+  };
+
   const handleSaveNote = (id) => {
     setNotes({ ...notes, [id]: tempNoteText });
     setEditingNoteId(null);
@@ -360,6 +371,7 @@ export default function BidanDashboard() {
                     <Table.ActionCell>
                       <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Sedang Dilayani")}>Panggil</Button>
                       <Button size="sm" onClick={() => handleStatusChange(item.id, "Selesai")}>Selesai</Button>
+                      <Button size="sm" variant="danger" onClick={() => handleDeleteQueue(item.id)}>Hapus Riwayat</Button>
                     </Table.ActionCell>
                   </td>
                 </tr>
@@ -445,6 +457,7 @@ export default function BidanDashboard() {
                       <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Sedang Dilayani")}>Layani</Button>
                       <Button size="sm" onClick={() => handleStatusChange(item.id, "Selesai")}>Selesai</Button>
                       <Button size="sm" variant="secondary" onClick={() => handleStatusChange(item.id, "Dibatalkan")}>Batal</Button>
+                      <Button size="sm" variant="danger" onClick={() => handleDeleteQueue(item.id)}>Hapus Riwayat</Button>
                     </Table.ActionCell>
                   </td>
                 </tr>
