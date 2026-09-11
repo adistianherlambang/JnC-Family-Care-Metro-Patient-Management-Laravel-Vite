@@ -9,13 +9,22 @@ import NewsSection from "../../components/NewsSection/NewsSection";
 import { apiService } from "../../services/apiService";
 import Loading from "../../components/Loading";
 
+  const getInitial = (key, fallback = []) => {
+    try {
+      const saved = localStorage.getItem(key);
+      return saved ? JSON.parse(saved) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  };
+
 export default function LandingPage() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => !localStorage.getItem("clinic_doctors"));
   const [isTab, setIsTab] = useState("");
-  const [doctorsList, setDoctorsList] = useState([]);
-  const [categoriesList, setCategoriesList] = useState([]);
-  const [newsList, setNewsList] = useState([]);
-  const [faqList, setFaqList] = useState([]);
+  const [doctorsList, setDoctorsList] = useState(() => getInitial("clinic_doctors"));
+  const [categoriesList, setCategoriesList] = useState(() => getInitial("clinic_categories"));
+  const [newsList, setNewsList] = useState(() => getInitial("clinic_news"));
+  const [faqList, setFaqList] = useState(() => getInitial("clinic_faqs"));
   const [openFaqId, setOpenFaqId] = useState(null);
 
   useEffect(() => {
@@ -27,10 +36,10 @@ export default function LandingPage() {
           apiService.getNews(),
           apiService.getFaqs(),
         ]);
-        setDoctorsList(docs);
-        setCategoriesList(cats);
-        setNewsList(news);
-        setFaqList(faqs);
+        if (Array.isArray(docs) && docs.length) setDoctorsList(docs);
+        if (Array.isArray(cats) && cats.length) setCategoriesList(cats);
+        if (Array.isArray(news) && news.length) setNewsList(news);
+        if (Array.isArray(faqs) && faqs.length) setFaqList(faqs);
       } finally {
         setIsLoading(false);
       }

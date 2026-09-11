@@ -139,7 +139,10 @@ export const apiService = {
       const res = await fetch(`${BASE_URL}/categories`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (Array.isArray(data) && data.length > 0) {
+          localStorage.setItem("clinic_categories", JSON.stringify(data));
+          return data;
+        }
       }
     } catch (e) {
       console.warn("MySQL API fetch error:", e);
@@ -190,7 +193,10 @@ export const apiService = {
       const res = await fetch(`${BASE_URL}/doctors`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (Array.isArray(data) && data.length > 0) {
+          localStorage.setItem("clinic_doctors", JSON.stringify(data));
+          return data;
+        }
       }
     } catch (e) {
       console.warn("MySQL API fetch error:", e);
@@ -241,7 +247,10 @@ export const apiService = {
       const res = await fetch(`${BASE_URL}/queues`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) return data;
+        if (Array.isArray(data) && data.length > 0) {
+          localStorage.setItem("clinic_queues", JSON.stringify(data));
+          return data;
+        }
       }
     } catch (e) {
       console.warn("MySQL API fetch error:", e);
@@ -251,10 +260,7 @@ export const apiService = {
       try {
         const parsed = JSON.parse(local);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const isStaleLiteral = parsed.some((q) => q.date === "Hari Ini" || q.date === "Besok");
-          if (!isStaleLiteral) {
-            return parsed;
-          }
+          return parsed;
         }
       } catch (e) {}
     }
@@ -304,7 +310,10 @@ export const apiService = {
       const res = await fetch(`${BASE_URL}/news`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (Array.isArray(data) && data.length > 0) {
+          localStorage.setItem("clinic_news", JSON.stringify(data));
+          return data;
+        }
       }
     } catch (e) {
       console.warn("MySQL API fetch error:", e);
@@ -313,7 +322,7 @@ export const apiService = {
     if (local) {
       try {
         const parsed = JSON.parse(local);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch (e) {}
     }
     return fallback || [];
@@ -361,13 +370,22 @@ export const apiService = {
       const res = await fetch(`${BASE_URL}/faqs`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (Array.isArray(data) && data.length > 0) {
+          localStorage.setItem("clinic_faqs", JSON.stringify(data));
+          return data;
+        }
       }
     } catch (e) {
       console.warn("MySQL API fetch error:", e);
     }
     const local = localStorage.getItem("clinic_faqs");
-    return local ? JSON.parse(local) : (fallback || []);
+    if (local) {
+      try {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {}
+    }
+    return fallback || [];
   },
   saveFaqsLocal(data) {
     localStorage.setItem("clinic_faqs", JSON.stringify(data));

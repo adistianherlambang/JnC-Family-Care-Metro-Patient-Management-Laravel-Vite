@@ -70,13 +70,23 @@ export default function AdminDashboard() {
   const [activeMenu, setActiveMenu] = useState("overview"); // 'overview', 'antrean', 'dokter', 'poli', 'artikel', 'faq'
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Master Data State
-  const [queues, setQueues] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [news, setNews] = useState([]);
-  const [faqs, setFaqs] = useState([]);
-  const [patients, setPatients] = useState([]);
+  // Helper to read initial state safely from localStorage
+  const getInitial = (key, fallback = []) => {
+    try {
+      const saved = localStorage.getItem(key);
+      return saved ? JSON.parse(saved) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  };
+
+  // Master Data State (Initialized from cached localStorage for instant display)
+  const [queues, setQueues] = useState(() => getInitial("clinic_queues"));
+  const [doctors, setDoctors] = useState(() => getInitial("clinic_doctors"));
+  const [categories, setCategories] = useState(() => getInitial("clinic_categories"));
+  const [news, setNews] = useState(() => getInitial("clinic_news"));
+  const [faqs, setFaqs] = useState(() => getInitial("clinic_faqs"));
+  const [patients, setPatients] = useState(() => getInitial("clinic_patients"));
   const [patientSearchQuery, setPatientSearchQuery] = useState("");
   const [queueSearchQuery, setQueueSearchQuery] = useState("");
   const [doctorSearchQuery, setDoctorSearchQuery] = useState("");
@@ -86,9 +96,10 @@ export default function AdminDashboard() {
   const [selectedArticleForEdit, setSelectedArticleForEdit] = useState(null);
   const [selectedArticleForPreview, setSelectedArticleForPreview] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(true);
-  const isDataLoaded = useRef(false);
+  const [tabLoading, setTabLoading] = useState(false);
+  const isDataLoaded = useRef(true);
 
+  // Lazy on-demand fetching when entering specific tabs
   useEffect(() => {
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (!loggedInUser) {
@@ -101,52 +112,98 @@ export default function AdminDashboard() {
       return;
     }
 
-    async function loadData() {
+    let isCurrent = true;
+
+    async function fetchTabData(tab) {
+      setTabLoading(true);
       try {
-        const [cats, docs, qList, nList, fList, pList] = await Promise.all([
-          apiService.getCategories(),
-          apiService.getDoctors(),
-          apiService.getQueues(),
-          apiService.getNews(),
-          apiService.getFaqs(),
-          apiService.getPatients(),
-        ]);
-        setCategories(cats);
-        setDoctors(docs);
-        setQueues(qList);
-        setNews(nList);
-        setFaqs(fList);
-        setPatients(pList);
-        isDataLoaded.current = true;
+        if (tab === "overview") {
+          const [cats, docs, qList, nList, fList, pList] = await Promise.all([
+            apiService.getCategories(),
+            apiService.getDoctors(),
+            apiService.getQueues(),
+            apiService.getNews(),
+            apiService.getFaqs(),
+            apiService.getPatients(),
+          ]);
+          if (!isCurrent) return;
+          if (Array.isArray(cats) && cats.length) setCategories(cats);
+          if (Array.isArray(docs) && docs.length) setDoctors(docs);
+          if (Array.isArray(qList) && qList.length) setQueues(qList);
+          if (Array.isArray(nList) && nList.length) setNews(nList);
+          if (Array.isArray(fList) && fList.length) setFaqs(fList);
+          if (Array.isArray(pList) && pList.length) setPatients(pList);
+        } else if (tab === "antrean") {
+          const [qList, docs, cats] = await Promise.all([
+            apiService.getQueues(),
+            apiService.getDoctors(),
+            apiService.getCategories(),
+          ]);
+          if (!isCurrent) return;
+          if (Array.isArray(qList) && qList.length) setQueues(qList);
+          if (Array.isArray(docs) && docs.length) setDoctors(docs);
+          if (Array.isArray(cats) && cats.length) setCategories(cats);
+        } else if (tab === "dokter") {
+          const [docs, cats] = await Promise.all([
+            apiService.getDoctors(),
+            apiService.getCategories(),
+          ]);
+          if (!isCurrent) return;
+          if (Array.isArray(docs) && docs.length) setDoctors(docs);
+          if (Array.isArray(cats) && cats.length) setCategories(cats);
+        } else if (tab === "pasien") {
+          const pList = await apiService.getPatients();
+          if (!isCurrent) return;
+          if (Array.isArray(pList) && pList.length) setPatients(pList);
+        } else if (tab === "poli") {
+          const cats = await apiService.getCategories();
+          if (!isCurrent) return;
+          if (Array.isArray(cats) && cats.length) setCategories(cats);
+        } else if (tab === "artikel") {
+          const nList = await apiService.getNews();
+          if (!isCurrent) return;
+          if (Array.isArray(nList) && nList.length) setNews(nList);
+        } else if (tab === "faq") {
+          const fList = await apiService.getFaqs();
+          if (!isCurrent) return;
+          if (Array.isArray(fList) && fList.length) setFaqs(fList);
+        }
+      } catch (e) {
+        console.error("Tab fetch error:", e);
       } finally {
-        setIsLoading(false);
+        if (isCurrent) setTabLoading(false);
       }
     }
-    loadData();
-  }, [navigate]);
+
+    fetchTabData(activeMenu);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [activeMenu, navigate]);
 
   useEffect(() => {
-    if (isDataLoaded.current) apiService.savePatientsLocal(patients);
+    if (patients?.length) apiService.savePatientsLocal(patients);
   }, [patients]);
 
   useEffect(() => {
-    if (isDataLoaded.current) apiService.saveNewsLocal(news);
+    if (news?.length) apiService.saveNewsLocal(news);
   }, [news]);
 
   useEffect(() => {
-    if (isDataLoaded.current) apiService.saveFaqsLocal(faqs);
+    if (faqs?.length) apiService.saveFaqsLocal(faqs);
   }, [faqs]);
 
   useEffect(() => {
-    if (isDataLoaded.current) apiService.saveDoctorsLocal(doctors);
+    if (doctors?.length) apiService.saveDoctorsLocal(doctors);
   }, [doctors]);
 
   useEffect(() => {
-    if (isDataLoaded.current) apiService.saveCategoriesLocal(categories);
+    if (categories?.length) apiService.saveCategoriesLocal(categories);
   }, [categories]);
 
   useEffect(() => {
-    if (isDataLoaded.current) apiService.saveQueuesLocal(queues);
+    if (queues?.length) apiService.saveQueuesLocal(queues);
   }, [queues]);
 
   // Filter State
@@ -851,7 +908,11 @@ export default function AdminDashboard() {
         avatar: "A"
       }}
     >
-      {isLoading && <Loading fullPage text="Memuat seluruh data operasional klinik..." />}
+      {tabLoading && (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000 }}>
+          <Loading text="Menyinkronkan data..." size="sm" />
+        </div>
+      )}
       {/* 0. Ringkasan Eksekutif & Operasional Overview */}
       {activeMenu === "overview" && (
         <>

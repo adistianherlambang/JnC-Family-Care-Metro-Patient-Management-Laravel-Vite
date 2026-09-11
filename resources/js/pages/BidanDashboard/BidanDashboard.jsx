@@ -15,7 +15,14 @@ export default function BidanDashboard() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [activeMenu, setActiveMenu] = useState("overview"); // 'overview', 'antrean', 'jadwal', 'profil'
-  const [queues, setQueues] = useState([]);
+  const [queues, setQueues] = useState(() => {
+    try {
+      const q = localStorage.getItem("clinic_queues");
+      return q ? JSON.parse(q) : [];
+    } catch (e) {
+      return [];
+    }
+  });
   const [mySchedule, setMySchedule] = useState({
     id: null,
     doctor: "Bidan Siti Rahmawati, S.Tr.Keb",
@@ -54,51 +61,64 @@ export default function BidanDashboard() {
       return;
     }
 
+    let isCurrent = true;
+
     async function loadData() {
+      setIsLoading(true);
       try {
-        const [queueData, categoriesData, doctorsData] = await Promise.all([
-          apiService.getQueues(),
-          apiService.getCategories(),
-          apiService.getDoctors(),
-        ]);
-        setQueues(queueData);
+        if (activeMenu === "overview" || activeMenu === "antrean") {
+          const queueData = await apiService.getQueues();
+          if (!isCurrent) return;
+          if (Array.isArray(queueData) && queueData.length) setQueues(queueData);
+        } else if (activeMenu === "jadwal" || activeMenu === "profil") {
+          const [categoriesData, doctorsData] = await Promise.all([
+            apiService.getCategories(),
+            apiService.getDoctors(),
+          ]);
+          if (!isCurrent) return;
+          if (Array.isArray(categoriesData) && categoriesData.length) {
+            const allClinicServices = Array.from(
+              new Set((categoriesData || []).flatMap((cat) => cat.services || []))
+            );
+            setAvailableClinicServices(allClinicServices);
+          }
 
-        const allClinicServices = Array.from(
-          new Set((categoriesData || []).flatMap((cat) => cat.services || []))
-        );
-        setAvailableClinicServices(allClinicServices);
+          if (Array.isArray(doctorsData) && doctorsData.length > 0) {
+            const matchedDoc = doctorsData.find((doc) => {
+              const docName = (doc.doctor || "").toLowerCase();
+              const docUser = (doc.username || "").toLowerCase();
+              const logged = loggedInUser.toLowerCase();
+              return logged.includes(docUser) || docName.includes(logged) || logged.includes(docName.split(" ")[0]);
+            }) || doctorsData[0];
 
-        if (Array.isArray(doctorsData) && doctorsData.length > 0) {
-          const matchedDoc = doctorsData.find((doc) => {
-            const docName = (doc.doctor || "").toLowerCase();
-            const docUser = (doc.username || "").toLowerCase();
-            const logged = loggedInUser.toLowerCase();
-            return logged.includes(docUser) || docName.includes(logged) || logged.includes(docName.split(" ")[0]);
-          }) || doctorsData[0];
-
-          if (matchedDoc) {
-            const firstSchedule = matchedDoc.schedules?.[0] || {};
-            const days = firstSchedule.days || [];
-            setMySchedule({
-              id: matchedDoc.id || null,
-              doctor: matchedDoc.doctor || "Bidan Siti Rahmawati, S.Tr.Keb",
-              role: matchedDoc.role || "Bidan Senior & Treatment Specialist",
-              image: matchedDoc.image || "/img/landingPage/dummyDr.png",
-              startDay: matchedDoc.startDay || days[0] || "Senin",
-              endDay: matchedDoc.endDay || days[days.length - 1] || "Sabtu",
-              startTime: matchedDoc.startTime || firstSchedule.startTime || "08:00",
-              endTime: matchedDoc.endTime || firstSchedule.endTime || "16:00",
-              strNumber: matchedDoc.strNumber || "STR-BIDAN-2026-88912",
-              services: matchedDoc.services || firstSchedule.services || ["Pemeriksaan Kehamilan", "Treatment Laktasi", "Baby Spa", "Pelayanan Persalinan"]
-            });
+            if (matchedDoc) {
+              const firstSchedule = matchedDoc.schedules?.[0] || {};
+              const days = firstSchedule.days || [];
+              setMySchedule({
+                id: matchedDoc.id || null,
+                doctor: matchedDoc.doctor || "Bidan Siti Rahmawati, S.Tr.Keb",
+                role: matchedDoc.role || "Bidan Senior & Treatment Specialist",
+                image: matchedDoc.image || "/img/landingPage/dummyDr.png",
+                startDay: matchedDoc.startDay || days[0] || "Senin",
+                endDay: matchedDoc.endDay || days[days.length - 1] || "Sabtu",
+                startTime: matchedDoc.startTime || firstSchedule.startTime || "08:00",
+                endTime: matchedDoc.endTime || firstSchedule.endTime || "16:00",
+                strNumber: matchedDoc.strNumber || "STR-BIDAN-2026-88912",
+                services: matchedDoc.services || firstSchedule.services || ["Pemeriksaan Kehamilan", "Treatment Laktasi", "Baby Spa", "Pelayanan Persalinan"]
+              });
+            }
           }
         }
       } finally {
-        setIsLoading(false);
+        if (isCurrent) setIsLoading(false);
       }
     }
     loadData();
-  }, [navigate]);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [activeMenu, navigate]);
 
   const handleStatusChange = async (id, newStatus) => {
     const updated = queues.map((q) => (q.id === id ? { ...q, status: newStatus } : q));
@@ -315,7 +335,11 @@ export default function BidanDashboard() {
       }}
       onLogout={handleLogout}
     >
-      {isLoading && <Loading fullPage text="Memuat antrean & jadwal praktisi..." />}
+      {isLoading && (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000 }}>
+          <Loading text="Menyinkronkan data..." size="sm" />
+        </div>
+      )}
       {successMsg && (
         <div className={styles.alertSuccess}>
           {successMsg}

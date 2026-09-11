@@ -4,11 +4,14 @@ import styles from "./Loading.module.css";
 export default function Loading({ text = "Memuat data...", fullPage = false, size = "md" }) {
   const content = (
     <div className={`${styles.loadingContainer} ${styles[size]}`}>
-      <div className={styles.spinnerWrapper}>
-        <div className={styles.spinner}></div>
-        <div className={styles.pulseCore}></div>
-      </div>
-      {text && <p className={styles.loadingText}>{text}</p>}
+      <span className={styles.loadingText}>
+        {text}
+        <span className={styles.dots}>
+          <span className={styles.dot1}>.</span>
+          <span className={styles.dot2}>.</span>
+          <span className={styles.dot3}>.</span>
+        </span>
+      </span>
     </div>
   );
 

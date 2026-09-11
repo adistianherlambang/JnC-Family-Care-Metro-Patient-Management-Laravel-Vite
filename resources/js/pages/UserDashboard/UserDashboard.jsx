@@ -15,15 +15,24 @@ export default function UserDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeMenu, setActiveMenu] = useState("antrean");
 
+  const getInitial = (key, fallback = []) => {
+    try {
+      const saved = localStorage.getItem(key);
+      return saved ? JSON.parse(saved) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  };
+
   const [currentUser, setCurrentUser] = useState(null);
   const [activeQueue, setActiveQueue] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const [categoriesList, setCategoriesList] = useState([]);
-  const [doctorsList, setDoctorsList] = useState([]);
-  const [newsList, setNewsList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState(() => getInitial("clinic_categories"));
+  const [doctorsList, setDoctorsList] = useState(() => getInitial("clinic_doctors"));
+  const [newsList, setNewsList] = useState(() => getInitial("clinic_news"));
   const [newsPage, setNewsPage] = useState(1);
-  const [faqList, setFaqList] = useState([]);
-  const [patientQueuesList, setPatientQueuesList] = useState([]);
+  const [faqList, setFaqList] = useState(() => getInitial("clinic_faqs"));
+  const [patientQueuesList, setPatientQueuesList] = useState(() => getInitial("clinic_queues"));
 
   const [newQueueData, setNewQueueData] = useState({
     peruntukan: "Untuk Sendiri",
@@ -62,33 +71,28 @@ export default function UserDashboard() {
     } else if (registeredUserRaw) {
       try {
         const reg = JSON.parse(registeredUserRaw);
-        userObj = {
-          username: reg.username || loggedInUsername,
-          patient: {
-            name: reg.nama || loggedInUsername,
-            noRM: reg.noRM || "RM-2026-00123",
-            noBpjs: reg.noBpjs || "-",
-            phone: reg.telepon || "-",
-            email: reg.email || "-",
-            address: reg.alamat || "-"
-          },
-          visitHistory: []
-        };
+        if (reg.username === loggedInUsername) {
+          userObj = reg;
+        }
       } catch (e) { }
     }
 
     if (!userObj) {
       userObj = {
+        name: loggedInUsername,
         username: loggedInUsername,
+        email: `${loggedInUsername}@example.com`,
         patient: {
-          name: loggedInUsername.charAt(0).toUpperCase() + loggedInUsername.slice(1),
-          noRM: "RM-2026-00123",
-          noBpjs: "-",
-          phone: "-",
-          email: "-",
-          address: "-"
-        },
-        visitHistory: []
+          name: loggedInUsername,
+          noRM: "RM-" + new Date().getFullYear() + "-0099"
+        }
+      };
+    }
+
+    if (!userObj.patient) {
+      userObj.patient = {
+        name: userObj.name || loggedInUsername,
+        noRM: userObj.noRM || "RM-" + new Date().getFullYear() + "-0099"
       };
     }
 
@@ -107,47 +111,72 @@ export default function UserDashboard() {
   }, [navigate]);
 
   useEffect(() => {
+    let isCurrent = true;
+
     async function fetchDynamicData() {
+      setIsLoading(true);
       try {
-        const [catsData, docsData, newsData, faqsData, allQueues] = await Promise.all([
-          apiService.getCategories(),
-          apiService.getDoctors(),
-          apiService.getNews(),
-          apiService.getFaqs(),
-          apiService.getQueues(),
-        ]);
-        setCategoriesList(catsData);
-        setDoctorsList(docsData);
-        setNewsList(newsData);
-        setFaqList(faqsData);
+        if (activeMenu === "antrean") {
+          const [catsData, docsData, allQueues] = await Promise.all([
+            apiService.getCategories(),
+            apiService.getDoctors(),
+            apiService.getQueues(),
+          ]);
+          if (!isCurrent) return;
+          if (Array.isArray(catsData) && catsData.length) setCategoriesList(catsData);
+          if (Array.isArray(docsData) && docsData.length) setDoctorsList(docsData);
 
-        const loggedInUsername = localStorage.getItem("loggedInUser");
-        if (loggedInUsername) {
-          const patientNameLower = (currentUser?.patient?.name || loggedInUsername || "").toLowerCase().trim();
+          const loggedInUsername = localStorage.getItem("loggedInUser");
+          if (loggedInUsername && Array.isArray(allQueues)) {
+            const patientNameLower = (currentUser?.patient?.name || loggedInUsername || "").toLowerCase().trim();
+            const userQueues = allQueues.filter((q) => {
+              const qName = (q.patientName || q.patient_name || "").toLowerCase().trim();
+              return qName.includes(patientNameLower) || patientNameLower.includes(qName) || qName === patientNameLower;
+            });
+            setPatientQueuesList(userQueues);
 
-          const userQueues = allQueues.filter((q) => {
-            const qName = (q.patientName || q.patient_name || "").toLowerCase().trim();
-            return qName.includes(patientNameLower) || patientNameLower.includes(qName) || qName === patientNameLower;
-          });
-          setPatientQueuesList(userQueues);
-
-          const savedUserQueue = localStorage.getItem("user_active_queue_" + loggedInUsername);
-          if (savedUserQueue) {
-            try {
-              const parsed = JSON.parse(savedUserQueue);
-              const match = allQueues.find((q) => String(q.id) === String(parsed.id) || q.queueNumber === parsed.queueNumber);
-              if (match) {
-                setActiveQueue(match);
-                localStorage.setItem("user_active_queue_" + loggedInUsername, JSON.stringify(match));
-              }
-            } catch (e) { }
+            const savedUserQueue = localStorage.getItem("user_active_queue_" + loggedInUsername);
+            if (savedUserQueue) {
+              try {
+                const parsed = JSON.parse(savedUserQueue);
+                const match = allQueues.find((q) => String(q.id) === String(parsed.id) || q.queueNumber === parsed.queueNumber);
+                if (match) {
+                  setActiveQueue(match);
+                  localStorage.setItem("user_active_queue_" + loggedInUsername, JSON.stringify(match));
+                }
+              } catch (e) { }
+            }
           }
+        } else if (activeMenu === "riwayat") {
+          const allQueues = await apiService.getQueues();
+          if (!isCurrent) return;
+          const loggedInUsername = localStorage.getItem("loggedInUser");
+          if (loggedInUsername && Array.isArray(allQueues)) {
+            const patientNameLower = (currentUser?.patient?.name || loggedInUsername || "").toLowerCase().trim();
+            const userQueues = allQueues.filter((q) => {
+              const qName = (q.patientName || q.patient_name || "").toLowerCase().trim();
+              return qName.includes(patientNameLower) || patientNameLower.includes(qName) || qName === patientNameLower;
+            });
+            setPatientQueuesList(userQueues);
+          }
+        } else if (activeMenu === "berita") {
+          const newsData = await apiService.getNews();
+          if (!isCurrent) return;
+          if (Array.isArray(newsData) && newsData.length) setNewsList(newsData);
+        } else if (activeMenu === "faq") {
+          const faqsData = await apiService.getFaqs();
+          if (!isCurrent) return;
+          if (Array.isArray(faqsData) && faqsData.length) setFaqList(faqsData);
         }
       } finally {
-        setIsLoading(false);
+        if (isCurrent) setIsLoading(false);
       }
     }
     fetchDynamicData();
+
+    return () => {
+      isCurrent = false;
+    };
   }, [activeMenu, currentUser]);
 
   const getTodayStr = () => {
@@ -413,7 +442,11 @@ export default function UserDashboard() {
         subtitle: "Pasien"
       }}
     >
-      {isLoading && <Loading fullPage text="Memuat antrean & layanan klinik..." />}
+      {isLoading && (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000 }}>
+          <Loading text="Menyinkronkan data..." size="sm" />
+        </div>
+      )}
       {activeMenu === "antrean" && (
         <>
           <div className={styles.header}>
