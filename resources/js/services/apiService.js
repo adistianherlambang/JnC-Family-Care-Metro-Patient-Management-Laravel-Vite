@@ -100,37 +100,100 @@ const DEFAULT_PATIENTS = [
 ];
 
 export const apiService = {
-  // Patients (Managed via Local Storage)
+  // Patients (Connected to MySQL via /api/patients)
   async getPatients(fallback) {
+    try {
+      const res = await fetch(`${BASE_URL}/patients`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          localStorage.setItem("clinic_patients", JSON.stringify(data));
+          return data;
+        }
+      } else {
+        console.error("Fetch patients failed with status:", res.status);
+      }
+    } catch (e) {
+      console.error("Fetch patients network/DB error:", e);
+    }
     const local = localStorage.getItem("clinic_patients");
     if (local) {
       try {
-        return JSON.parse(local);
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch (e) {}
     }
-    localStorage.setItem("clinic_patients", JSON.stringify(DEFAULT_PATIENTS));
-    return DEFAULT_PATIENTS;
+    return fallback || DEFAULT_PATIENTS;
   },
   savePatientsLocal(data) {
     localStorage.setItem("clinic_patients", JSON.stringify(data));
   },
   async createPatient(data) {
-    const list = await this.getPatients();
-    const newPatient = { id: Date.now(), ...data };
-    const updated = [newPatient, ...list];
-    this.savePatientsLocal(updated);
-    return newPatient;
+    try {
+      const res = await fetch(`${BASE_URL}/patients`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        const created = await res.json();
+        const current = await this.getPatients();
+        this.savePatientsLocal([created, ...current.filter((p) => p.id !== created.id)]);
+        return created;
+      } else {
+        const errText = await res.text();
+        console.error("Gagal simpan pasien ke DB:", res.status, errText);
+        alert(`Gagal menyimpan pasien ke Database (HTTP ${res.status}). Pastikan database MySQL cPanel sudah terhubung dan tabel 'patients' sudah di-import.`);
+        return null;
+      }
+    } catch (e) {
+      console.error("Error creating patient in DB:", e);
+      alert("Terjadi kesalahan koneksi saat menyimpan pasien ke Database MySQL.");
+      return null;
+    }
   },
   async updatePatient(id, data) {
-    const list = await this.getPatients();
-    const updated = list.map((p) => (p.id === id ? { ...p, ...data } : p));
-    this.savePatientsLocal(updated);
-    return { id, ...data };
+    try {
+      const res = await fetch(`${BASE_URL}/patients/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        const current = await this.getPatients();
+        this.savePatientsLocal(current.map((p) => (p.id === id ? updated : p)));
+        return updated;
+      } else {
+        console.error("Gagal update pasien di DB:", res.status);
+        alert(`Gagal memperbarui data pasien di Database (HTTP ${res.status}).`);
+        return null;
+      }
+    } catch (e) {
+      console.error("Error updating patient in DB:", e);
+      alert("Terjadi kesalahan koneksi saat memperbarui pasien.");
+      return null;
+    }
   },
   async deletePatient(id) {
-    const list = await this.getPatients();
-    const updated = list.filter((p) => p.id !== id);
-    this.savePatientsLocal(updated);
+    try {
+      const res = await fetch(`${BASE_URL}/patients/${id}`, {
+        method: "DELETE",
+        headers: { "Accept": "application/json" }
+      });
+      if (res.ok) {
+        const current = await this.getPatients();
+        this.savePatientsLocal(current.filter((p) => p.id !== id));
+        return true;
+      } else {
+        console.error("Gagal hapus pasien di DB:", res.status);
+        alert(`Gagal menghapus akun pasien dari Database (HTTP ${res.status}).`);
+        return false;
+      }
+    } catch (e) {
+      console.error("Error deleting patient in DB:", e);
+      return false;
+    }
   },
 
   // Categories
@@ -143,9 +206,11 @@ export const apiService = {
           localStorage.setItem("clinic_categories", JSON.stringify(data));
           return data;
         }
+      } else {
+        console.error("Fetch categories failed with status:", res.status);
       }
     } catch (e) {
-      console.warn("MySQL API fetch error:", e);
+      console.error("Categories fetch error:", e);
     }
     const local = localStorage.getItem("clinic_categories");
     return local ? JSON.parse(local) : (fallback || []);
@@ -161,8 +226,12 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      const errText = await res.text();
+      console.error("Error creating category:", res.status, errText);
+      alert(`Gagal menyimpan kategori ke Database (HTTP ${res.status}). Periksa koneksi database MySQL.`);
     } catch (e) {
       console.error("Error creating category:", e);
+      alert("Koneksi gagal saat menyimpan kategori ke database.");
     }
     return null;
   },
@@ -174,6 +243,7 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      alert(`Gagal memperbarui kategori di Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error updating category:", e);
     }
@@ -181,10 +251,13 @@ export const apiService = {
   },
   async deleteCategory(id) {
     try {
-      await fetch(`${BASE_URL}/categories/${id}`, { method: "DELETE" });
+      const res = await fetch(`${BASE_URL}/categories/${id}`, { method: "DELETE" });
+      if (res.ok) return true;
+      alert(`Gagal menghapus kategori dari Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error deleting category:", e);
     }
+    return false;
   },
 
   // Doctors
@@ -197,9 +270,11 @@ export const apiService = {
           localStorage.setItem("clinic_doctors", JSON.stringify(data));
           return data;
         }
+      } else {
+        console.error("Fetch doctors failed with status:", res.status);
       }
     } catch (e) {
-      console.warn("MySQL API fetch error:", e);
+      console.error("Doctors fetch error:", e);
     }
     const local = localStorage.getItem("clinic_doctors");
     return local ? JSON.parse(local) : (fallback || []);
@@ -215,8 +290,12 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      const errText = await res.text();
+      console.error("Error creating doctor:", res.status, errText);
+      alert(`Gagal menyimpan dokter ke Database (HTTP ${res.status}). Periksa koneksi database MySQL.`);
     } catch (e) {
       console.error("Error creating doctor:", e);
+      alert("Koneksi gagal saat menyimpan data dokter ke database.");
     }
     return null;
   },
@@ -228,6 +307,7 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      alert(`Gagal memperbarui data dokter di Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error updating doctor:", e);
     }
@@ -235,10 +315,13 @@ export const apiService = {
   },
   async deleteDoctor(id) {
     try {
-      await fetch(`${BASE_URL}/doctors/${id}`, { method: "DELETE" });
+      const res = await fetch(`${BASE_URL}/doctors/${id}`, { method: "DELETE" });
+      if (res.ok) return true;
+      alert(`Gagal menghapus dokter dari Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error deleting doctor:", e);
     }
+    return false;
   },
 
   // Queues
@@ -251,9 +334,11 @@ export const apiService = {
           localStorage.setItem("clinic_queues", JSON.stringify(data));
           return data;
         }
+      } else {
+        console.error("Fetch queues failed with status:", res.status);
       }
     } catch (e) {
-      console.warn("MySQL API fetch error:", e);
+      console.error("Queues fetch error:", e);
     }
     const local = localStorage.getItem("clinic_queues");
     if (local) {
@@ -264,8 +349,7 @@ export const apiService = {
         }
       } catch (e) {}
     }
-    localStorage.setItem("clinic_queues", JSON.stringify(DEFAULT_QUEUES));
-    return DEFAULT_QUEUES;
+    return fallback || DEFAULT_QUEUES;
   },
   saveQueuesLocal(data) {
     localStorage.setItem("clinic_queues", JSON.stringify(data));
@@ -278,8 +362,12 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      const errText = await res.text();
+      console.error("Error creating queue:", res.status, errText);
+      alert(`Gagal menyimpan antrean ke Database (HTTP ${res.status}). Periksa koneksi database MySQL.`);
     } catch (e) {
       console.error("Error creating queue:", e);
+      alert("Koneksi gagal saat mendaftar antrean ke database.");
     }
     return null;
   },
@@ -291,6 +379,7 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      alert(`Gagal memperbarui status antrean di Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error updating queue:", e);
     }
@@ -298,10 +387,13 @@ export const apiService = {
   },
   async deleteQueue(id) {
     try {
-      await fetch(`${BASE_URL}/queues/${id}`, { method: "DELETE" });
+      const res = await fetch(`${BASE_URL}/queues/${id}`, { method: "DELETE" });
+      if (res.ok) return true;
+      alert(`Gagal menghapus antrean dari Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error deleting queue:", e);
     }
+    return false;
   },
 
   // News
@@ -314,9 +406,11 @@ export const apiService = {
           localStorage.setItem("clinic_news", JSON.stringify(data));
           return data;
         }
+      } else {
+        console.error("Fetch news failed with status:", res.status);
       }
     } catch (e) {
-      console.warn("MySQL API fetch error:", e);
+      console.error("News fetch error:", e);
     }
     const local = localStorage.getItem("clinic_news");
     if (local) {
@@ -338,8 +432,12 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      const errText = await res.text();
+      console.error("Error creating news:", res.status, errText);
+      alert(`Gagal menyimpan artikel ke Database (HTTP ${res.status}). Periksa koneksi database MySQL.`);
     } catch (e) {
       console.error("Error creating news:", e);
+      alert("Koneksi gagal saat menyimpan artikel ke database.");
     }
     return null;
   },
@@ -351,6 +449,7 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      alert(`Gagal memperbarui artikel di Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error updating news:", e);
     }
@@ -358,10 +457,13 @@ export const apiService = {
   },
   async deleteNews(id) {
     try {
-      await fetch(`${BASE_URL}/news/${id}`, { method: "DELETE" });
+      const res = await fetch(`${BASE_URL}/news/${id}`, { method: "DELETE" });
+      if (res.ok) return true;
+      alert(`Gagal menghapus artikel dari Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error deleting news:", e);
     }
+    return false;
   },
 
   // FAQs
@@ -374,9 +476,11 @@ export const apiService = {
           localStorage.setItem("clinic_faqs", JSON.stringify(data));
           return data;
         }
+      } else {
+        console.error("Fetch faqs failed with status:", res.status);
       }
     } catch (e) {
-      console.warn("MySQL API fetch error:", e);
+      console.error("FAQs fetch error:", e);
     }
     const local = localStorage.getItem("clinic_faqs");
     if (local) {
@@ -398,8 +502,12 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      const errText = await res.text();
+      console.error("Error creating faq:", res.status, errText);
+      alert(`Gagal menyimpan FAQ ke Database (HTTP ${res.status}). Periksa koneksi database MySQL.`);
     } catch (e) {
       console.error("Error creating faq:", e);
+      alert("Koneksi gagal saat menyimpan FAQ ke database.");
     }
     return null;
   },
@@ -411,6 +519,7 @@ export const apiService = {
         body: JSON.stringify(data)
       });
       if (res.ok) return await res.json();
+      alert(`Gagal memperbarui FAQ di Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error updating faq:", e);
     }
@@ -418,9 +527,12 @@ export const apiService = {
   },
   async deleteFaq(id) {
     try {
-      await fetch(`${BASE_URL}/faqs/${id}`, { method: "DELETE" });
+      const res = await fetch(`${BASE_URL}/faqs/${id}`, { method: "DELETE" });
+      if (res.ok) return true;
+      alert(`Gagal menghapus FAQ dari Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error deleting faq:", e);
     }
+    return false;
   }
 };

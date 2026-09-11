@@ -326,11 +326,11 @@ export default function AdminDashboard() {
       }
     } else {
       const payload = {
-        id: Date.now(),
         ...newPatient
       };
       const created = await apiService.createPatient(payload);
-      const updated = [created || payload, ...patients];
+      if (!created) return;
+      const updated = [created, ...patients];
       setPatients(updated);
       apiService.savePatientsLocal(updated);
     }
@@ -449,12 +449,8 @@ export default function AdminDashboard() {
         status: "Menunggu Antrean"
       };
       const created = await apiService.createQueue(payload);
-      const item = created || {
-        id: `Q-00${queues.length + 1}`,
-        queueNumber: `A-0${Math.floor(Math.random() * 80) + 20}`,
-        ...payload
-      };
-      const updated = [...queues, item];
+      if (!created) return;
+      const updated = [...queues, created];
       setQueues(updated);
       apiService.saveQueuesLocal(updated);
     }
@@ -566,19 +562,8 @@ export default function AdminDashboard() {
       setEditingDoctorName(null);
     } else {
       const created = await apiService.createDoctor(payload);
-      const docItem = created || {
-        ...payload,
-        schedules: [
-          {
-            days: daysList,
-            displayDays: displayDays,
-            startTime: startTime,
-            endTime: endTime,
-            services: servicesList
-          }
-        ]
-      };
-      const updated = [...doctors, docItem];
+      if (!created) return;
+      const updated = [...doctors, created];
       setDoctors(updated);
       apiService.saveDoctorsLocal(updated);
     }
@@ -649,8 +634,8 @@ export default function AdminDashboard() {
       setEditingCategoryTitle(null);
     } else {
       const created = await apiService.createCategory(payload);
-      const item = created || payload;
-      const updated = [...categories, item];
+      if (!created) return;
+      const updated = [...categories, created];
       setCategories(updated);
       apiService.saveCategoriesLocal(updated);
     }
@@ -696,10 +681,7 @@ export default function AdminDashboard() {
     }
 
     if (!result) {
-      result = {
-        id: selectedArticleForEdit && selectedArticleForEdit.id ? selectedArticleForEdit.id : Date.now(),
-        ...payload
-      };
+      return;
     }
 
     setNews((prevNews) => {
@@ -763,11 +745,8 @@ export default function AdminDashboard() {
       setEditingFaqId(null);
     } else {
       const created = await apiService.createFaq(payload);
-      const item = created || {
-        id: Date.now(),
-        ...payload
-      };
-      const updated = [...faqs, item];
+      if (!created) return;
+      const updated = [...faqs, created];
       setFaqs(updated);
       apiService.saveFaqsLocal(updated);
     }

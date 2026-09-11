@@ -340,17 +340,15 @@ export default function UserDashboard() {
     };
 
     const created = await apiService.createQueue(payload);
-    const createdQueue = created || {
-      id: Date.now(),
-      queueNumber: `A-0${Math.floor(Math.random() * 80) + 20}`,
-      ...payload
-    };
-
-    if (currentUser?.username) {
-      localStorage.setItem("user_active_queue_" + currentUser.username, JSON.stringify(createdQueue));
+    if (!created) {
+      return;
     }
 
-    setActiveQueue(createdQueue);
+    if (currentUser?.username) {
+      localStorage.setItem("user_active_queue_" + currentUser.username, JSON.stringify(created));
+    }
+
+    setActiveQueue(created);
     setNewQueueData({ peruntukan: "Untuk Sendiri", namaAnak: "", usiaAnak: "", keluhan: "", tanggalLayanan: "", kategoriLayanan: "", layanan: "", dokter: "" });
   };
 

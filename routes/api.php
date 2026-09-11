@@ -6,9 +6,11 @@ use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\QueueController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\PatientController;
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('doctors', DoctorController::class);
 Route::apiResource('queues', QueueController::class);
 Route::apiResource('news', NewsController::class);
 Route::apiResource('faqs', FaqController::class);
+Route::apiResource('patients', PatientController::class);
