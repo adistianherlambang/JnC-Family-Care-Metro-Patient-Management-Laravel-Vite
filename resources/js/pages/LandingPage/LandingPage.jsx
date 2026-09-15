@@ -8,14 +8,14 @@ import NewsSection from "../../components/NewsSection/NewsSection";
 
 import { apiService } from "../../services/apiService";
 
-  const getInitial = (key, fallback = []) => {
-    try {
-      const saved = localStorage.getItem(key);
-      return saved ? JSON.parse(saved) : fallback;
-    } catch (e) {
-      return fallback;
-    }
-  };
+const getInitial = (key, fallback = []) => {
+  try {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+};
 
 export default function LandingPage() {
   const [isTab, setIsTab] = useState("");
@@ -92,7 +92,8 @@ export default function LandingPage() {
               </div>
             </div>
             <div className={styles.whyImgWrapper}>
-              <div className={styles.whyImg}></div>
+              {/* <div className={styles.whyImg}></div> */}
+              <img src="/img/landingPage/kotak.jpeg" alt="img" className={styles.whyImg} />
             </div>
           </div>
 
