@@ -8,28 +8,34 @@ use Illuminate\Http\Request;
 
 class DoctorController extends Controller
 {
+    private function formatDoctor(Practitioner $doc)
+    {
+        return [
+            'id' => $doc->id,
+            'doctor' => $doc->doctor,
+            'role' => $doc->role,
+            'image' => $doc->image,
+            'startDay' => $doc->start_day,
+            'endDay' => $doc->end_day,
+            'startTime' => $doc->start_time,
+            'endTime' => $doc->end_time,
+            'services' => $doc->services ?? ['Konsultasi Umum'],
+            'schedules' => [
+                [
+                    'days' => [$doc->start_day, $doc->end_day],
+                    'displayDays' => $doc->start_day === $doc->end_day ? $doc->start_day : "{$doc->start_day} - {$doc->end_day}",
+                    'startTime' => $doc->start_time,
+                    'endTime' => $doc->end_time,
+                    'services' => $doc->services ?? ['Konsultasi Umum'],
+                ]
+            ]
+        ];
+    }
+
     public function index()
     {
         $doctors = Practitioner::all()->map(function ($doc) {
-            return [
-                'id' => $doc->id,
-                'doctor' => $doc->doctor,
-                'role' => $doc->role,
-                'image' => $doc->image,
-                'startDay' => $doc->start_day,
-                'endDay' => $doc->end_day,
-                'startTime' => $doc->start_time,
-                'endTime' => $doc->end_time,
-                'schedules' => [
-                    [
-                        'days' => [$doc->start_day, $doc->end_day],
-                        'displayDays' => $doc->start_day === $doc->end_day ? $doc->start_day : "{$doc->start_day} - {$doc->end_day}",
-                        'startTime' => $doc->start_time,
-                        'endTime' => $doc->end_time,
-                        'services' => $doc->services ?? ['Konsultasi Umum'],
-                    ]
-                ]
-            ];
+            return $this->formatDoctor($doc);
         });
 
         return response()->json($doctors);
@@ -59,7 +65,7 @@ class DoctorController extends Controller
             'services' => $validated['services'] ?? ['Konsultasi Umum'],
         ]);
 
-        return response()->json($doctor, 201);
+        return response()->json($this->formatDoctor($doctor), 201);
     }
 
     public function update(Request $request, $id)
@@ -88,7 +94,7 @@ class DoctorController extends Controller
             'services' => $validated['services'] ?? $doctor->services,
         ]);
 
-        return response()->json($doctor);
+        return response()->json($this->formatDoctor($doctor));
     }
 
     public function destroy($id)

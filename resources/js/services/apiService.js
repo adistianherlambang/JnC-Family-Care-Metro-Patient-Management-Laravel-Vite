@@ -261,14 +261,41 @@ export const apiService = {
   },
 
   // Doctors
+  normalizeDoctor(doc) {
+    if (!doc || typeof doc !== "object") return doc;
+    if (Array.isArray(doc.schedules) && doc.schedules.length > 0) return doc;
+    const startDay = doc.startDay || doc.start_day || "Senin";
+    const endDay = doc.endDay || doc.end_day || "Jumat";
+    const startTime = doc.startTime || doc.start_time || "08:00";
+    const endTime = doc.endTime || doc.end_time || "14:00";
+    const services = Array.isArray(doc.services) ? doc.services : ["Konsultasi Umum"];
+    return {
+      ...doc,
+      startDay,
+      endDay,
+      startTime,
+      endTime,
+      services,
+      schedules: [
+        {
+          days: [startDay, endDay],
+          displayDays: startDay === endDay ? startDay : `${startDay} - ${endDay}`,
+          startTime,
+          endTime,
+          services
+        }
+      ]
+    };
+  },
   async getDoctors(fallback) {
     try {
       const res = await fetch(`${BASE_URL}/doctors`);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          localStorage.setItem("clinic_doctors", JSON.stringify(data));
-          return data;
+          const normalized = data.map((d) => this.normalizeDoctor(d));
+          localStorage.setItem("clinic_doctors", JSON.stringify(normalized));
+          return normalized;
         }
       } else {
         console.error("Fetch doctors failed with status:", res.status);
@@ -277,10 +304,12 @@ export const apiService = {
       console.error("Doctors fetch error:", e);
     }
     const local = localStorage.getItem("clinic_doctors");
-    return local ? JSON.parse(local) : (fallback || []);
+    const raw = local ? JSON.parse(local) : (fallback || []);
+    return Array.isArray(raw) ? raw.map((d) => this.normalizeDoctor(d)) : [];
   },
   saveDoctorsLocal(data) {
-    localStorage.setItem("clinic_doctors", JSON.stringify(data));
+    const normalized = Array.isArray(data) ? data.map((d) => this.normalizeDoctor(d)) : [];
+    localStorage.setItem("clinic_doctors", JSON.stringify(normalized));
   },
   async createDoctor(data) {
     try {
@@ -289,7 +318,10 @@ export const apiService = {
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
-      if (res.ok) return await res.json();
+      if (res.ok) {
+        const created = await res.json();
+        return this.normalizeDoctor(created);
+      }
       const errText = await res.text();
       console.error("Error creating doctor:", res.status, errText);
       alert(`Gagal menyimpan dokter ke Database (HTTP ${res.status}). Periksa koneksi database MySQL.`);
@@ -306,7 +338,10 @@ export const apiService = {
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify(data)
       });
-      if (res.ok) return await res.json();
+      if (res.ok) {
+        const updated = await res.json();
+        return this.normalizeDoctor(updated);
+      }
       alert(`Gagal memperbarui data dokter di Database (HTTP ${res.status}).`);
     } catch (e) {
       console.error("Error updating doctor:", e);

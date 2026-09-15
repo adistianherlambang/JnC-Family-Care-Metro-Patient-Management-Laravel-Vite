@@ -69,6 +69,37 @@ export default function AdminDashboard() {
   const [activeMenu, setActiveMenu] = useState("overview"); // 'overview', 'antrean', 'dokter', 'poli', 'artikel', 'faq'
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Helper to normalize doctor schedule structure
+  const normalizeDoctors = (docsList) => {
+    if (!Array.isArray(docsList)) return [];
+    return docsList.map((d) => {
+      if (!d || typeof d !== "object") return d;
+      if (Array.isArray(d.schedules) && d.schedules.length > 0) return d;
+      const startDay = d.startDay || d.start_day || "Senin";
+      const endDay = d.endDay || d.end_day || "Jumat";
+      const startTime = d.startTime || d.start_time || "08:00";
+      const endTime = d.endTime || d.end_time || "14:00";
+      const services = Array.isArray(d.services) ? d.services : ["Konsultasi Umum"];
+      return {
+        ...d,
+        startDay,
+        endDay,
+        startTime,
+        endTime,
+        services,
+        schedules: [
+          {
+            days: [startDay, endDay],
+            displayDays: startDay === endDay ? startDay : `${startDay} - ${endDay}`,
+            startTime,
+            endTime,
+            services,
+          }
+        ]
+      };
+    });
+  };
+
   // Helper to read initial state safely from localStorage
   const getInitial = (key, fallback = []) => {
     try {
@@ -81,7 +112,7 @@ export default function AdminDashboard() {
 
   // Master Data State (Initialized from cached localStorage for instant display)
   const [queues, setQueues] = useState(() => getInitial("clinic_queues"));
-  const [doctors, setDoctors] = useState(() => getInitial("clinic_doctors"));
+  const [doctors, setDoctors] = useState(() => normalizeDoctors(getInitial("clinic_doctors")));
   const [categories, setCategories] = useState(() => getInitial("clinic_categories"));
   const [news, setNews] = useState(() => getInitial("clinic_news"));
   const [faqs, setFaqs] = useState(() => getInitial("clinic_faqs"));
@@ -127,7 +158,7 @@ export default function AdminDashboard() {
           ]);
           if (!isCurrent) return;
           if (Array.isArray(cats) && cats.length) setCategories(cats);
-          if (Array.isArray(docs) && docs.length) setDoctors(docs);
+          if (Array.isArray(docs) && docs.length) setDoctors(normalizeDoctors(docs));
           if (Array.isArray(qList) && qList.length) setQueues(qList);
           if (Array.isArray(nList) && nList.length) setNews(nList);
           if (Array.isArray(fList) && fList.length) setFaqs(fList);
@@ -140,7 +171,7 @@ export default function AdminDashboard() {
           ]);
           if (!isCurrent) return;
           if (Array.isArray(qList) && qList.length) setQueues(qList);
-          if (Array.isArray(docs) && docs.length) setDoctors(docs);
+          if (Array.isArray(docs) && docs.length) setDoctors(normalizeDoctors(docs));
           if (Array.isArray(cats) && cats.length) setCategories(cats);
         } else if (tab === "dokter") {
           const [docs, cats] = await Promise.all([
@@ -148,7 +179,7 @@ export default function AdminDashboard() {
             apiService.getCategories(),
           ]);
           if (!isCurrent) return;
-          if (Array.isArray(docs) && docs.length) setDoctors(docs);
+          if (Array.isArray(docs) && docs.length) setDoctors(normalizeDoctors(docs));
           if (Array.isArray(cats) && cats.length) setCategories(cats);
         } else if (tab === "pasien") {
           const pList = await apiService.getPatients();
@@ -478,7 +509,7 @@ export default function AdminDashboard() {
     setEditingDoctorName(doc.doctor);
     const firstSchedule = doc.schedules?.[0] || {};
     const days = firstSchedule.days || ["Senin", "Jumat"];
-    const servicesList = Array.from(new Set(doc.schedules.flatMap((s) => s.services)));
+    const servicesList = Array.from(new Set((doc.schedules || []).flatMap((s) => s.services || [])));
 
     setNewDoctor({
       doctor: doc.doctor,
@@ -562,7 +593,27 @@ export default function AdminDashboard() {
     } else {
       const created = await apiService.createDoctor(payload);
       if (!created) return;
-      const updated = [...doctors, created];
+      const normalizedCreated = {
+        ...created,
+        doctor: created.doctor || payload.doctor,
+        role: created.role || payload.role,
+        image: created.image || payload.image,
+        startDay: created.startDay || payload.startDay,
+        endDay: created.endDay || payload.endDay,
+        startTime: created.startTime || payload.startTime,
+        endTime: created.endTime || payload.endTime,
+        services: created.services || servicesList,
+        schedules: created.schedules && created.schedules.length > 0 ? created.schedules : [
+          {
+            days: daysList,
+            displayDays: displayDays,
+            startTime: startTime,
+            endTime: endTime,
+            services: servicesList
+          }
+        ]
+      };
+      const updated = [...doctors, normalizedCreated];
       setDoctors(updated);
       apiService.saveDoctorsLocal(updated);
     }
@@ -824,8 +875,8 @@ export default function AdminDashboard() {
 
   const allClinicServices = Array.from(new Set(categories.flatMap((c) => c.list)));
 
-  const availableWalkinDoctors = doctors.filter((d) =>
-    d.schedules.some((s) => !newQueue.service || s.services.includes(newQueue.service))
+  const availableWalkinDoctors = (doctors || []).filter((d) =>
+    (d?.schedules || []).some((s) => !newQueue.service || (s.services || []).includes(newQueue.service))
   );
   const doctorOptions = availableWalkinDoctors.map((d) => d.doctor);
 
@@ -1258,14 +1309,14 @@ export default function AdminDashboard() {
                           <td><span className={styles.codeBadge}>{docUsername}</span></td>
                           <td><PasswordCell password={docPassword} /></td>
                           <td>
-                            {doc.schedules.map((s, i) => (
+                            {(doc.schedules || []).map((s, i) => (
                               <div key={i} style={{ fontSize: "13px", fontWeight: "500", color: "var(--primary)" }}>
-                                {s.displayDays || (s.days.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days[0])} ({s.startTime} - {s.endTime})
+                                {s.displayDays || (s.days?.length > 1 ? `${s.days[0]} - ${s.days[s.days.length - 1]}` : s.days?.[0] || "-")} ({s.startTime || "-"} - {s.endTime || "-"})
                               </div>
                             ))}
                           </td>
                           <td style={{ fontSize: "13px" }}>
-                            {doc.schedules.flatMap((s) => s.services).slice(0, 3).join(", ")}
+                            {(doc.schedules || []).flatMap((s) => s.services || []).slice(0, 3).join(", ")}
                           </td>
                           <td>
                             <Table.ActionCell>
