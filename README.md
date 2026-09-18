@@ -1,116 +1,335 @@
 # JnC Family Care Metro - Sistem Informasi Pelayanan Pasien (Fokus Ibu & Anak)
 
-Sistem Informasi Pelayanan Pasien Berbasis Website terpadu yang berfokus pada **Pelayanan Ibu dan Anak** (Klinik Meika Healthcare / JnC Family Care Metro). Sistem ini memfasilitasi pendaftaran pasien secara online maupun offline, pengelolaan slot antrean digital secara real-time, manajemen jadwal praktisi medis (dokter, bidan, terapis), manajemen kategori pelayanan resmi, serta modul administrasi klinik.
+Sistem Informasi Pelayanan Pasien Berbasis Web terintegrasi yang dirancang khusus untuk **Pelayanan Kesehatan Ibu dan Anak** (Tempat Praktik Mandiri Bidan / TPMB & Klinik Meika Healthcare / JnC Family Care Metro). Platform ini memfasilitasi pendaftaran pasien mandiri secara online (terinspirasi alur cerdas Mobile JKN), pengelolaan slot antrean digital real-time, manajemen jadwal praktik bidan dan dokter, katalog kategori pelayanan terstandarisasi, serta portal administrasi dan rekam medis ringkas terpadu.
 
 ---
 
-## 1. Overview
+## 1. Overview Sistem
 
-Sistem Informasi Pelayanan Pasien ini dikembangkan untuk mentransformasi operasional pelayanan kesehatan ibu dan anak menjadi modern, digital, dan efisien. Terinspirasi dari alur antrean Mobile JKN, platform ini memungkinkan pasien mendaftar dan memilih jam pelayanan dari rumah, serta mempermudah petugas klinik dan tenaga medis dalam mengelola pasien harian.
+Sistem ini mentransformasi alur pendaftaran dan manajemen antrean klinik konvensional menjadi ekosistem digital yang modern, efisien, dan transparan. Melalui platform ini, pasien dan keluarga dapat mendaftar dari rumah, memilih praktisi medis sesuai preferensi dan jam aktif, memantau antrean harian secara langsung, serta mengakses edukasi kesehatan ibu dan anak.
 
-### Tujuan Utama Sistem:
-- **Pendaftaran Mandiri Pasien**: Memudahkan pasien mendaftar online, memilih kategori pelayanan, memilih praktisi, dan mendapatkan nomor antrean digital.
-- **Efisiensi Operasional Klinik**: Terintegrasi dari pendaftaran, pengelolaan jadwal praktisi, pemeriksaan/treatment, hingga pelaporan data antrean.
-- **Pengalaman Pengguna Responsif (Mobile-First)**: Didesain khusus untuk smartphone dan desktop dengan antarmuka yang modern, cepat, intuitif, dan nyaman dipandang menggunakan warna identitas utama `#D896ED`.
-
----
-
-## 2. Fitur Utama dan Keunggulan Sistem
-
-### A. Fitur Pasien & Publik
-- **Registrasi Online & Tiket Digital**: Pasien dapat melakukan pendaftaran online dan memperoleh tiket antrean digital dengan kode urut otomatis (misal: `A-014`).
-- **Pencarian & Filtering Realtime**: Pencarian praktisi medis, jadwal aktif, dan jenis layanan secara langsung tanpa reload halaman.
-- **Kategori Pelayanan Spesialis Ibu & Anak**: Mendukung 4 kategori pelayanan resmi klinik.
-- **Edukasi & FAQ**: Pusat artikel/berita kesehatan ibu & anak serta tanya jawab umum seputar pelayanan faskes.
-
-### B. Fitur Petugas & Administrasi (Admin Dashboard)
-- **Manajemen Antrean (Queue Management)**: Melacak status antrean (`Menunggu Antrean`, `Dipanggil`, `Selesai`, `Dibatalkan`), menambah pendaftaran walk-in, dan mengedit data pasien.
-- **Manajemen Kategori & Layanan**: Mengelola master data kategori pelayanan dan daftar layanan turunan.
-- **Manajemen Praktisi Medis**: Pengelolaan data dokter, bidan, dan terapis beserta spesialisasi, foto, serta jam & hari praktik.
-- **Manajemen Konten (Blog Editor & FAQ)**: Pembuatan dan pembaruan berita/artikel kesehatan serta daftar pertanyaan yang sering diajukan.
-
-### C. Keunggulan Sistem
-- **Mobile-First Experience**: Dirancang responsif dengan standar visual modern berbasis Tailwind CSS & React.
-- **Single Page Application (SPA)**: Integrasi seamless antara Laravel API dan React JS via Vite untuk performa super cepat.
-- **Multi-Deployment Ready**: Dilengkapi konfigurasi Docker (PHP Apache, MariaDB, phpMyAdmin) dan siap dijalankan pada lingkungan lokal maupun server produksi.
+### Nilai Utama & Tujuan Sistem
+- **Pendaftaran Mandiri Pasien (Mobile-First Experience)**: Pasien dapat memilih kategori, jenis layanan, praktisi medis, dan waktu kunjungan secara transparan, serta langsung mengunduh tiket antrean digital dengan kode urut otomatis (misal `A-001`, `B-001`).
+- **Penyaringan Praktisi Cerdas (Smart Practitioner Matching)**: Menghubungkan layanan yang dipilih dengan kompetensi praktisi secara fleksibel serta memverifikasi ketersediaan jadwal hari dan jam praktik tanpa membingungkan pasien.
+- **Dukungan Multi-Role Terpadu**: Menyediakan antarmuka khusus untuk **Pasien/Pengunjung**, **Bidan/Praktisi Medis** (pemanggilan antrean & rekam catatan pelayanan), dan **Administrator Klinik** (manajemen master data, jadwal, dan audit operasional).
+- **Arsitektur Hibrida Tangguh (High Resilience)**: Mengombinasikan REST API Laravel berbasis database MySQL/MariaDB dengan sinkronisasi reaktif `localStorage` di browser untuk memastikan sistem tetap responsif meski dalam kondisi jaringan lambat atau server hosting mengalami perawatan berkala.
+- **Dukungan Deployment Fleksibel**: Siap dijalankan dengan **Docker Compose** (lokal), manual **PHP + Vite**, maupun arsitektur split-root aman untuk **cPanel Shared Hosting**.
 
 ---
 
-## 3. Struktur Direktori Blueprint
+## 2. Struktur Blueprint Direktori Proyek
 
-Berikut adalah gambaran struktur direktori proyek yang mengombinasikan backend Laravel 11/13 dan frontend React Vite:
+Sistem ini memiliki dua blueprint struktur: **Lingkungan Pengembangan Monorepo (`code/project/`)** dan **Arsitektur Deployment Produksi cPanel (`code/cpanel/`)**.
 
-```
-project/
-├── .docker/                         # Konfigurasi lingkungan Docker
-│   └── vhost.conf                   # VirtualHost Apache
-├── app/                             # Core Logic Backend Laravel
+### A. Blueprint Direktori Pengembangan Lokal (`code/project/`)
+
+```text
+code/project/
+├── .docker/                                 # Konfigurasi Apache VirtualHost untuk Docker
+│   └── vhost.conf                           # Konfigurasi DocumentRoot Apache ke /var/www/html/public
+├── app/                                     # Core Backend Laravel 11/13
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   └── Api/                 # API Resource Controllers
-│   │   │       ├── CategoryController.php
-│   │   │       ├── DoctorController.php
-│   │   │       ├── FaqController.php
-│   │   │       ├── NewsController.php
-│   │   │       └── QueueController.php
-│   │   └── Middleware/
-│   └── Models/                      # Eloquent ORM Models
-│       ├── Appointment.php
-│       ├── Faq.php
-│       ├── News.php
-│       ├── Practitioner.php
-│       ├── Service.php
-│       ├── ServiceCategory.php
-│       └── User.php
-├── bootstrap/                       # Bootstrapping Aplikasi Laravel
-├── config/                          # Konfigurasi Aplikasi & Framework
-├── database/                        # Database Schema & Data Initializer
-│   ├── factories/                   # Model Factories
-│   ├── migrations/                  # Database Migrations
+│   │   │   └── Api/                         # Controller REST API JSON
+│   │   │       ├── CategoryController.php   # CRUD Kategori & Relasi Layanan
+│   │   │       ├── DoctorController.php     # CRUD Praktisi Medis & Jadwal (getDaysRange)
+│   │   │       ├── FaqController.php        # CRUD Pertanyaan Umum (FAQ)
+│   │   │       ├── NewsController.php       # CRUD Artikel Edukasi Kesehatan
+│   │   │       ├── PatientController.php    # Manajemen Data Pasien Terdaftar
+│   │   │       └── QueueController.php      # Penerbitan Tiket Antrean & Update Status
+│   │   └── Middleware/                      # HTTP Middlewares
+│   └── Models/                              # Eloquent ORM Data Models
+│       ├── Appointment.php                  # Model Antrean / Kunjungan Pasien
+│       ├── Faq.php                          # Model FAQ Klinik
+│       ├── News.php                         # Model Berita / Artikel Edukasi
+│       ├── Patient.php                      # Model Data Induk Pasien
+│       ├── Practitioner.php                 # Model Bidan & Dokter
+│       ├── Service.php                      # Model Layanan Medis
+│       ├── ServiceCategory.php              # Model 4 Kategori Pelayanan
+│       └── User.php                         # Model Akun Pengguna / Admin
+├── bootstrap/                               # File Bootstrapping Laravel & Container Dependency
+│   └── app.php                              # Inisialisasi Framework, Routing API & Web
+├── config/                                  # Konfigurasi Database, App, Cache, Logging
+├── database/                                # Database Migrations, Factories, & Seeders
+│   ├── migrations/
 │   │   ├── 0001_01_01_000000_create_users_table.php
-│   │   └── 2026_08_11_000001_create_clinic_tables.php
-│   └── seeders/                     # Seeder Data Bawaan
-│       └── DatabaseSeeder.php
-├── public/                          # Public Assets & Entrypoint (index.php)
-├── resources/                       # Frontend Source Files
+│   │   └── 2026_08_11_000001_create_clinic_tables.php  # Schema seluruh tabel klinik
+│   └── seeders/
+│       └── DatabaseSeeder.php               # Seeder 4 Kategori, Layanan, Bidan, Dokter, FAQ, & Artikel
+├── public/                                  # Web Root Publik Lokal
+│   ├── index.php                            # Entry point PHP HTTP Kernel
+│   └── robots.txt
+├── resources/                               # Frontend Source Code (React 18 + Vite)
 │   ├── css/
-│   │   └── index.css                # Custom CSS & Tailwind Imports
-│   ├── js/                          # React Application Architecture
-│   │   ├── components/              # Reusable React UI Components
-│   │   │   ├── BlogEditor/
-│   │   │   ├── Button/
-│   │   │   ├── Input/
-│   │   │   ├── Nav/
-│   │   │   └── PageWrapper/
-│   │   ├── pages/                   # SPA Pages / Views
-│   │   │   ├── AdminDashboard/      # Portal Admin & Manajemen
-│   │   │   ├── LandingPage/         # Landing Page Utama Klinik
-│   │   │   ├── Login/               # Halaman Autentikasi
-│   │   │   ├── NewAppointment/      # Form Registrasi Online Pasien
-│   │   │   └── UserDashboard/       # Portal Pasien & Riwayat Antrean
-│   │   ├── services/                # API Client Service Helpers
-│   │   ├── App.jsx                  # Main React Routing
-│   │   └── main.jsx                 # React Entry Point
+│   │   └── index.css                        # Design System, CSS Variables, & Tailwind Directives
+│   ├── js/
+│   │   ├── components/                      # UI Components Reusable
+│   │   │   ├── BlogEditor/                  # Editor Konten Artikel Edukasi
+│   │   │   ├── Button/                      # Tombol Interaktif dengan Variasi Warna
+│   │   │   ├── DashboardLayout/             # Layout Dashboard dengan Sidebar Dinamis
+│   │   │   ├── Input/                       # InputText, InputSelect, InputImage
+│   │   │   ├── Loading/                     # Skeleton & Spinner Loading
+│   │   │   ├── Modal/                       # Dialog & Pop-up Modal Interaktif
+│   │   │   ├── Nav/                         # Navbar Navigasi Pasien & Publik
+│   │   │   ├── NewsSection/                 # Komponen Kartu Edukasi & Berita
+│   │   │   ├── PageWrapper/                 # Wrapper Halaman Konsisten
+│   │   │   ├── Table/                       # Komponen Tabel Responsif & TableBadge
+│   │   │   └── Title/                       # Tipografi Header Halaman
+│   │   ├── pages/                           # Tampilan Halaman Utama (SPA Pages)
+│   │   │   ├── AdminDashboard/              # Portal Manajemen Administrator Klinik
+│   │   │   ├── ArtikelPage/                 # Portal Pembaca Artikel Edukasi
+│   │   │   ├── BidanDashboard/              # Portal Khusus Bidan (Pemanggilan & Catatan)
+│   │   │   ├── CariDokter/                  # Pencarian & Direktori Praktisi Medis
+│   │   │   ├── Fasilitas/                   # Galeri & Fasilitas Penunjang Medis
+│   │   │   ├── LandingPage/                 # Halaman Utama Beranda Klinik
+│   │   │   ├── Login/                       # Autentikasi Pengguna (Admin & Bidan)
+│   │   │   ├── NewAppointment/              # Formulir Pendaftaran Mandiri Pasien Online
+│   │   │   ├── TentangKami/                 # Profil Faskes, Visi, Misi, & Legalitas
+│   │   │   └── UserDashboard/               # Portal Pasien: Cek Antrean Real-time & Riwayat
+│   │   ├── services/
+│   │   │   └── apiService.js                # API Client Layer (Axios, Fallback Data, LocalStorage Sync)
+│   │   ├── App.jsx                          # Deklarasi Routing SPA (React Router DOM)
+│   │   └── main.jsx                         # React DOM Mount Entrypoint
 │   └── views/
-│       └── app.blade.php            # Root Blade Shell for React SPA
+│       └── app.blade.php                    # Shell HTML Dasar yang Me-load Bundle Vite
 ├── routes/
-│   ├── console.php
-│   └── web.php                      # Routing API & Fallback SPA Route
-├── storage/                         # Log & Storage File Aplikasi
-├── tests/                           # Automated Tests (PHPUnit)
-├── .env.example                     # Templat Variabel Lingkungan
-├── Dockerfile                       # Container Build Directive (PHP 8.2 + Apache)
-├── docker-compose.yml               # Multi-container Docker Orchestration
-├── package.json                     # Frontend Dependencies & Scripts
-├── composer.json                    # Backend Dependencies & Scripts
-└── vite.config.js                   # Vite Build Configuration
+│   ├── api.php                              # Definisi REST API Endpoints (/api/categories, /api/queues, dll.)
+│   ├── console.php                          # Artisan CLI Commands
+│   └── web.php                              # Catch-All Route Mengarahkan Permintaan Web ke React SPA
+├── storage/                                 # Log Aplikasi, Cache Framework, & Upload Aset
+├── tests/                                   # Pengujian Unit & Fitur (PHPUnit)
+├── .env.example                             # Master Konfigurasi Environment Lokal
+├── composer.json                            # Dependensi PHP & Framework Laravel
+├── Dockerfile                               # Image Builder PHP 8.2 + Apache + Ekstensi MySQL
+├── docker-compose.yml                       # Orkestrasi Docker (Laravel App, MariaDB, phpMyAdmin)
+├── package.json                             # Dependensi Node.js & Script Vite
+└── vite.config.js                           # Konfigurasi Bundler Vite & Plugin React
 ```
 
 ---
 
-## 4. Arsitektur Database (Schema)
+### B. Blueprint Deployment cPanel Produksi (`code/cpanel/`)
 
-Sistem menggunakan database relational (MariaDB / MySQL) dengan struktur tabel sebagai berikut:
+Untuk keamanan tingkat enterprise pada shared hosting cPanel, sistem dipisahkan menjadi dua bagian independen (*Dual-Root Architecture*):
+1. **Di Luar Web Root (`laravel_core/`)**: Berisi kode sumber backend, logika aplikasi, `.env`, konfigurasi, dan database logic agar tidak dapat diakses secara publik oleh browser.
+2. **Di Dalam Web Root (`public_html/`)**: Hanya berisi file statis hasil kompilasi Vite (JS, CSS, images, fonts), file `.htaccess` rewrite, dan `index.php` yang menghubungkan request browser ke `laravel_core`.
+
+```text
+code/cpanel/
+├── laravel_core/                            # BACKEND & LOGIKA APLIKASI (Folder Target: /home/username/laravel_core/)
+│   ├── app/                                 # Controllers, Models, Middleware
+│   ├── bootstrap/                           # Autoloader & app.php
+│   ├── config/                              # File konfigurasi sistem
+│   ├── database/                            # Migrations & Seeders
+│   ├── routes/                              # api.php & web.php
+│   ├── storage/                             # Storage log & cache (Permission 775)
+│   ├── vendor/                              # Dependensi PHP Composer lengkap
+│   ├── .env                                 # Konfigurasi kredensial database & APP_URL produksi
+│   └── artisan                              # Artisan CLI tool
+│
+├── public_html/                             # FRONTEND WEB ROOT (Folder Target: /home/username/public_html/)
+│   ├── build/                               # Bundle hasil build Vite
+│   │   ├── assets/                          # Kompilasi JS (main-*.js) & CSS (main-*.css)
+│   │   └── manifest.json                    # Peta aset Vite
+│   ├── img/                                 # Seluruh aset visual & ilustrasi klinik
+│   ├── fonts/                               # Font lokal antarmuka
+│   ├── .htaccess                            # Rule mod_rewrite Apache untuk SPA & API
+│   ├── index.php                            # Bridge Bootstrap: memanggil ../laravel_core/bootstrap/app.php
+│   └── robots.txt                           # Aturan crawler mesin pencari
+│
+├── laravel_core.zip                         # File arsip backend siap ekstrak di Root cPanel
+├── public_html.zip                          # File arsip web asset siap ekstrak di public_html
+└── pelayanan_pasien.sql                     # Dump database MySQL lengkap dengan 4 kategori & master data
+```
+
+---
+
+## 3. Alur Logika Sistem (System Logic & Core Workflows)
+
+### A. Alur Logika Pendaftaran Pasien & Filter Cerdas Praktisi
+
+Salah satu fitur paling krusial pada sistem ini adalah **Penyaringan Praktisi Cerdas (Smart Practitioner Matching)**. Alur ini memastikan bahwa pasien selalu menemukan dokter/bidan yang tepat sesuai kebutuhan tanpa terjadinya kekosongan opsi akibat kesalahan hari atau pencocokan string nama layanan yang kaku.
+
+```mermaid
+flowchart TD
+    Start([Pasien Membuka Form Pendaftaran]) --> Step1[1. Pasien Mengisi Biodata & Tanggal Kunjungan]
+    Step1 --> Step2[2. Pasien Memilih 1 dari 4 Kategori Pelayanan]
+    Step2 --> Step3[3. Pasien Memilih Jenis Layanan Spesifik]
+    
+    Step3 --> FetchDocs[Ambil Daftar Praktisi dari API / Local Cache]
+    
+    FetchDocs --> Stage1{Tahap 1: isServiceMatched?<br/>Apakah Praktisi Melayani Layanan Ini?}
+    Stage1 -- Tidak Cocok --> SkipDoc[Abaikan Praktisi]
+    Stage1 -- Cocok --> MatchList[Daftar Praktisi Sesuai Layanan]
+    
+    MatchList --> Stage2{Tahap 2: isDayInSchedule?<br/>Apakah Praktisi Praktik di Hari Terpilih?}
+    Stage2 -- Praktik di Hari Tersebut --> AvailList[Praktisi Aktif & Tersedia Hari Ini]
+    Stage2 -- Tidak Praktik di Hari Tersebut --> SchedNotice[Tandai Praktisi Memiliki Hari Berbeda]
+    
+    AvailList --> CheckAvail{Apakah ada Praktisi Aktif Hari Ini?}
+    CheckAvail -- Ada --> DispPrimary[Tampilkan Praktisi Aktif Sebagai Pilihan Utama]
+    CheckAvail -- Tidak Ada --> FallbackFlow[Tahap 3: Fallback Cerdas Non-Blocking]
+    
+    FallbackFlow --> DispFallback[Tampilkan Praktisi yang Melayani Layanan Tersebut<br/>+ Kartu Info Hari Praktik yang Berlaku]
+    
+    DispPrimary --> SelectPractitioner[Pasien Memilih Praktisi & Jam Praktik]
+    DispFallback --> SelectPractitioner
+    
+    SelectPractitioner --> SubmitQueue[Pasien Klik Daftar Antrean]
+    SubmitQueue --> GenQueue[Sistem Menerbitkan Kode Antrean A-xxx / B-xxx]
+    GenQueue --> ShowTicket([Tiket Antrean Digital Tampil & Siap Diunduh])
+```
+
+#### Rincian Algoritma 3 Tahap Penapisan Praktisi:
+
+1. **Flexible Service Matching (`isServiceMatched`)**:
+   - Membandingkan jenis layanan yang dipilih pasien dengan daftar kompetensi praktisi (`practitioner.services`).
+   - Melakukan normalisasi huruf kecil (*case-insensitive*) dan penghapusan spasi ganda.
+   - Menggunakan pencocokan dua arah (*bidirectional substring matching*), sehingga variasi penulisan seperti `"Pemeriksaan Kehamilan"` akan cocok dengan `"Pemeriksaan Kehamilan (ANC)"`, dan `"Baby Spa"` akan mencakup `"Paket Baby Spa"`.
+
+2. **Ekspansi Siklik Rentang Hari (`getDaysRange` & `isDayInSchedule`)**:
+   - Jadwal praktisi pada basis data disimpan dalam format hari awal dan hari akhir (misalnya `start_day = "Selasa"` dan `end_day = "Minggu"`).
+   - Algoritma `getDaysRange()` mengonversi rentang tersebut ke dalam array seluruh hari aktif secara siklik berdasarkan urutan hari di Indonesia: `["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]`.
+   - Hasilnya, bila pasien memilih hari Kamis atau Sabtu, sistem secara presisi mengenali bahwa tanggal tersebut berada dalam rentang kerja praktisi.
+
+3. **Mekanisme Fallback Non-Blocking & UX Resilience**:
+   - Jika praktisi melayani layanan yang diinginkan namun tidak memiliki jadwal di tanggal yang dipilih pasien, sistem **tidak akan menyembunyikan praktisi secara sepihak** (yang menyebabkan dropdown kosong membingungkan).
+   - Sistem akan tetap menampilkan opsi praktisi disertai **Badge Jadwal Berbeda** dan **Kartu Rekomendasi Jadwal**, sehingga pasien dapat memilih untuk tetap mendaftar atau menyesuaikan tanggal kunjungannya.
+
+---
+
+### B. Alur Logika Multi-Role (Pasien, Bidan, dan Admin)
+
+Sistem mengadopsi prinsip *Role-Based Access Control (RBAC)* dengan hak akses terpisah:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Pasien as Pasien / Publik
+    actor Bidan as Bidan / Praktisi Medis
+    actor Admin as Admin Faskes
+    participant Web as React SPA Frontend
+    participant API as Laravel REST API
+    participant DB as MariaDB / MySQL
+
+    %% Alur 1: Pasien
+    rect rgb(250, 245, 255)
+    Note over Pasien, DB: 1. Alur Pendaftaran Mandiri (Role Pasien)
+    Pasien->>Web: Buka /buat-janji & Isi Form Registrasi
+    Web->>API: GET /api/categories & GET /api/doctors
+    API-->>Web: Data Kategori, Layanan, & Praktisi
+    Web->>Web: Eksekusi Filter Cerdas (Layanan & Hari)
+    Pasien->>Web: Pilih Waktu & Konfirmasi Pendaftaran
+    Web->>API: POST /api/queues (Payload Pendaftaran)
+    API->>DB: Insert Record ke Tabel appointments
+    API-->>Web: Response Sukses + Nomor Antrean (A-xxx)
+    Web-->>Pasien: Tampilkan Tiket Digital & Simpan ke Riwayat
+    end
+
+    %% Alur 2: Bidan
+    rect rgb(245, 250, 255)
+    Note over Bidan, DB: 2. Alur Pelayanan Pasien (Role Bidan)
+    Bidan->>Web: Login di /login (Username: bidan)
+    Web-->>Bidan: Redirect ke /bidan-dashboard
+    Web->>API: GET /api/queues (Filter Hari Ini)
+    API-->>Web: Daftar Antrean Pasien Hari Ini
+    Bidan->>Web: Klik "Panggil / Layani Pasien"
+    Web->>API: PUT /api/queues/{id} (status: "Sedang Dilayani")
+    Bidan->>Web: Input Catatan Medis Ringkas
+    Bidan->>Web: Klik "Selesaikan Tindakan"
+    Web->>API: PUT /api/queues/{id} (status: "Selesai", notes)
+    API->>DB: Update Record Status Antrean
+    API-->>Web: Status Diperbarui
+    end
+
+    %% Alur 3: Admin
+    rect rgb(255, 250, 245)
+    Note over Admin, DB: 3. Alur Administrasi & Master Data (Role Admin)
+    Admin->>Web: Login di /login (Email: admin@meikahealth.id)
+    Web-->>Admin: Redirect ke /admin-dashboard
+    Admin->>Web: Kelola Master Kategori & Layanan
+    Web->>API: POST/PUT /api/categories
+    Admin->>Web: Tambah / Edit Praktisi & Atur Jadwal Kerja
+    Web->>API: POST/PUT /api/doctors
+    Admin->>Web: Kelola Berita Kesehatan & FAQ
+    Web->>API: POST/PUT /api/news & /api/faqs
+    API->>DB: Sinkronisasi Seluruh Perubahan
+    API-->>Web: Master Data Terupdate Realtime
+    end
+```
+
+#### Matriks Hak Akses Peran:
+
+| Fitur & Modul | Pasien / Publik | Bidan / Praktisi | Admin Klinik |
+| :--- | :---: | :---: | :---: |
+| Akses Landing Page, Fasilitas, & Edukasi | ✅ | ✅ | ✅ |
+| Pendaftaran Mandiri & Penerbitan Tiket Antrean | ✅ | ❌ | ✅ (Walk-in) |
+| Pemantauan Nomor Antrean Real-time | ✅ | ✅ | ✅ |
+| Pembatalan Antrean Mandiri | ✅ (Tiket Sendiri) | ❌ | ✅ (Semua) |
+| Dashboard Khusus Bidan (`/bidan-dashboard`) | ❌ | ✅ | ❌ |
+| Pemanggilan Antrean (`Sedang Dilayani`) | ❌ | ✅ | ✅ |
+| Penyelesaian Tindakan (`Selesai`) & Catatan Medis | ❌ | ✅ | ✅ |
+| Pengaturan Hari & Jam Praktik Mandiri | ❌ | ✅ | ✅ |
+| Dashboard Master Admin (`/admin-dashboard`) | ❌ | ❌ | ✅ |
+| CRUD Master Kategori, Layanan, & Praktisi | ❌ | ❌ | ✅ |
+| CRUD Berita/Artikel & FAQ Faskes | ❌ | ❌ | ✅ |
+
+---
+
+### C. Siklus Hidup Status Antrean (Queue Lifecycle)
+
+Status antrean pada sistem ini merepresentasikan siklus kunjungan pasien dari pendaftaran hingga selesai mendapatkan tindakan:
+
+```mermaid
+stateDiagram-v2
+    [*] --> MenungguAntrean: Pasien Mendaftar Mandiri / Walk-in
+    
+    MenungguAntrean --> SedangDilayani: Bidan / Petugas Memanggil Pasien
+    MenungguAntrean --> Dibatalkan: Pasien Membatalkan Kunjungan
+    
+    SedangDilayani --> Selesai: Pelayanan Selesai & Catatan Disimpan
+    SedangDilayani --> MenungguAntrean: Panggilan Ulang (Bila Pasien Belum Tiba)
+    
+    Selesai --> [*]
+    Dibatalkan --> [*]
+```
+
+- **Menunggu Antrean**: Status awal saat tiket diterbitkan. Nomor antrean otomatis terurut dengan prefix `A-` (layanan poli/umum) atau `B-` (layanan kebidanan khusus).
+- **Sedang Dilayani (Dipanggil)**: Bidan atau petugas menekan tombol panggil. Status ini memberi notifikasi visual pada dashboard pasien bahwa giliran mereka telah tiba.
+- **Selesai**: Pasien telah selesai mendapatkan tindakan, konsultasi, atau persalinan. Bidan dapat melampirkan catatan rekam medis ringkas.
+- **Dibatalkan**: Pasien atau admin dapat membatalkan kunjungan jika berhalangan hadir.
+
+---
+
+### D. Arsitektur Sinkronisasi Data Hibrida (Dual-Tier Storage)
+
+Sistem mengadopsi mekanisme *Dual-Tier Storage* antara database MySQL (via REST API) dan browser `localStorage`:
+
+```mermaid
+flowchart LR
+    ClientApp[React SPA Component] --> APILayer[apiService.js Layer]
+    
+    APILayer --> TryAPI{Panggil Laravel API?}
+    TryAPI -- Koneksi Sukses --> MySQL[(Database MySQL / MariaDB)]
+    MySQL -- Data Valid --> UpdateLocal[Simpan Salinan ke LocalStorage Cache]
+    UpdateLocal --> ReturnData[Kirim Data ke Komponen]
+    
+    TryAPI -- Jaringan Lambat / Offline --> FallbackLocal{Ada Cache LocalStorage?}
+    FallbackLocal -- Ya --> ReadCache[Baca Data dari LocalStorage]
+    FallbackLocal -- Tidak --> ReadDefault[Gunakan Default Const Fallback]
+    
+    ReadCache --> ReturnData
+    ReadDefault --> ReturnData
+```
+
+- **Single Source of Truth**: Database MySQL/MariaDB pada server Laravel adalah sumber data utama.
+- **Toleransi Gangguan (Self-Healing)**: Ketika koneksi jaringan terputus atau server hosting sedang dalam pemeliharaan sementara, `apiService.js` secara otomatis membaca data dari cache `localStorage` (`clinic_queues`, `clinic_doctors`, `clinic_categories`), sehingga antarmuka tetap berjalan mulus tanpa layar putih atau galat fatal.
+
+---
+
+## 4. Arsitektur Database (Entity-Relationship Diagram)
+
+Database dirancang menggunakan pendekatan relasional ternormalisasi untuk menjamin integritas data:
 
 ```mermaid
 erDiagram
@@ -125,40 +344,51 @@ erDiagram
 
     service_categories {
         bigint id PK
-        string title UK
+        string title UK "Poli, Mom's Treatment, Persalinan, Pelayanan Bayi dan Anak"
         timestamps created_at_updated_at
     }
 
     services {
         bigint id PK
         bigint category_id FK
-        string name
+        string name "Nama spesifik layanan"
         timestamps created_at_updated_at
     }
 
     practitioners {
         bigint id PK
-        string doctor
-        string role
-        string image
-        string start_day
-        string end_day
-        string start_time
-        string end_time
-        json services
+        string doctor "Nama lengkap & gelar praktisi"
+        string role "Spesialisasi profesi"
+        string image "Path foto profil"
+        string start_day "Hari awal praktik (misal: Senin)"
+        string end_day "Hari akhir praktik (misal: Sabtu)"
+        string start_time "Jam mulai praktik (misal: 08:00)"
+        string end_time "Jam selesai praktik (misal: 16:00)"
+        json services "Daftar layanan yang dapat dilayani"
         timestamps created_at_updated_at
     }
 
     appointments {
         bigint id PK
-        string queue_number
-        string patient_name
-        string doctor_name
-        string category_name
-        string service_name
-        string date
-        string time
-        string status
+        string queue_number "Kode antrean otomatis (A-001 / B-001)"
+        string patient_name "Nama pasien"
+        string doctor_name "Nama dokter / bidan yang dipilih"
+        string category_name "Kategori pelayanan"
+        string service_name "Jenis layanan spesifik"
+        string date "Tanggal kunjungan (YYYY-MM-DD)"
+        string time "Waktu / jam kedatangan"
+        string status "Menunggu Antrean / Sedang Dilayani / Selesai / Dibatalkan"
+        text notes "Catatan medis ringkas"
+        timestamps created_at_updated_at
+    }
+
+    patients {
+        bigint id PK
+        string name
+        string nik "Nomor Induk Kependudukan (Opsional)"
+        string phone
+        string address
+        date birth_date
         timestamps created_at_updated_at
     }
 
@@ -182,152 +412,132 @@ erDiagram
         timestamps created_at_updated_at
     }
 
-    service_categories ||--o{ services : "memiliki banyak"
-```
-
-### Detail Spesifikasi Tabel:
-
-1. **`users`**: Menyimpan akun pengguna/administrator.
-   - `id`, `name`, `email` (Unique), `password`, `email_verified_at`, `remember_token`, `timestamps`.
-2. **`service_categories`**: Master 4 kategori pelayanan resmi ibu & anak.
-   - `id`, `title` (Unique: Poli, Mom's Treatment, Persalinan, Pelayanan Bayi dan Anak), `timestamps`.
-3. **`services`**: Detail jenis layanan pada tiap kategori.
-   - `id`, `category_id` (Foreign Key ke `service_categories`), `name`, `timestamps`.
-4. **`practitioners`**: Master data dokter, bidan, dan terapis.
-   - `id`, `doctor` (nama lengkap & gelar), `role` (spesialisasi), `image`, `start_day`, `end_day`, `start_time`, `end_time`, `services` (JSON array jenis layanan), `timestamps`.
-5. **`appointments`**: Data pendaftaran antrean pasien.
-   - `id`, `queue_number` (kode antrean `A-xxx`), `patient_name`, `doctor_name`, `category_name`, `service_name`, `date`, `time`, `status` (Menunggu Antrean / Dipanggil / Selesai / Dibatalkan), `timestamps`.
-6. **`news`**: Berita dan artikel edukasi kesehatan.
-   - `id`, `title`, `category`, `summary`, `content`, `author`, `image`, `read_time`, `date`, `timestamps`.
-7. **`faqs`**: Data pertanyaan umum dan jawaban resmi klinik.
-   - `id`, `question`, `answer`, `timestamps`.
-
----
-
-## 5. Alur Kerja Utama System (System Flow)
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Pasien
-    participant ReactSPA as React SPA Client
-    participant Controller as Laravel API Controller
-    participant DB as Database (MariaDB)
-    actor Admin as Admin / Petugas
-
-    %% Alur Pendaftaran Online
-    Note over Pasien, DB: Alur Pendaftaran Online Pasien (Mobile JKN Style)
-    Pasien->>ReactSPA: Buka Form Registrasi Online
-    ReactSPA->>Controller: GET /api/categories & GET /api/doctors
-    Controller->>DB: Query Kategori, Services, & Practitioners
-    DB-->>Controller: Return Data
-    Controller-->>ReactSPA: Data Kategori & Praktisi
-    Pasien->>ReactSPA: Pilih Kategori, Layanan, Praktisi, & Waktu
-    Pasien->>ReactSPA: Submit Form Registrasi
-    ReactSPA->>Controller: POST /api/queues (patientName, doctor, service, date, time)
-    Controller->>DB: Save Appointment & Generate Queue Number (A-xxx)
-    DB-->>Controller: Appointment Created
-    Controller-->>ReactSPA: Return Data Tiket Antrean (A-xxx)
-    ReactSPA-->>Pasien: Tampilkan Tiket Antrean Digital
-
-    %% Alur Pengelolaan Antrean Klinik
-    Note over Admin, DB: Alur Operasional & Manajemen Antrean Klinik
-    Admin->>ReactSPA: Akses Admin Dashboard
-    ReactSPA->>Controller: GET /api/queues
-    Controller->>DB: Fetch All Appointments
-    DB-->>Controller: List Antrean
-    Controller-->>ReactSPA: Update UI Tabel Antrean
-    Admin->>ReactSPA: Ubah Status Antrean (Dipanggil / Selesai)
-    ReactSPA->>Controller: PUT /api/queues/{id} (status)
-    Controller->>DB: Update Record Status
-    DB-->>Controller: Success
-    Controller-->>ReactSPA: Return Status Terbaru
+    service_categories ||--o{ services : "memiliki banyak layanan"
 ```
 
 ---
 
-## 6. Validasi dan Logika Teknis Khusus
+## 5. Master 4 Kategori Resmi Pelayanan Faskes
 
-### A. Alur Registrasi & Slot Antrean (Mobile JKN Style)
-1. **Penerbitan Nomor Antrean**: Generator nomor antrean secara otomatis membuat format kode `A-0xx` berdasarkan kombinasi nomor urut pendaftaran.
-2. **Filtering Otomatis Kategori & Praktisi**:
-   - Sistem mengambil relasi kategori dengan layanan (`ServiceCategory::with('services')`).
-   - Praktisi difilter berdasarkan hari praktik (`start_day` s/d `end_day`) dan jam operasional (`start_time` s/d `end_time`).
-3. **Pengelolaan Status Antrean**: Status antrean dapat bertransisi secara dinamis melalui API endpoint: `Menunggu Antrean` $\rightarrow$ `Dipanggil` $\rightarrow$ `Selesai` / `Dibatalkan`.
+Klinik JnC Family Care Metro memiliki 4 kategori pelayanan resmi berstandar kesehatan ibu dan anak:
 
-### B. Standardisasi 4 Kategori Pelayanan Resmi (Sesuai Spesifikasi Clinic):
-- **Poli**: *Prenatal Class Yoga, Aquatic Yoga, Kelas Melahirkan, KB, Pemeriksaan/Konsultasi Catin, Pemeriksaan Nifas, Pemeriksaan Kehamilan, IVA, Papsmear, Washing V*.
-- **Mom's Treatment**: *Special Pregnant Treatment, Treatment Laktasi, Treatment Babaran, Totok Wajah, Body Massage, Ratus V, Steambath, Lulur, Scrub, Creambath, Footbath*.
-- **Persalinan**: *Pelayanan Persalinan, IMD (Inisiasi Menyusu Dini), Pendampingan Persalinan, DCC (Delayed Cord Clamping)*.
-- **Pelayanan Bayi dan Anak**: *Baby Infant & Kids Massage, Massage Common Cold/Diare/Konstipasi/Kolik/Kembung, SHK, Konsultasi Tumbuh Kembang, MTBS/MTBM, Cukur Bayi, Jemur Bayi, Imunisasi, Baby Spa, Potong Kuku, Mandi Bayi, Cek Gol Darah, Hygiene Lidah/Telinga/Hidung, Tindik*.
-
-### C. Aturan Design System & UI Constraints:
-- **Warna Utama**: `#D896ED` (Soft Violet/Purple Accent).
-- **Aturan Bebas Badge & Letter Spacing**: Bebas dari badge generik, tanpa pemakaian `uppercase` paksaan, dan tanpa `tracking-*` spacing.
-- **Restriksi Penggunaan Icon**: Icon hanya diperbolehkan pada elemen interaktif (Tombol Aksi, Navigasi, Pencarian, Kalender, Notifikasi).
+```
+├── 1. Poli (Kebidanan & Kandungan)
+│   ├── Prenatal Class Yoga
+│   ├── Aquatic Yoga
+│   ├── Kelas Melahirkan
+│   ├── KB (Keluarga Berencana)
+│   ├── Pemeriksaan / Konsultasi Catin (Calon Pengantin)
+│   ├── Pemeriksaan Nifas
+│   ├── Pemeriksaan Kehamilan (ANC)
+│   ├── IVA Test
+│   ├── Papsmear
+│   └── Washing V
+│
+├── 2. Mom's Treatment (Perawatan Relaksasi & Pasca Melahirkan)
+│   ├── Special Pregnant Treatment
+│   ├── Treatment Laktasi
+│   ├── Treatment Babaran
+│   ├── Totok Wajah
+│   ├── Body Massage
+│   ├── Ratus V
+│   ├── Steambath
+│   ├── Lulur
+│   ├── Scrub
+│   ├── Creambath
+│   └── Footbath
+│
+├── 3. Persalinan (Maternity & Delivery Care)
+│   ├── Pelayanan Persalinan 24 Jam
+│   ├── Inisiasi Menyusu Dini (IMD)
+│   ├── Pendampingan Persalinan Lembut (Gentle Birth Support)
+│   └── Delayed Cord Clamping (DCC)
+│
+└── 4. Pelayanan Bayi dan Anak (Pediatric & Newborn Care)
+    ├── Baby Infant & Kids Massage
+    ├── Massage Terapi (Common Cold / Diare / Konstipasi / Kolik / Kembung)
+    ├── Skrining Hipotiroid Kongenital (SHK)
+    ├── Konsultasi Tumbuh Kembang Anak
+    ├── MTBS / MTBM
+    ├── Cukur Rambut Bayi
+    ├── Terapi Jemur Bayi
+    ├── Imunisasi Dasar & Lanjutan
+    ├── Baby Spa & Hydrotherapy
+    ├── Potong Kuku & Perawatan Tali Pusat
+    ├── Mandi Bayi & Edukasi Ibu
+    ├── Pemeriksaan Golongan Darah Bayi
+    ├── Higienitas Lidah, Telinga, & Hidung
+    └── Tindik Daun Telinga Steril
+```
 
 ---
 
-## 7. Dependensi Project
+## 6. Katalog REST API Endpoints
 
-### A. Dependensi Backend (Composer / PHP)
-- **`php`**: `^8.2` (PHP `8.2` Docker)
-- **`laravel/framework`**: `^13.8` (Laravel 11/13 Framework Engine)
-- **`laravel/tinker`**: `^3.0` (REPL CLI untuk Laravel)
-- **`fakerphp/faker`**: `^1.23` (Generator mock data)
-- **`laravel/pint`**: `^1.27` (PHP Code Style Fixer)
-- **`phpunit/phpunit`**: `^12.5` (Testing Framework)
+Seluruh komunikasi frontend React menggunakan endpoint RESTful JSON terstandarisasi:
 
-### B. Dependensi Frontend (NPM / Node.js)
-- **`react`**: `^18.3.1` & **`react-dom`**: `^18.3.1` (UI Engine)
-- **`react-router-dom`**: `^6.26.0` (SPA Client Routing)
-- **`vite`**: `^5.0.0` (Fast Frontend Bundler)
-- **`@vitejs/plugin-react`**: `^4.3.1` (Vite React Plugin)
-- **`tailwindcss`**: `^4.0.0` & **`@tailwindcss/vite`**: `^4.0.0` (Utility-First CSS)
-- **`concurrently`**: `^9.0.1` (Menjalankan dev server parallel)
+| Method | Endpoint | Deskripsi Fungsi | Request Body / Param |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/categories` | Mendapatkan seluruh kategori beserta relasi layanannya | - |
+| **POST** | `/api/categories` | Menambahkan kategori pelayanan baru (Admin) | `{ title: string }` |
+| **PUT** | `/api/categories/{id}` | Memperbarui nama kategori | `{ title: string }` |
+| **DELETE** | `/api/categories/{id}` | Menghapus kategori | - |
+| **GET** | `/api/doctors` | Mendapatkan seluruh data praktisi medis, jadwal, & layanan | - |
+| **POST** | `/api/doctors` | Menambahkan dokter/bidan baru (Admin) | `{ doctor, role, start_day, end_day, start_time, end_time, services }` |
+| **PUT** | `/api/doctors/{id}` | Memperbarui data praktisi atau jadwal kerja | Payload field praktisi |
+| **DELETE** | `/api/doctors/{id}` | Menghapus data praktisi medis | - |
+| **GET** | `/api/queues` | Mendapatkan daftar antrean pasien klinik | Query params: `?date=YYYY-MM-DD` |
+| **POST** | `/api/queues` | Mendaftarkan antrean baru (Pasien Mandiri / Walk-in) | `{ patientName, doctor, service, category, date, time }` |
+| **PUT** | `/api/queues/{id}` | Mengubah status antrean (`Sedang Dilayani`, `Selesai`, dll.) | `{ status: string, notes?: string }` |
+| **DELETE** | `/api/queues/{id}` | Menghapus riwayat antrean | - |
+| **GET** | `/api/news` | Mendapatkan daftar artikel edukasi kesehatan | - |
+| **POST** | `/api/news` | Mempublikasikan artikel edukasi baru (Admin) | `{ title, category, summary, content, author, image }` |
+| **GET** | `/api/faqs` | Mendapatkan daftar FAQ klinik | - |
+| **POST** | `/api/faqs` | Menambahkan pertanyaan & jawaban FAQ | `{ question, answer }` |
 
 ---
 
-## 8. Panduan Instalasi (Docker dan non Docker)
+## 7. Panduan Instalasi & Menjalankan Sistem
 
 ### Prasyarat Sistem
-- Node.js versi 18+ & NPM
-- Composer 2.x
-- Git
+- **Node.js**: Versi 18+ & NPM
+- **PHP**: Versi 8.2+
+- **Composer**: Versi 2.x
+- **Database**: MariaDB 10.4+ atau MySQL 8.0+
+- *(Opsional)* **Docker & Docker Compose**
 
 ---
 
-### Metode A: Instalasi Menggunakan Docker (Rekomendasi)
+### Metode A: Menjalankan Menggunakan Docker Compose (Rekomendasi Lokal)
 
-Dengan Docker, Anda tidak perlu mengonfigurasi PHP atau database MySQL secara manual di sistem lokal.
+Dengan Docker Compose, seluruh lingkungan PHP 8.2, Apache, MariaDB, dan phpMyAdmin akan langsung diorkestrasikan tanpa perlu instalasi manual pada sistem operasi induk.
 
-1. **Clone Repositori**:
+1. **Masuk ke Direktori Proyek**:
    ```bash
-   git clone https://github.com/adistianherlambang/JnC-Family-Care-Metro-Patient-Management-Laravel-Vite.git
-   cd JnC-Family-Care-Metro-Patient-Management-Laravel-Vite/project
+   cd code/project
    ```
 
-2. **Salin File Environment**:
+2. **Salin File Konfigurasi Environment**:
    ```bash
    cp .env.example .env
    ```
 
-3. **Jalankan Container Docker**:
+3. **Nyalakan Container Docker**:
    ```bash
    docker compose up -d
    ```
-   *Layanan Docker akan aktif di:*
-   - **Web App (Laravel)**: [http://localhost:8000](http://localhost:8000)
-   - **MariaDB Database**: `localhost:3306`
+   *Layanan Docker akan aktif pada port:*
+   - **Aplikasi Web**: [http://localhost:8000](http://localhost:8000)
+   - **Database MariaDB**: `localhost:3306`
    - **phpMyAdmin**: [http://localhost:8081](http://localhost:8081)
 
-4. **Jalankan Migrasi & Database Seeder di dalam Container**:
+4. **Inisialisasi Kunci Aplikasi & Database Seeder**:
    ```bash
    docker exec -it laravel_app php artisan key:generate
    docker exec -it laravel_app php artisan migrate:fresh --seed
    ```
 
-5. **Jalankan Vite Development Server (Lokal)**:
+5. **Jalankan Frontend Vite (Development Mode)**:
    ```bash
    npm install
    npm run dev
@@ -335,30 +545,24 @@ Dengan Docker, Anda tidak perlu mengonfigurasi PHP atau database MySQL secara ma
 
 ---
 
-### Metode B: Instalasi Manual / Non-Docker
+### Metode B: Menjalankan Manual Non-Docker (Laragon / XAMPP / Native)
 
-1. **Clone Repositori & Masuk Direktori Proyek**:
+1. **Masuk ke Direktori Proyek**:
    ```bash
-   git clone https://github.com/adistianherlambang/JnC-Family-Care-Metro-Patient-Management-Laravel-Vite.git
-   cd JnC-Family-Care-Metro-Patient-Management-Laravel-Vite/project
+   cd code/project
    ```
 
-2. **Install Dependensi Backend (Composer)**:
+2. **Install Dependensi Backend & Frontend**:
    ```bash
    composer install
-   ```
-
-3. **Install Dependensi Frontend (NPM)**:
-   ```bash
    npm install
    ```
 
-4. **Konfigurasi File Environment (`.env`)**:
-   Salin `.env.example` menjadi `.env`:
+3. **Konfigurasi File Environment (`.env`)**:
    ```bash
    cp .env.example .env
    ```
-   Sesuaikan konfigurasi database pada `.env`:
+   Sesuaikan parameter database di file `.env`:
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -368,56 +572,105 @@ Dengan Docker, Anda tidak perlu mengonfigurasi PHP atau database MySQL secara ma
    DB_PASSWORD=
    ```
 
-5. **Generate Application Key & Inisialisasi Database**:
-   Pastikan MySQL/MariaDB lokal (XAMPP / Laragon / Native) sudah berjalan, lalu buat database bernama `pelayanan_pasien`.
+4. **Generate Key & Eksekusi Migrasi Database**:
+   Buat database kosong bernama `pelayanan_pasien` di MySQL Anda, lalu jalankan:
    ```bash
    php artisan key:generate
    php artisan migrate:fresh --seed
    ```
 
-6. **Jalankan Aplikasi Mode Pengembangan**:
-   Gunakan perintah `composer dev` untuk menjalankan Laravel Server dan Vite secara bersamaan:
+5. **Jalankan Server Pengembangan**:
    ```bash
+   # Jalankan bersamaan via concurrently:
    composer dev
    ```
-   *Atau jalankan secara terpisah:*
+   *Atau jalankan pada dua jendela terminal terpisah:*
    ```bash
-   # Terminal 1: Laravel Backend
-   php artisan serve
+   # Terminal 1 (Backend Laravel API):
+   php artisan serve --port=8000
 
-   # Terminal 2: Vite React Frontend
+   # Terminal 2 (Frontend React Vite SPA):
    npm run dev
    ```
-   Akses aplikasi di browser pada: [http://localhost:8000](http://localhost:8000) atau `http://127.0.0.1:8000`.
+   Aplikasi siap diakses pada browser di [http://localhost:8000](http://localhost:8000).
 
 ---
 
-## 9. Kredensial Akun Bawaan
+### Metode C: Panduan Deployment ke cPanel Hosting
 
-Setelah melakukan perintah `php artisan db:seed` atau `migrate --seed`, akun administrator bawaan berikut akan otomatis tersedia di database:
+File paket produksi telah dipisahkan secara otomatis pada folder `code/cpanel/`.
 
-| Role | Email | Password | Hak Akses |
-|---|---|---|---|
-| **Administrator Klinik** | `admin@meikahealth.id` | `admin123` | Akses penuh Dashboard Admin, Kelola Antrean, Kategori, Layanan, Dokter/Practitioner, Artikel Berita, & FAQ |
+1. **Buat Database di cPanel**:
+   - Buka **MySQL Databases** di cPanel, buat database baru (misal: `user_pelayanan_pasien`).
+   - Buat user database dan hubungkan dengan hak akses **ALL PRIVILEGES**.
+   - Buka **phpMyAdmin**, pilih database tersebut, lalu **Import** file `code/cpanel/pelayanan_pasien.sql`.
 
-> **Catatan**: Data awal seeder juga menggenerasi master 4 kategori pelayanan resmi, daftar jenis layanan lengkap, 3 akun sampel praktisi medis (Dokter Spesialis Anak, Spesialis Kandungan, & Bidan Senior), antrean sampel, artikel berita kesehatan, serta sampel FAQ.
+2. **Upload & Ekstrak Backend (`laravel_core.zip`)**:
+   - Buka **File Manager** cPanel.
+   - Masuk ke direktori home akun (`/home/username/`, sejajar dengan folder `public_html`).
+   - Upload file `laravel_core.zip` dan ekstrak di direktori tersebut sehingga menghasilkan folder `/home/username/laravel_core/`.
+
+3. **Upload & Ekstrak Frontend Assets (`public_html.zip`)**:
+   - Masuk ke folder `/home/username/public_html/`.
+   - Hapus file default `index.html` bila ada.
+   - Upload file `public_html.zip` dan ekstrak langsung di dalam `public_html/`.
+   - Pastikan file `.htaccess` dan `index.php` berada langsung di dalam root `public_html/`.
+
+4. **Konfigurasi `.env` Produksi**:
+   - Buka `/home/username/laravel_core/.env` melalui editor File Manager cPanel.
+   - Perbarui baris berikut:
+     ```env
+     APP_NAME="JnC Family Care Metro"
+     APP_ENV=production
+     APP_DEBUG=false
+     APP_URL=https://nama-domain-anda.com
+
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=user_pelayanan_pasien
+     DB_USERNAME=user_dbuser
+     DB_PASSWORD=password_db_anda
+     ```
+
+5. **Atur Permission Folder**:
+   - Pastikan folder `/home/username/laravel_core/storage` dan `/home/username/laravel_core/bootstrap/cache` memiliki hak akses **775** (atau **755**).
+   - Buka domain Anda di browser (`https://nama-domain-anda.com`). Sistem akan langsung aktif.
 
 ---
 
-## 10. Ringkasan Tech Stack
+## 8. Kredensial Default & Akun Pengguna
 
-| Komponen | Teknologi / Library | Versi / Keterangan |
-|---|---|---|
-| **Core Framework** | Laravel | v11.x / v13.x (PHP 8.2) |
-| **Frontend UI Library** | React JS | v18.3.1 |
-| **Client Router** | React Router DOM | v6.26.0 |
-| **Frontend Build Tool** | Vite | v5.0.0 |
-| **Styling Engine** | Tailwind CSS | v4.0.0 (Custom Color `#D896ED`) |
-| **Database Server** | MariaDB / MySQL | MariaDB 10.4 / MySQL 8.0 |
-| **Database Admin** | phpMyAdmin | v5.2.1 |
-| **Containerization** | Docker & Docker Compose | Apache PHP 8.2 Container |
-| **Testing** | PHPUnit | v12.5.12 |
-| **API Pattern** | RESTful JSON API | Laravel ApiResource Controllers |
+Setelah menjalankan migrasi database seeder atau mengimpor file `pelayanan_pasien.sql`, akun bawaan berikut siap digunakan:
+
+| Role | Akun / Username / Email | Password | Halaman Login / Target |
+| :--- | :--- | :--- | :--- |
+| **Administrator Faskes** | `admin@meikahealth.id` | `admin123` | Buka `/login` $\rightarrow$ Masuk ke `/admin-dashboard` |
+| **Bidan / Praktisi Medis** | `bidan` *(atau email bidan)* | `bidan123` | Buka `/login` $\rightarrow$ Masuk ke `/bidan-dashboard` |
+| **Pasien Publik** | Pendaftaran Bebas Tanpa Login | - | Langsung akses `/buat-janji` & `/dashboard-pasien` |
+
+> [!NOTE]
+> Seeder database secara otomatis telah menyiapkan data lengkap:
+> - **4 Kategori Pelayanan Resmi** & seluruh daftar layanan spesifik.
+> - **Praktisi Medis**: Bidan Siti Rahmawati, S.Tr.Keb (mencakup seluruh layanan kebidanan, mom's treatment, persalinan, dan anak), Dr. Meika Sp.A (Spesialis Anak), dan Dr. Hendra Sp.OG (Spesialis Kandungan).
+> - **Data Antrean Sampel**, artikel edukasi kesehatan, dan daftar FAQ resmi faskes.
 
 ---
-*Dikembangkan untuk Klinik Pelayanan Ibu & Anak - JnC Family Care Metro / Meika Healthcare.*
+
+## 9. Ringkasan Tech Stack & Arsitektur
+
+| Layer / Komponen | Teknologi | Keterangan & Peran |
+| :--- | :--- | :--- |
+| **Backend Engine** | **Laravel 11.x / 13.x** | PHP 8.2 Framework, RESTful API Controllers, Eloquent ORM |
+| **Frontend Framework** | **React JS 18.3.1** | Component-driven UI, declarative state management |
+| **Client Routing** | **React Router DOM v6.26** | Single Page Application (SPA) client-side routing |
+| **Build & Bundler** | **Vite v5.0** | Ultra-fast HMR, Tree-shaking asset bundler |
+| **Styling Engine** | **Vanilla CSS & Tailwind CSS v4.0** | Custom Color Palette `#D896ED` (Soft Violet Accent) |
+| **Database Server** | **MariaDB 10.4 / MySQL 8.0** | Relational Database Engine dengan Indexing & Foreign Keys |
+| **Client Storage Cache**| **Browser LocalStorage** | Reaktif Cache (`clinic_queues`, `clinic_doctors`, `clinic_categories`) |
+| **Containerization** | **Docker & Docker Compose** | Apache PHP 8.2 container + MariaDB database container |
+| **Code Testing** | **PHPUnit v12.5** | Automated Testing suite untuk backend controllers |
+
+---
+
+*Dikembangkan untuk Klinik Pelayanan Kesehatan Ibu & Anak - JnC Family Care Metro / Meika Healthcare.*
