@@ -635,7 +635,7 @@ export default function UserDashboard() {
                   />
                   {selectedDoctorObj && (
                     <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "-8px", marginBottom: "12px", padding: "8px 12px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                      📅 <strong>Jadwal Praktik:</strong> {selectedDoctorObj.startDay || "Senin"} - {selectedDoctorObj.endDay || "Jumat"} ({selectedDoctorObj.startTime || "08:00"} - {selectedDoctorObj.endTime || "14:00"} WIB)
+                      <strong>Jadwal Praktik:</strong> {selectedDoctorObj.startDay || "Senin"} - {selectedDoctorObj.endDay || "Jumat"} ({selectedDoctorObj.startTime || "08:00"} - {selectedDoctorObj.endTime || "14:00"} WIB)
                       {currentDayName && !isDayInSchedule(currentDayName, selectedDoctorObj.schedules?.[0] || {}, selectedDoctorObj) && (
                         <span style={{ color: "#b45309", display: "block", marginTop: "3px", fontWeight: "500" }}>
                           ⚠️ Catatan: Hari layanan yang Anda pilih ({currentDayName}) berada di luar jadwal reguler {selectedDoctorObj.doctor}. Pendaftaran tetap diproses untuk konfirmasi petugas.

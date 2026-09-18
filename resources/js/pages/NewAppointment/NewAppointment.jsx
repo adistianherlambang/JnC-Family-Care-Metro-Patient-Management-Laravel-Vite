@@ -666,7 +666,7 @@ function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext, d
             />
             {selectedDoctorObj && (
               <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "4px", marginBottom: "12px", padding: "8px 12px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                📅 <strong>Jadwal Praktik:</strong> {selectedDoctorObj.startDay || "Senin"} - {selectedDoctorObj.endDay || "Jumat"} ({selectedDoctorObj.startTime || "08:00"} - {selectedDoctorObj.endTime || "14:00"} WIB)
+                <strong>Jadwal Praktik:</strong> {selectedDoctorObj.startDay || "Senin"} - {selectedDoctorObj.endDay || "Jumat"} ({selectedDoctorObj.startTime || "08:00"} - {selectedDoctorObj.endTime || "14:00"} WIB)
                 {currentDayName && !isDayInSchedule(currentDayName, selectedDoctorObj.schedules?.[0] || {}, selectedDoctorObj) && (
                   <span style={{ color: "#b45309", display: "block", marginTop: "3px", fontWeight: "500" }}>
                     ⚠️ Catatan: Hari yang Anda pilih ({currentDayName}) di luar hari kerja reguler {selectedDoctorObj.doctor}. Pendaftaran tetap dilanjutkan untuk konfirmasi petugas.
@@ -854,11 +854,11 @@ function Eighth({ page, setPage, formData, updateFormData }) {
         }
         queuesArr.push(newQueueItem);
         localStorage.setItem("clinic_queues", JSON.stringify(queuesArr));
-      } catch (e) {}
+      } catch (e) { }
 
       try {
         await apiService.createQueue(newQueueItem);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     localStorage.setItem("registeredUser", JSON.stringify(formData));
