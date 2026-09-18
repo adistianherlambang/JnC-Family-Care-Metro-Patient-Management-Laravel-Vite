@@ -74,12 +74,42 @@ export default function AdminDashboard() {
     if (!Array.isArray(docsList)) return [];
     return docsList.map((d) => {
       if (!d || typeof d !== "object") return d;
-      if (Array.isArray(d.schedules) && d.schedules.length > 0) return d;
-      const startDay = d.startDay || d.start_day || "Senin";
-      const endDay = d.endDay || d.end_day || "Jumat";
-      const startTime = d.startTime || d.start_time || "08:00";
-      const endTime = d.endTime || d.end_time || "14:00";
-      const services = Array.isArray(d.services) ? d.services : ["Konsultasi Umum"];
+      const startDay = d.startDay || d.start_day || d.schedules?.[0]?.days?.[0] || "Senin";
+      const endDay = d.endDay || d.end_day || d.schedules?.[0]?.days?.[d.schedules?.[0]?.days?.length - 1] || "Jumat";
+      const startTime = d.startTime || d.start_time || d.schedules?.[0]?.startTime || "08:00";
+      const endTime = d.endTime || d.end_time || d.schedules?.[0]?.endTime || "14:00";
+      const services = Array.isArray(d.services) && d.services.length > 0
+        ? d.services
+        : (d.schedules?.[0]?.services || ["Konsultasi Umum"]);
+      const daysList = getDaysRange(startDay, endDay);
+      const displayDays = startDay === endDay ? startDay : `${startDay} - ${endDay}`;
+
+      const schedules = (Array.isArray(d.schedules) && d.schedules.length > 0)
+        ? d.schedules.map((s) => {
+            const sStart = s.days?.[0] || startDay;
+            const sEnd = s.days?.[s.days?.length - 1] || endDay;
+            const sDays = (Array.isArray(s.days) && s.days.length > 2)
+              ? s.days
+              : getDaysRange(sStart, sEnd);
+            return {
+              ...s,
+              days: sDays,
+              displayDays: s.displayDays || (sStart === sEnd ? sStart : `${sStart} - ${sEnd}`),
+              startTime: s.startTime || startTime,
+              endTime: s.endTime || endTime,
+              services: Array.isArray(s.services) && s.services.length > 0 ? s.services : services
+            };
+          })
+        : [
+            {
+              days: daysList,
+              displayDays: displayDays,
+              startTime,
+              endTime,
+              services
+            }
+          ];
+
       return {
         ...d,
         startDay,
@@ -87,15 +117,7 @@ export default function AdminDashboard() {
         startTime,
         endTime,
         services,
-        schedules: [
-          {
-            days: [startDay, endDay],
-            displayDays: startDay === endDay ? startDay : `${startDay} - ${endDay}`,
-            startTime,
-            endTime,
-            services,
-          }
-        ]
+        schedules
       };
     });
   };

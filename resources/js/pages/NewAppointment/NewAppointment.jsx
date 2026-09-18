@@ -522,6 +522,21 @@ function Fourth({ page, setPage, formData, updateFormData, errors = {}, onNext, 
 }
 
 function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext, doctorsList = [] }) {
+  const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+
+  const getDaysRange = (startDay, endDay) => {
+    const start = startDay || "Senin";
+    const end = endDay || "Jumat";
+    const startIndex = DAYS_OF_WEEK.indexOf(start);
+    const endIndex = DAYS_OF_WEEK.indexOf(end);
+    if (startIndex === -1 || endIndex === -1) return [start, end];
+    if (startIndex <= endIndex) {
+      return DAYS_OF_WEEK.slice(startIndex, endIndex + 1);
+    } else {
+      return [...DAYS_OF_WEEK.slice(startIndex), ...DAYS_OF_WEEK.slice(0, endIndex + 1)];
+    }
+  };
+
   const getDayName = (dateVal) => {
     const daysMap = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const now = new Date();
@@ -545,29 +560,59 @@ function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext, d
           return daysMap[d.getDay()];
         }
       }
+      const dashParts = dateVal.split("-");
+      if (dashParts.length === 3) {
+        const year = parseInt(dashParts[0], 10);
+        const month = parseInt(dashParts[1], 10) - 1;
+        const day = parseInt(dashParts[2], 10);
+        const d = new Date(year, month, day);
+        if (!isNaN(d.getTime())) {
+          return daysMap[d.getDay()];
+        }
+      }
     }
     return null;
   };
 
-  const currentDayName = getDayName(formData.tanggalLayanan);
-
-  // Filter doctors matching selected service AND input date day of week
-  const getFilteredDoctors = () => {
-    return doctorsList.filter((doc) => {
-      return (doc.schedules || []).some((sched) => {
-        const matchService =
-          !formData.layanan ||
-          (sched.services || []).some(
-            (s) => s.toLowerCase().trim() === formData.layanan.toLowerCase().trim()
-          );
-        const matchDay = !currentDayName || (sched.days || []).includes(currentDayName);
-        return matchService && matchDay;
-      });
-    });
+  const isDayInSchedule = (targetDay, sched, doc) => {
+    if (!targetDay) return true;
+    let days = sched?.days || [];
+    if (days.length <= 2) {
+      days = getDaysRange(days[0] || doc?.startDay || doc?.start_day, days[days.length - 1] || doc?.endDay || doc?.end_day);
+    }
+    return days.includes(targetDay);
   };
 
-  const availableDoctors = getFilteredDoctors();
-  const doctorOptions = availableDoctors.map((doc) => doc.doctor);
+  const isServiceMatched = (serviceToCheck, targetService) => {
+    if (!targetService) return true;
+    const clean = (str) => String(str || "").toLowerCase().replace(/[\s\-_(),.]/g, "");
+    const s1 = clean(serviceToCheck);
+    const s2 = clean(targetService);
+    return s1 === s2 || s1.includes(s2) || s2.includes(s1);
+  };
+
+  const currentDayName = getDayName(formData.tanggalLayanan);
+
+  // 1. Doctors matching the selected service
+  const serviceDoctors = doctorsList.filter((doc) => {
+    if (!formData.layanan) return true;
+    const allDocServices = [
+      ...(doc.services || []),
+      ...((doc.schedules || []).flatMap((s) => s.services || []))
+    ];
+    return allDocServices.some((s) => isServiceMatched(s, formData.layanan));
+  });
+
+  // 2. Doctors also matching the selected day of week
+  const availableDoctors = serviceDoctors.filter((doc) => {
+    if (!currentDayName) return true;
+    return (doc.schedules || []).some((sched) => isDayInSchedule(currentDayName, sched, doc));
+  });
+
+  // 3. Fallback: if available on selected day, show those; otherwise show all doctors who offer this service
+  const displayedDoctors = availableDoctors.length > 0 ? availableDoctors : serviceDoctors;
+  const doctorOptions = displayedDoctors.map((doc) => doc.doctor || doc.name);
+  const selectedDoctorObj = doctorsList.find((d) => (d.doctor || d.name) === formData.dokter);
 
   return (
     <div className={styles.thirdContainer}>
@@ -592,8 +637,8 @@ function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext, d
           Kembali
         </p>
         <Title
-          title="Cari Dokter"
-          desc="Pilih dokter sesuai ketersediaan jadwal"
+          title="Cari Dokter / Bidan"
+          desc="Pilih dokter atau bidan sesuai ketersediaan jadwal dan jenis layanan yang Anda butuhkan."
         />
         <div className={styles.inputContainer}>
           <div className={styles.inputWrapper}>
@@ -609,16 +654,26 @@ function Fifth({ page, setPage, formData, updateFormData, errors = {}, onNext, d
               error={errors.tanggalLayanan}
             />
           </div>
-          <p className={styles.title}>Pilih Dokter</p>
+          <p className={styles.title}>Pilih Dokter / Bidan</p>
           <div className={styles.inputWrapper}>
             <InputSelect
-              label="Dokter"
+              label="Dokter / Bidan"
               options={doctorOptions}
               value={formData.dokter}
               onChange={(val) => updateFormData("dokter", val)}
-              placeholder="Pilih Dokter"
+              placeholder="Pilih Dokter / Bidan"
               error={errors.dokter}
             />
+            {selectedDoctorObj && (
+              <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "4px", marginBottom: "12px", padding: "8px 12px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                📅 <strong>Jadwal Praktik:</strong> {selectedDoctorObj.startDay || "Senin"} - {selectedDoctorObj.endDay || "Jumat"} ({selectedDoctorObj.startTime || "08:00"} - {selectedDoctorObj.endTime || "14:00"} WIB)
+                {currentDayName && !isDayInSchedule(currentDayName, selectedDoctorObj.schedules?.[0] || {}, selectedDoctorObj) && (
+                  <span style={{ color: "#b45309", display: "block", marginTop: "3px", fontWeight: "500" }}>
+                    ⚠️ Catatan: Hari yang Anda pilih ({currentDayName}) di luar hari kerja reguler {selectedDoctorObj.doctor}. Pendaftaran tetap dilanjutkan untuk konfirmasi petugas.
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div className={styles.button} onClick={onNext}>Next</div>

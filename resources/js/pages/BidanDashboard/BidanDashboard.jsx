@@ -283,6 +283,9 @@ export default function BidanDashboard() {
 
     if (mySchedule.id) {
       await apiService.updateDoctor(mySchedule.id, {
+        doctor: mySchedule.doctor,
+        role: mySchedule.role,
+        image: mySchedule.image,
         startDay: startDay,
         endDay: endDay,
         startTime: startTime,

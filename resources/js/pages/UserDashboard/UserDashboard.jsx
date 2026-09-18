@@ -228,24 +228,63 @@ export default function UserDashboard() {
     return null;
   };
 
+  const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+
+  const getDaysRange = (startDay, endDay) => {
+    const start = startDay || "Senin";
+    const end = endDay || "Jumat";
+    const startIndex = DAYS_OF_WEEK.indexOf(start);
+    const endIndex = DAYS_OF_WEEK.indexOf(end);
+    if (startIndex === -1 || endIndex === -1) return [start, end];
+    if (startIndex <= endIndex) {
+      return DAYS_OF_WEEK.slice(startIndex, endIndex + 1);
+    } else {
+      return [...DAYS_OF_WEEK.slice(startIndex), ...DAYS_OF_WEEK.slice(0, endIndex + 1)];
+    }
+  };
+
+  const isDayInSchedule = (targetDay, sched, doc) => {
+    if (!targetDay) return true;
+    let days = sched?.days || [];
+    if (days.length <= 2) {
+      days = getDaysRange(days[0] || doc?.startDay || doc?.start_day, days[days.length - 1] || doc?.endDay || doc?.end_day);
+    }
+    return days.includes(targetDay);
+  };
+
+  const isServiceMatched = (serviceToCheck, targetService) => {
+    if (!targetService) return true;
+    const clean = (str) => String(str || "").toLowerCase().replace(/[\s\-_(),.]/g, "");
+    const s1 = clean(serviceToCheck);
+    const s2 = clean(targetService);
+    return s1 === s2 || s1.includes(s2) || s2.includes(s1);
+  };
+
   const selectCategoryObj = categoriesList.find((item) => item.title === newQueueData.kategoriLayanan);
   const listLayanan = selectCategoryObj?.list || selectCategoryObj?.services || [];
 
   const currentDayName = getDayName(newQueueData.tanggalLayanan);
 
-  const availableDoctors = doctorsList.filter((doc) => {
-    return (doc.schedules || []).some((sched) => {
-      const matchService =
-        !newQueueData.layanan ||
-        (sched.services || []).some(
-          (s) => s.toLowerCase().trim() === newQueueData.layanan.toLowerCase().trim()
-        );
-      const matchDay = !currentDayName || (sched.days || []).includes(currentDayName);
-      return matchService && matchDay;
-    });
+  // 1. Doctors matching the selected service
+  const serviceDoctors = doctorsList.filter((doc) => {
+    if (!newQueueData.layanan) return true;
+    const allDocServices = [
+      ...(doc.services || []),
+      ...((doc.schedules || []).flatMap((s) => s.services || []))
+    ];
+    return allDocServices.some((s) => isServiceMatched(s, newQueueData.layanan));
   });
 
-  const doctorOptions = availableDoctors.map((doc) => doc.doctor || doc.name);
+  // 2. Doctors also matching the selected day of week
+  const availableDoctors = serviceDoctors.filter((doc) => {
+    if (!currentDayName) return true;
+    return (doc.schedules || []).some((sched) => isDayInSchedule(currentDayName, sched, doc));
+  });
+
+  // 3. Fallback: if available on selected day, show those; otherwise show all doctors who offer this service
+  const displayedDoctors = availableDoctors.length > 0 ? availableDoctors : serviceDoctors;
+  const doctorOptions = displayedDoctors.map((doc) => doc.doctor || doc.name);
+  const selectedDoctorObj = doctorsList.find((d) => (d.doctor || d.name) === newQueueData.dokter);
 
   const getCategoryForQueue = (item) => {
     if (item.category_name) return item.category_name;
@@ -594,6 +633,16 @@ export default function UserDashboard() {
                     }}
                     placeholder="Pilih Dokter / Bidan"
                   />
+                  {selectedDoctorObj && (
+                    <div style={{ fontSize: "12px", color: "#4b5563", marginTop: "-8px", marginBottom: "12px", padding: "8px 12px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                      📅 <strong>Jadwal Praktik:</strong> {selectedDoctorObj.startDay || "Senin"} - {selectedDoctorObj.endDay || "Jumat"} ({selectedDoctorObj.startTime || "08:00"} - {selectedDoctorObj.endTime || "14:00"} WIB)
+                      {currentDayName && !isDayInSchedule(currentDayName, selectedDoctorObj.schedules?.[0] || {}, selectedDoctorObj) && (
+                        <span style={{ color: "#b45309", display: "block", marginTop: "3px", fontWeight: "500" }}>
+                          ⚠️ Catatan: Hari layanan yang Anda pilih ({currentDayName}) berada di luar jadwal reguler {selectedDoctorObj.doctor}. Pendaftaran tetap diproses untuk konfirmasi petugas.
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   <InputText
                     label="Keterangan Keluhan Detail"

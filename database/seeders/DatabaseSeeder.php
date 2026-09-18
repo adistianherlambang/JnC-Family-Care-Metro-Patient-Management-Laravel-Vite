@@ -135,7 +135,22 @@ class DatabaseSeeder extends Seeder
                 'end_day' => 'Jumat',
                 'start_time' => '08:00',
                 'end_time' => '14:00',
-                'services' => ['Konsultasi Tumbuh Kembang', 'Imunisasi', 'MTBS/MTBM', 'SHK (Skrining Hipotiroid Kongenital)', 'Baby Infant dan Kids Massage']
+                'services' => [
+                    'Konsultasi Tumbuh Kembang',
+                    'Imunisasi',
+                    'MTBS/MTBM',
+                    'SHK (Skrining Hipotiroid Kongenital)',
+                    'Baby Infant dan Kids Massage',
+                    'Massage Common Cold',
+                    'Massage Diare',
+                    'Massage Konstipasi',
+                    'Massage Kolik',
+                    'Massage Kembung',
+                    'Baby Spa',
+                    'Baby Spa with Parents',
+                    'Cek Golongan Darah',
+                    'Tindik dr Evoo'
+                ]
             ],
             [
                 'doctor' => 'dr. Aulia Rahma, Sp.OG',
@@ -145,7 +160,23 @@ class DatabaseSeeder extends Seeder
                 'end_day' => 'Sabtu',
                 'start_time' => '09:00',
                 'end_time' => '15:00',
-                'services' => ['Pemeriksaan Kehamilan', 'Pemeriksaan Nifas', 'IVA', 'Papsmear', 'KB', 'Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)', 'Pelayanan Persalinan']
+                'services' => [
+                    'Pemeriksaan Kehamilan',
+                    'Pemeriksaan Nifas',
+                    'IVA',
+                    'Papsmear',
+                    'KB',
+                    'Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)',
+                    'Pelayanan Persalinan',
+                    'IMD (Inisiasi Menyusu Dini)',
+                    'Pendampingan Persalinan',
+                    'DCC (Delayed Cord Clamping)',
+                    'Prenatal Class Yoga',
+                    'Aquatic Yoga',
+                    'Kelas Melahirkan',
+                    'Washing V',
+                    'Special Pregnant Treatment'
+                ]
             ],
             [
                 'doctor' => 'Bidan Siti Rahmawati, S.Tr.Keb',
@@ -155,7 +186,54 @@ class DatabaseSeeder extends Seeder
                 'end_day' => 'Minggu',
                 'start_time' => '08:00',
                 'end_time' => '16:00',
-                'services' => ['Treatment Laktasi', 'Special Pregnant Treatment', 'Treatment Babaran', 'Baby Spa', 'IMD (Inisiasi Menyusu Dini)', 'Pendampingan Persalinan', 'Prenatal Class Yoga', 'Mandi Bayi']
+                'services' => [
+                    // Mom's Treatment (100% Kebidanan)
+                    'Special Pregnant Treatment',
+                    'Treatment Laktasi',
+                    'Treatment Babaran',
+                    'Totok Wajah',
+                    'Body Massage',
+                    'Ratus V',
+                    'Steambath',
+                    'Lulur',
+                    'Scrub',
+                    'Creambath',
+                    'Footbath',
+                    // Persalinan
+                    'Pelayanan Persalinan',
+                    'IMD (Inisiasi Menyusu Dini)',
+                    'Pendampingan Persalinan',
+                    'DCC (Delayed Cord Clamping)',
+                    // Poli Kebidanan
+                    'Pemeriksaan Kehamilan',
+                    'Pemeriksaan Nifas',
+                    'KB',
+                    'Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)',
+                    'Prenatal Class Yoga',
+                    'Aquatic Yoga',
+                    'Kelas Melahirkan',
+                    'IVA',
+                    'Washing V',
+                    // Bayi & Anak
+                    'Baby Spa',
+                    'Baby Spa with Parents',
+                    'Mandi Bayi',
+                    'Cukur Bayi',
+                    'Jemur Bayi',
+                    'Baby Infant dan Kids Massage',
+                    'Massage Common Cold',
+                    'Massage Diare',
+                    'Massage Konstipasi',
+                    'Massage Kolik',
+                    'Massage Kembung',
+                    'Imunisasi',
+                    'Tindik Manual',
+                    'Tindik dr Evoo',
+                    'Potong Kuku',
+                    'Manicure',
+                    'Pedicure',
+                    'Hygiene Lidah, Telinga, dan Hidung'
+                ]
             ]
         ];
 

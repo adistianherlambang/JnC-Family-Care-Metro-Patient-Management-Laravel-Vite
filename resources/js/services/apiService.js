@@ -99,6 +99,260 @@ const DEFAULT_PATIENTS = [
   }
 ];
 
+const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+
+const getDaysRange = (startDay, endDay) => {
+  const start = startDay || "Senin";
+  const end = endDay || "Jumat";
+  const startIndex = DAYS_OF_WEEK.indexOf(start);
+  const endIndex = DAYS_OF_WEEK.indexOf(end);
+  if (startIndex === -1 || endIndex === -1) return [start, end];
+  if (startIndex <= endIndex) {
+    return DAYS_OF_WEEK.slice(startIndex, endIndex + 1);
+  } else {
+    return [...DAYS_OF_WEEK.slice(startIndex), ...DAYS_OF_WEEK.slice(0, endIndex + 1)];
+  }
+};
+
+const DEFAULT_CATEGORIES = [
+  {
+    id: 1,
+    title: "Poli",
+    list: [
+      "Prenatal Class Yoga",
+      "Aquatic Yoga",
+      "Kelas Melahirkan",
+      "KB",
+      "Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)",
+      "Pemeriksaan Nifas",
+      "Pemeriksaan Kehamilan",
+      "IVA",
+      "Papsmear",
+      "Washing V"
+    ],
+    services: [
+      "Prenatal Class Yoga",
+      "Aquatic Yoga",
+      "Kelas Melahirkan",
+      "KB",
+      "Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)",
+      "Pemeriksaan Nifas",
+      "Pemeriksaan Kehamilan",
+      "IVA",
+      "Papsmear",
+      "Washing V"
+    ]
+  },
+  {
+    id: 2,
+    title: "Mom's Treatment",
+    list: [
+      "Special Pregnant Treatment",
+      "Treatment Laktasi",
+      "Treatment Babaran",
+      "Totok Wajah",
+      "Body Massage",
+      "Ratus V",
+      "Steambath",
+      "Lulur",
+      "Scrub",
+      "Creambath",
+      "Footbath"
+    ],
+    services: [
+      "Special Pregnant Treatment",
+      "Treatment Laktasi",
+      "Treatment Babaran",
+      "Totok Wajah",
+      "Body Massage",
+      "Ratus V",
+      "Steambath",
+      "Lulur",
+      "Scrub",
+      "Creambath",
+      "Footbath"
+    ]
+  },
+  {
+    id: 3,
+    title: "Persalinan",
+    list: [
+      "Pelayanan Persalinan",
+      "IMD (Inisiasi Menyusu Dini)",
+      "Pendampingan Persalinan",
+      "DCC (Delayed Cord Clamping)"
+    ],
+    services: [
+      "Pelayanan Persalinan",
+      "IMD (Inisiasi Menyusu Dini)",
+      "Pendampingan Persalinan",
+      "DCC (Delayed Cord Clamping)"
+    ]
+  },
+  {
+    id: 4,
+    title: "Pelayanan Bayi dan Anak",
+    list: [
+      "Baby Infant dan Kids Massage",
+      "Massage Common Cold",
+      "Massage Diare",
+      "Massage Konstipasi",
+      "Massage Kolik",
+      "Massage Kembung",
+      "SHK (Skrining Hipotiroid Kongenital)",
+      "Konsultasi Tumbuh Kembang",
+      "MTBS/MTBM",
+      "Cukur Bayi",
+      "Jemur Bayi",
+      "Imunisasi",
+      "Baby Spa",
+      "Baby Spa with Parents",
+      "Potong Kuku",
+      "Manicure",
+      "Pedicure",
+      "Mandi Bayi",
+      "Cek Golongan Darah",
+      "Hygiene Lidah, Telinga, dan Hidung",
+      "Tindik Manual",
+      "Tindik dr Evoo"
+    ],
+    services: [
+      "Baby Infant dan Kids Massage",
+      "Massage Common Cold",
+      "Massage Diare",
+      "Massage Konstipasi",
+      "Massage Kolik",
+      "Massage Kembung",
+      "SHK (Skrining Hipotiroid Kongenital)",
+      "Konsultasi Tumbuh Kembang",
+      "MTBS/MTBM",
+      "Cukur Bayi",
+      "Jemur Bayi",
+      "Imunisasi",
+      "Baby Spa",
+      "Baby Spa with Parents",
+      "Potong Kuku",
+      "Manicure",
+      "Pedicure",
+      "Mandi Bayi",
+      "Cek Golongan Darah",
+      "Hygiene Lidah, Telinga, dan Hidung",
+      "Tindik Manual",
+      "Tindik dr Evoo"
+    ]
+  }
+];
+
+const DEFAULT_DOCTORS = [
+  {
+    id: 1,
+    doctor: "dr. Fitri Handayani, Sp.A",
+    role: "Spesialis Anak & Tumbuh Kembang",
+    image: "/img/landingPage/dummyDr.png",
+    startDay: "Senin",
+    endDay: "Jumat",
+    startTime: "08:00",
+    endTime: "14:00",
+    services: [
+      "Konsultasi Tumbuh Kembang",
+      "Imunisasi",
+      "MTBS/MTBM",
+      "SHK (Skrining Hipotiroid Kongenital)",
+      "Baby Infant dan Kids Massage",
+      "Massage Common Cold",
+      "Massage Diare",
+      "Massage Konstipasi",
+      "Massage Kolik",
+      "Massage Kembung",
+      "Baby Spa",
+      "Baby Spa with Parents",
+      "Cek Golongan Darah",
+      "Tindik dr Evoo"
+    ]
+  },
+  {
+    id: 2,
+    doctor: "dr. Aulia Rahma, Sp.OG",
+    role: "Spesialis Kandungan & Kebidanan",
+    image: "/img/landingPage/dummyDr.png",
+    startDay: "Senin",
+    endDay: "Sabtu",
+    startTime: "09:00",
+    endTime: "15:00",
+    services: [
+      "Pemeriksaan Kehamilan",
+      "Pemeriksaan Nifas",
+      "IVA",
+      "Papsmear",
+      "KB",
+      "Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)",
+      "Pelayanan Persalinan",
+      "IMD (Inisiasi Menyusu Dini)",
+      "Pendampingan Persalinan",
+      "DCC (Delayed Cord Clamping)",
+      "Prenatal Class Yoga",
+      "Aquatic Yoga",
+      "Kelas Melahirkan",
+      "Washing V",
+      "Special Pregnant Treatment"
+    ]
+  },
+  {
+    id: 3,
+    doctor: "Bidan Siti Rahmawati, S.Tr.Keb",
+    role: "Bidan Senior & Treatment Specialist",
+    image: "/img/landingPage/dummyDr.png",
+    startDay: "Selasa",
+    endDay: "Minggu",
+    startTime: "08:00",
+    endTime: "16:00",
+    services: [
+      "Special Pregnant Treatment",
+      "Treatment Laktasi",
+      "Treatment Babaran",
+      "Totok Wajah",
+      "Body Massage",
+      "Ratus V",
+      "Steambath",
+      "Lulur",
+      "Scrub",
+      "Creambath",
+      "Footbath",
+      "Pelayanan Persalinan",
+      "IMD (Inisiasi Menyusu Dini)",
+      "Pendampingan Persalinan",
+      "DCC (Delayed Cord Clamping)",
+      "Pemeriksaan Kehamilan",
+      "Pemeriksaan Nifas",
+      "KB",
+      "Pemeriksaan dan Konsultasi Catin (Persiapan Hamil, Melahirkan, Menyusui)",
+      "Prenatal Class Yoga",
+      "Aquatic Yoga",
+      "Kelas Melahirkan",
+      "IVA",
+      "Washing V",
+      "Baby Spa",
+      "Baby Spa with Parents",
+      "Mandi Bayi",
+      "Cukur Bayi",
+      "Jemur Bayi",
+      "Baby Infant dan Kids Massage",
+      "Massage Common Cold",
+      "Massage Diare",
+      "Massage Konstipasi",
+      "Massage Kolik",
+      "Massage Kembung",
+      "Imunisasi",
+      "Tindik Manual",
+      "Tindik dr Evoo",
+      "Potong Kuku",
+      "Manicure",
+      "Pedicure",
+      "Hygiene Lidah, Telinga, dan Hidung"
+    ]
+  }
+];
+
 export const apiService = {
   // Patients (Connected to MySQL via /api/patients)
   async getPatients(fallback) {
@@ -213,7 +467,7 @@ export const apiService = {
       console.error("Categories fetch error:", e);
     }
     const local = localStorage.getItem("clinic_categories");
-    return local ? JSON.parse(local) : (fallback || []);
+    return local ? JSON.parse(local) : (fallback || DEFAULT_CATEGORIES);
   },
   saveCategoriesLocal(data) {
     localStorage.setItem("clinic_categories", JSON.stringify(data));
@@ -263,12 +517,42 @@ export const apiService = {
   // Doctors
   normalizeDoctor(doc) {
     if (!doc || typeof doc !== "object") return doc;
-    if (Array.isArray(doc.schedules) && doc.schedules.length > 0) return doc;
-    const startDay = doc.startDay || doc.start_day || "Senin";
-    const endDay = doc.endDay || doc.end_day || "Jumat";
-    const startTime = doc.startTime || doc.start_time || "08:00";
-    const endTime = doc.endTime || doc.end_time || "14:00";
-    const services = Array.isArray(doc.services) ? doc.services : ["Konsultasi Umum"];
+    const startDay = doc.startDay || doc.start_day || doc.schedules?.[0]?.days?.[0] || "Senin";
+    const endDay = doc.endDay || doc.end_day || doc.schedules?.[0]?.days?.[doc.schedules?.[0]?.days?.length - 1] || "Jumat";
+    const startTime = doc.startTime || doc.start_time || doc.schedules?.[0]?.startTime || "08:00";
+    const endTime = doc.endTime || doc.end_time || doc.schedules?.[0]?.endTime || "14:00";
+    const services = Array.isArray(doc.services) && doc.services.length > 0
+      ? doc.services
+      : (doc.schedules?.[0]?.services || ["Konsultasi Umum"]);
+    const daysList = getDaysRange(startDay, endDay);
+    const displayDays = startDay === endDay ? startDay : `${startDay} - ${endDay}`;
+
+    const schedules = (Array.isArray(doc.schedules) && doc.schedules.length > 0)
+      ? doc.schedules.map((s) => {
+          const sStart = s.days?.[0] || startDay;
+          const sEnd = s.days?.[s.days?.length - 1] || endDay;
+          const sDays = (Array.isArray(s.days) && s.days.length > 2)
+            ? s.days
+            : getDaysRange(sStart, sEnd);
+          return {
+            ...s,
+            days: sDays,
+            displayDays: s.displayDays || (sStart === sEnd ? sStart : `${sStart} - ${sEnd}`),
+            startTime: s.startTime || startTime,
+            endTime: s.endTime || endTime,
+            services: Array.isArray(s.services) && s.services.length > 0 ? s.services : services
+          };
+        })
+      : [
+          {
+            days: daysList,
+            displayDays: displayDays,
+            startTime,
+            endTime,
+            services
+          }
+        ];
+
     return {
       ...doc,
       startDay,
@@ -276,15 +560,7 @@ export const apiService = {
       startTime,
       endTime,
       services,
-      schedules: [
-        {
-          days: [startDay, endDay],
-          displayDays: startDay === endDay ? startDay : `${startDay} - ${endDay}`,
-          startTime,
-          endTime,
-          services
-        }
-      ]
+      schedules
     };
   },
   async getDoctors(fallback) {
@@ -304,8 +580,8 @@ export const apiService = {
       console.error("Doctors fetch error:", e);
     }
     const local = localStorage.getItem("clinic_doctors");
-    const raw = local ? JSON.parse(local) : (fallback || []);
-    return Array.isArray(raw) ? raw.map((d) => this.normalizeDoctor(d)) : [];
+    const raw = local ? JSON.parse(local) : (fallback || DEFAULT_DOCTORS);
+    return Array.isArray(raw) ? raw.map((d) => this.normalizeDoctor(d)) : DEFAULT_DOCTORS.map((d) => this.normalizeDoctor(d));
   },
   saveDoctorsLocal(data) {
     const normalized = Array.isArray(data) ? data.map((d) => this.normalizeDoctor(d)) : [];
