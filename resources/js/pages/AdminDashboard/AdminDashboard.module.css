@@ -728,3 +728,210 @@
   color: #6b7280;
   margin: 2px 0 0 0;
 }
+
+/* Pasien per Poli Section Styles */
+.poliSectionWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.poliSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.toggleGroup {
+  display: inline-flex;
+  background-color: #f3f4f6;
+  padding: 4px;
+  border-radius: 30px;
+  border: 1px solid #e5e7eb;
+}
+
+.toggleBtn {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  font-family: var(--artico);
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.toggleBtn:hover {
+  color: #111827;
+}
+
+.toggleBtnActive {
+  background-color: var(--primary);
+  color: white !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(216, 150, 237, 0.4);
+}
+
+.poliGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.poliCard {
+  background-color: white;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid rgba(216, 150, 237, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  user-select: none;
+}
+
+.poliCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(216, 150, 237, 0.2);
+  border-color: var(--primary);
+}
+
+.poliCardActive {
+  border: 2px solid var(--primary);
+  background: linear-gradient(180deg, #ffffff 0%, #faf0fc 100%);
+  box-shadow: 0 8px 24px rgba(216, 150, 237, 0.28);
+}
+
+.poliHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.poliIconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #FAF0FC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.poliTitleGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.poliName {
+  font-family: var(--antonia);
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.poliCategoryDesc {
+  font-family: var(--artico);
+  font-size: 12px;
+  color: #6b7280;
+  margin: 2px 0 0 0;
+}
+
+.poliCountRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.poliCountNumber {
+  font-family: var(--artico);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.poliCountPercent {
+  font-family: var(--artico);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background-color: #FAF0FC;
+  color: var(--primary);
+  border: 1px solid rgba(216, 150, 237, 0.4);
+}
+
+.poliStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--artico);
+  font-size: 12px;
+  color: #4b5563;
+  flex-wrap: wrap;
+}
+
+.poliStatusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.poliDoctorRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid #f3f4f6;
+  font-family: var(--artico);
+  font-size: 12px;
+  color: #374151;
+}
+
+.poliDoctorName {
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.poliActiveIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: 600;
+  margin-left: auto;
+}
+
+@media (max-width: 1200px) {
+  .poliGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .poliGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -14,6 +14,7 @@ import Table, { TableBadge } from "../../components/Table/Table";
 import Title from "../../components/Title/Title";
 import Modal from "../../components/Modal/Modal";
 import LaporanBulananTab from "./LaporanBulananTab";
+import PasienPerPoliSection from "./PasienPerPoliSection";
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -1104,6 +1105,16 @@ export default function AdminDashboard() {
               ))}
             </div>
           </div>
+
+          {/* Section Pasien per Poli Layanan */}
+          <PasienPerPoliSection
+            queues={queues}
+            categories={categories}
+            doctors={doctors}
+            isToday={isToday}
+            onUpdateQueueStatus={handleUpdateQueueStatus}
+            onDeleteQueue={handleDeleteQueue}
+          />
 
           {/* Recent Antrean Table Preview */}
           <div className={styles.inputContainer}>
