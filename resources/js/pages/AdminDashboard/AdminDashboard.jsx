@@ -13,6 +13,7 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import Table, { TableBadge } from "../../components/Table/Table";
 import Title from "../../components/Title/Title";
 import Modal from "../../components/Modal/Modal";
+import LaporanBulananTab from "./LaporanBulananTab";
 
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -219,6 +220,16 @@ export default function AdminDashboard() {
           const fList = await apiService.getFaqs();
           if (!isCurrent) return;
           if (Array.isArray(fList) && fList.length) setFaqs(fList);
+        } else if (tab === "laporan") {
+          const [qList, docs, cats] = await Promise.all([
+            apiService.getQueues(),
+            apiService.getDoctors(),
+            apiService.getCategories(),
+          ]);
+          if (!isCurrent) return;
+          if (Array.isArray(qList) && qList.length) setQueues(qList);
+          if (Array.isArray(docs) && docs.length) setDoctors(normalizeDoctors(docs));
+          if (Array.isArray(cats) && cats.length) setCategories(cats);
         }
       } catch (e) {
         console.error("Tab fetch error:", e);
@@ -932,6 +943,12 @@ export default function AdminDashboard() {
       id: "poli", label: "Poli & Layanan", svg:
         <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M11.01 0.00999999H1C0.733626 0.0118505 0.478833 0.119173 0.29141 0.30847C0.103987 0.497768 -0.00079548 0.753616 4.54779e-06 1.02V6.6C4.54779e-06 6.79 0.0500045 6.97 0.150005 7.13C0.250005 7.29 0.390004 7.42 0.550004 7.51L5.33 10.35C5.54 10.46 5.77 10.51 6 10.51C6.23 10.51 6.46 10.46 6.67 10.35L11.45 7.51C11.62 7.42 11.76 7.29 11.85 7.13C11.95 6.97 12 6.79 12 6.6V1.02C12 0.89 11.98 0.76 11.93 0.63C11.88 0.51 11.81 0.4 11.72 0.3C11.5354 0.111586 11.2838 0.00375705 11.02 0L11.01 0.00999999ZM9.01 5.51H7.01V7.51H5.01V5.51H3.01V3.51H5.01V1.51H7.01V3.51H9.01V5.51Z" fill="currentColor" />
+        </svg>
+    },
+    {
+      id: "laporan", label: "Laporan Bulanan", svg:
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 0H2C0.895 0 0 0.895 0 2V14C0 15.105 0.895 16 2 16H14C15.105 16 16 15.105 16 14V2C16 0.895 15.105 0 14 0ZM5 12H3V7H5V12ZM9 12H7V4H9V12ZM13 12H11V9H13V12Z" fill="currentColor" />
         </svg>
     },
     {
@@ -1701,6 +1718,16 @@ export default function AdminDashboard() {
             </Table>
           </div>
         </>
+      )}
+
+      {/* 6. Laporan Bulanan Pelayanan Pasien */}
+      {activeMenu === "laporan" && (
+        <LaporanBulananTab
+          queues={queues}
+          doctors={doctors}
+          categories={categories}
+          isLoading={tabLoading}
+        />
       )}
 
       {/* Modal Window Popup */}

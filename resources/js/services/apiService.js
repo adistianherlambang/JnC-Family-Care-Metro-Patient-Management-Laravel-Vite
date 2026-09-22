@@ -49,6 +49,86 @@ const DEFAULT_QUEUES = [
     date: getFormattedDate(1),
     time: "11:00 WIB",
     status: "Menunggu Antrean"
+  },
+  {
+    id: 5,
+    queueNumber: "A-008",
+    patientName: "Maya Indriyani",
+    doctor: "dr. Aulia Rahma, Sp.OG",
+    service: "Pemeriksaan Nifas",
+    date: getFormattedDate(-4),
+    time: "09:00 WIB",
+    status: "Selesai"
+  },
+  {
+    id: 6,
+    queueNumber: "A-009",
+    patientName: "Anisa Putri",
+    doctor: "Bidan Siti Rahmawati, S.Tr.Keb",
+    service: "Special Pregnant Treatment",
+    date: getFormattedDate(-5),
+    time: "13:30 WIB",
+    status: "Selesai"
+  },
+  {
+    id: 7,
+    queueNumber: "A-005",
+    patientName: "Fitria Wulandari",
+    doctor: "dr. Fitri Handayani, Sp.A",
+    service: "Imunisasi",
+    date: getFormattedDate(-8),
+    time: "10:15 WIB",
+    status: "Selesai"
+  },
+  {
+    id: 8,
+    queueNumber: "A-006",
+    patientName: "Teddy Setiawan",
+    doctor: "dr. Aulia Rahma, Sp.OG",
+    service: "Kelas Melahirkan",
+    date: getFormattedDate(-10),
+    time: "14:00 WIB",
+    status: "Selesai"
+  },
+  {
+    id: 9,
+    queueNumber: "A-003",
+    patientName: "Kurniawati",
+    doctor: "Bidan Siti Rahmawati, S.Tr.Keb",
+    service: "Pelayanan Persalinan",
+    date: getFormattedDate(-14),
+    time: "03:45 WIB",
+    status: "Selesai"
+  },
+  {
+    id: 10,
+    queueNumber: "A-002",
+    patientName: "Dian Permata",
+    doctor: "dr. Fitri Handayani, Sp.A",
+    service: "Baby Infant dan Kids Massage",
+    date: getFormattedDate(-18),
+    time: "11:30 WIB",
+    status: "Selesai"
+  },
+  {
+    id: 11,
+    queueNumber: "A-001",
+    patientName: "Lestari Rahayu",
+    doctor: "dr. Aulia Rahma, Sp.OG",
+    service: "Prenatal Class Yoga",
+    date: getFormattedDate(-21),
+    time: "08:00 WIB",
+    status: "Selesai"
+  },
+  {
+    id: 12,
+    queueNumber: "A-018",
+    patientName: "Zahra Salsabila",
+    doctor: "Bidan Siti Rahmawati, S.Tr.Keb",
+    service: "Treatment Babaran",
+    date: getFormattedDate(-1),
+    time: "15:00 WIB",
+    status: "Dibatalkan"
   }
 ];
 
