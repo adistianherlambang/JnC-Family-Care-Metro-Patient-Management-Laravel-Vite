@@ -1011,8 +1011,8 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Two Column Section: Status Breakdown & Category Distribution */}
-          <div className={styles.twoColumnGrid}>
+          {/* Three Column Section: Status Breakdown, Sebaran Pasien, & Category Distribution */}
+          <div className={styles.threeColumnGrid}>
             {/* Status Antrean Breakdown */}
             <div className={styles.cardSection}>
               <p className={styles.title} style={{ fontSize: "18px", margin: 0 }}>
@@ -1080,6 +1080,13 @@ export default function AdminDashboard() {
               })()}
             </div>
 
+            {/* Sebaran Pasien per Poli Layanan */}
+            <PasienPerPoliSection
+              queues={queues}
+              categories={categories}
+              isToday={isToday}
+            />
+
             {/* Kategori Pelayanan Utama */}
             <div className={styles.cardSection}>
               <p className={styles.title} style={{ fontSize: "18px", margin: 0 }}>
@@ -1105,16 +1112,6 @@ export default function AdminDashboard() {
               ))}
             </div>
           </div>
-
-          {/* Section Pasien per Poli Layanan */}
-          <PasienPerPoliSection
-            queues={queues}
-            categories={categories}
-            doctors={doctors}
-            isToday={isToday}
-            onUpdateQueueStatus={handleUpdateQueueStatus}
-            onDeleteQueue={handleDeleteQueue}
-          />
 
           {/* Recent Antrean Table Preview */}
           <div className={styles.inputContainer}>
