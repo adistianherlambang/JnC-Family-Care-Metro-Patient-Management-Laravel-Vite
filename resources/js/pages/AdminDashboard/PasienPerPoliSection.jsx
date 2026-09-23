@@ -206,9 +206,7 @@ export default function PasienPerPoliSection({
         <div key={idx} className={styles.progressItem}>
           <div className={styles.progressLabelRow}>
             <span>{poli.title}</span>
-            <span>
-              {poli.count} Pasien {totalFiltered > 0 ? `(${poli.percent}%)` : ""}
-            </span>
+            <span>{poli.count} Pasien</span>
           </div>
           <div className={styles.progressBarTrack}>
             <div
